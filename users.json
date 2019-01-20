@@ -1,0 +1,8 @@
+{
+    "admin": {
+        "database": {
+            "all": "admin"
+        },
+        "password": "admin"
+    }
+}
