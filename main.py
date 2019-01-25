@@ -1,4 +1,5 @@
 import sys
+import os
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import * 
@@ -226,25 +227,51 @@ class Manager(QMainWindow):
             else:
                 pass
 
-        self.b.appendPlainText("Running JSON Script...")
-        self.b.appendPlainText("Checking Database Connection...")
-
-        dbHandler = DatabaseHandler(self.dbData)
-        if dbHandler.serverStatus() == True:
-            self.b.appendPlainText("Connected to Dabase.")
-        else:
-            self.b.appendPlainText("Failed to Connect to Database")
-            return
-
-        with open(self.filePath) as infile:
-            data = json.load(infile)
-            for i in range(len(data)):
-                dbHandler.insertDoc(data[i])
-                self.writeToBoard("%d/%d" %(i+1,len(data)))
-                time.sleep(1)
-        self.b.appendPlainText("Finished")
-        self.statusBar().showMessage('Ready')
         
+        running = True
+        connected = False
+
+        r, w = os.pipe()
+        newpid = os.fork()
+
+        if newpid:
+            os.close(w)
+            r = os.fdopen(r)
+            self.b.appendPlainText("Checking Database Connection...")
+            dbHandler = DatabaseHandler(self.dbData)
+            if dbHandler.serverStatus() == True:
+                self.b.appendPlainText("Connected to Dabase.")
+                connected = True
+            else:
+                self.b.appendPlainText("Failed to Connect to Database")
+                return
+
+            while running:
+                message = r.read()
+                self.b.appendPlainText( message)
+
+        else:
+            time.sleep(5)
+            if connected:
+                os.close(r)
+                os.fdopen(w,'w')
+                w.write("Running JSON Script...")
+
+                with open(self.filePath) as infile:
+                    data = json.load(infile)
+                    for i in range(len(data)):
+                        dbHandler.insertDoc(data[i])
+                        w.write("Sending Objects to Database... %d/%d" %(i+1,len(data)))
+                        time.sleep(1)
+
+                w.write("Finished")
+
+                self.statusBar().showMessage('Ready')
+
+                w.close()
+            
+            running = False
+            sys.exit(0)
 
     def saveScript(self):
         if not self.filePath:
@@ -268,9 +295,6 @@ class Manager(QMainWindow):
         if fileName:
             self.filePath = fileName
             self.saveScript()
-
-    def writeToBoard(self, message):
-        self.b.appendPlainText("Sending Objects to Database... " + message)
 
     def closeEvent(self, event):
         if self.changed:
