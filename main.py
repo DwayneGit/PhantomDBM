@@ -10,9 +10,24 @@ from Users import *
 from DBConnection import *
 import logging
 import json
+import multiprocessing
 import time
 import re
 import pprint
+
+# class Unbuffered(object):
+#    def __init__(self, stream):
+#        self.stream = stream
+#    def write(self, data):
+#        self.stream.write(data)
+#        self.stream.flush()
+#    def writelines(self, datas):
+#        self.stream.writelines(datas)
+#        self.stream.flush()
+#    def __getattr__(self, attr):
+#        return getattr(self.stream, attr)
+
+# sys.stdout = Unbuffered(sys.stdout)
 
 class Manager(QMainWindow):
     
@@ -231,47 +246,61 @@ class Manager(QMainWindow):
         running = True
         connected = False
 
+        sem1 = multiprocessing.Semaphore(1)
+        sem2 = multiprocessing.Semaphore(0)
+
         r, w = os.pipe()
-        newpid = os.fork()
 
-        if newpid:
-            os.close(w)
-            r = os.fdopen(r)
-            self.b.appendPlainText("Checking Database Connection...")
-            dbHandler = DatabaseHandler(self.dbData)
-            if dbHandler.serverStatus() == True:
-                self.b.appendPlainText("Connected to Dabase.")
-                connected = True
-            else:
-                self.b.appendPlainText("Failed to Connect to Database")
-                return
+        self.b.appendPlainText("Checking Database Connection...")
+        dbHandler = DatabaseHandler(self.dbData)
+        if dbHandler.serverStatus() == True:
 
-            while running:
-                message = r.read()
-                self.b.appendPlainText( message)
+            self.b.appendPlainText("Connected to Dabase.")
 
-        else:
-            time.sleep(5)
-            if connected:
+            try:
+                newpid = os.fork()
+            except OSError:
+                print("error in fork")
+
+            if newpid == 0:
                 os.close(r)
-                os.fdopen(w,'w')
+                w = os.fdopen(w,'w')
                 w.write("Running JSON Script...")
+                # sys.stdout.flush()
 
                 with open(self.filePath) as infile:
                     data = json.load(infile)
                     for i in range(len(data)):
                         dbHandler.insertDoc(data[i])
                         w.write("Sending Objects to Database... %d/%d" %(i+1,len(data)))
+                        print(1)
                         time.sleep(1)
 
-                w.write("Finished")
+                w.write("Finished") 
+                w.close()
 
                 self.statusBar().showMessage('Ready')
 
-                w.close()
+                print(str(running) + " 2")
+                os._exit(0)
+
+        else:
+            self.b.appendPlainText("Failed to Connect to Database")
+            return
+
+        os.close(w)
+        r = os.fdopen(r)
+        
+        while True:
+            print("parent")
+            message = r.read()
+            print(message)
+            if not message:
+                break
             
-            running = False
-            sys.exit(0)
+            self.b.appendPlainText(message)
+            
+                
 
     def saveScript(self):
         if not self.filePath:
