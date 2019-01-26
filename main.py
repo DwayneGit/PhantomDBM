@@ -10,24 +10,10 @@ from Users import *
 from DBConnection import *
 import logging
 import json
-import multiprocessing
+import threading
 import time
 import re
 import pprint
-
-# class Unbuffered(object):
-#    def __init__(self, stream):
-#        self.stream = stream
-#    def write(self, data):
-#        self.stream.write(data)
-#        self.stream.flush()
-#    def writelines(self, datas):
-#        self.stream.writelines(datas)
-#        self.stream.flush()
-#    def __getattr__(self, attr):
-#        return getattr(self.stream, attr)
-
-# sys.stdout = Unbuffered(sys.stdout)
 
 class Manager(QMainWindow):
     
@@ -246,9 +232,6 @@ class Manager(QMainWindow):
         running = True
         connected = False
 
-        sem1 = multiprocessing.Semaphore(1)
-        sem2 = multiprocessing.Semaphore(0)
-
         r, w = os.pipe()
 
         self.b.appendPlainText("Checking Database Connection...")
@@ -256,6 +239,9 @@ class Manager(QMainWindow):
         if dbHandler.serverStatus() == True:
 
             self.b.appendPlainText("Connected to Dabase.")
+            
+            try:
+                thread.start_new_thread(self.addToDatabase)
 
             try:
                 newpid = os.fork()
@@ -266,7 +252,6 @@ class Manager(QMainWindow):
                 os.close(r)
                 w = os.fdopen(w,'w')
                 w.write("Running JSON Script...")
-                # sys.stdout.flush()
 
                 with open(self.filePath) as infile:
                     data = json.load(infile)
@@ -276,11 +261,12 @@ class Manager(QMainWindow):
                         print(1)
                         time.sleep(1)
 
-                w.write("Finished") 
-                w.close()
+                w.write("Finished")
 
                 self.statusBar().showMessage('Ready')
 
+                w.close()
+                    
                 print(str(running) + " 2")
                 os._exit(0)
 
@@ -294,13 +280,10 @@ class Manager(QMainWindow):
         while True:
             print("parent")
             message = r.read()
-            print(message)
             if not message:
                 break
             
             self.b.appendPlainText(message)
-            
-                
 
     def saveScript(self):
         if not self.filePath:
@@ -364,6 +347,22 @@ class Manager(QMainWindow):
     #         self.tabWidget.addTab(MainLayout(self.db), self.db.mDbCollection)
 
     #     self.setCentralWidget(self.tabWidget)
+            
+def addToDatabase(self, threading.Thread):
+
+    os.close(r)
+    w = os.fdopen(w,'w')
+    w.write("Running JSON Script...")
+    # sys.stdout.flush()
+
+    with open(filePath) as infile:
+        data = json.load(infile)
+        for i in range(len(data)):
+            dbHandler.insertDoc(data[i])
+            w.write("Sending Objects to Database... %d/%d" %(i+1,len(data)))
+            print(1)
+            time.sleep(1)
+            
 
 if __name__ == '__main__':
     
