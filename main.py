@@ -10,7 +10,6 @@ from Users import *
 from DBConnection import *
 import logging
 import json
-import threading
 import time
 import re
 import pprint
@@ -239,9 +238,6 @@ class Manager(QMainWindow):
         if dbHandler.serverStatus() == True:
 
             self.b.appendPlainText("Connected to Dabase.")
-            
-            try:
-                thread.start_new_thread(self.addToDatabase)
 
             try:
                 newpid = os.fork()
@@ -267,6 +263,7 @@ class Manager(QMainWindow):
 
                 w.close()
                     
+                running = False
                 print(str(running) + " 2")
                 os._exit(0)
 
@@ -276,14 +273,18 @@ class Manager(QMainWindow):
 
         os.close(w)
         r = os.fdopen(r)
-        
-        while True:
+        num=0
+        while running:
             print("parent")
             message = r.read()
-            if not message:
+            print(message)
+            self.b.appendPlainText(message)
+            num  = num + 1
+            print(str(running) + " 1")
+            if num == 5:
                 break
             
-            self.b.appendPlainText(message)
+                
 
     def saveScript(self):
         if not self.filePath:
@@ -347,22 +348,6 @@ class Manager(QMainWindow):
     #         self.tabWidget.addTab(MainLayout(self.db), self.db.mDbCollection)
 
     #     self.setCentralWidget(self.tabWidget)
-            
-def addToDatabase(self, threading.Thread):
-
-    os.close(r)
-    w = os.fdopen(w,'w')
-    w.write("Running JSON Script...")
-    # sys.stdout.flush()
-
-    with open(filePath) as infile:
-        data = json.load(infile)
-        for i in range(len(data)):
-            dbHandler.insertDoc(data[i])
-            w.write("Sending Objects to Database... %d/%d" %(i+1,len(data)))
-            print(1)
-            time.sleep(1)
-            
 
 if __name__ == '__main__':
     
