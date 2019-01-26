@@ -17,8 +17,12 @@ from Preferences import *
 from Users import *
 from DBConnection import *
 
+bufferSize = 1000
+
 class Manager(QMainWindow):
     
+
+    update = pyqtSignal()
     def __init__(self):
         super().__init__()
         self.left = 10
@@ -41,6 +45,7 @@ class Manager(QMainWindow):
         self.prefs.loadConfig()
         # print(self.prefs)
         self.dbData = self.prefs.prefDict['mongodb']
+        self.update.connect(self.appendToBoard)
 
         login = loginScreen()
         if login.exec_():
@@ -63,11 +68,11 @@ class Manager(QMainWindow):
         splitter1 = QSplitter(Qt.Horizontal)
 
         # Add text field
-        self.b = QPlainTextEdit(self)
-        self.b.setReadOnly(True)
-        self.b.insertPlainText("Welcome to Phantom Database Manager (DBM).")
-        # self.b.move(10,10)
-        # self.b.resize(self.width-60,self.height-20)
+        self.brd = QPlainTextEdit(self)
+        self.brd.setReadOnly(True)
+        self.brd.insertPlainText("Welcome to Phantom Database Manager (DBM).")
+        # self.brd.move(10,10)
+        # self.brd.resize(self.width-60,self.height-20)
 
         self.fileLoaded = True
         self.filePath = None
@@ -76,7 +81,7 @@ class Manager(QMainWindow):
         self.fileContents.textChanged.connect(self.isChanged)
         self.changed = False 
         # check if file is loaded and set flag to use to ask if save necessary before running or closing
-        splitter1.addWidget(self.b)
+        splitter1.addWidget(self.brd)
         splitter1.addWidget(self.fileContents)
 
         self.setCentralWidget(splitter1)
@@ -230,22 +235,20 @@ class Manager(QMainWindow):
             else:
                 pass
 
-        self.b.appendPlainText("Checking Database Connection...")
+        self.update.emit("Checking Database Connection...")
+
         dbHandler = DatabaseHandler(self.dbData)
         if dbHandler.serverStatus() == True:
 
-            self.b.appendPlainText("Connected to Dabase.")
+            self.update.emit("Connected to Dabase.")
             
-            npid = None
-            FIFO = 'mypipe'
+            FIFO = 'tmp/mypipe'
             
             try:
                 os.mkfifo(FIFO)
             except OSError as oe:
                 if oe.errno != errno.EEXIST:
                     raise
-
-            self.sem = 1
 
             try:
                 pid = os.fork()
@@ -259,54 +262,53 @@ class Manager(QMainWindow):
                     with open(FIFO) as fifo:
                         print("Parent FIFO Opened.")
                         while True:
-                            if self.sem == 0:
-                                message = fifo.read()
-                                if len(message) == 0:
-                                    print("Writer closed")
-                                    break
-                                
-                                print(message)
-                                self.b.appendPlainText(message)
-                                self.sem = 1
+                            # print(2)
+                            message = fifo.readline()
+                            self.update.emit(message)
+                            print(message)
+
+                            if len(message) == 0:
+                                print("Writer closed")
+                                break
+                    fifo.close()
                     sys.exit()
 
                 print("Opening Child FIFO...")
                 with open(FIFO, 'w') as fifo:
                     print("Child FIFO Opened.")
-                    if self.sem == 1:
-                        fifo.write("Running JSON Script..." + "\r\n")
-                        fifo.flush()
-                        self.sem = 0
-                    print(self.sem)
+
+                    fifo.write("Running JSON Script..." + "\n")
+                    time.sleep(1)
+                    fifo.flush()
+                        
                     with open(self.filePath) as infile:
                         data = json.load(infile)
-                        i = 0
-                        while i in range(len(data)):
-                            if sem == 1:
-                                print(self.sem)
-                                dbHandler.insertDoc(data[i])
-                                fifo.write("Sending Objects to Database... %d/%d" %(i+1,len(data)) + "\r\n")
-                                fifo.flush()
-                                print(1)
-                                i = i + 1
-                                self.sem = 0
-                                print(self.sem)
-                                time.sleep(1)
+                        for i in range(len(data)):
+                            dbHandler.insertDoc(data[i])
+                            fifo.write("Sending Objects to Database... %d/%d" %(i+1,len(data)) + "\n")
+                            time.sleep(1)
+                            fifo.flush()
+                            # print(1)
 
-                    if self.sem == 1:
-                        fifo.write("Finished")
-                        fifo.flush()
-                        self.sem = 0
+                    fifo.write("Finished" + "\r")
+                    fifo.flush()
 
                 self.statusBar().showMessage('Ready')
+                time.sleep(1)
                 fifo.close()
 
                 sys.exit()
 
         else:
-            self.b.appendPlainText("Failed to Connect to Database")
+            self.appendToBoard("Failed to Connect to Database")
             return
-                
+    
+
+    #create custom signal to ubdate UI
+    def appendToBoard(self, message):
+        self.brd.appendPlainText(message)
+        QCoreApplication.processEvents()
+
 
     def saveScript(self):
         if not self.filePath:
