@@ -1,5 +1,13 @@
 import sys
 import os
+
+import errno
+import logging
+import json
+import time
+import re
+import pprint
+
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import * 
@@ -8,11 +16,6 @@ from Dialogs import *
 from Preferences import *
 from Users import *
 from DBConnection import *
-import logging
-import json
-import time
-import re
-import pprint
 
 class Manager(QMainWindow):
     
@@ -227,63 +230,61 @@ class Manager(QMainWindow):
             else:
                 pass
 
-        
-        running = True
-        connected = False
-
-        r, w = os.pipe()
-
         self.b.appendPlainText("Checking Database Connection...")
         dbHandler = DatabaseHandler(self.dbData)
         if dbHandler.serverStatus() == True:
 
             self.b.appendPlainText("Connected to Dabase.")
 
+            FIFO = 'mypipe'
             try:
+                os.mkfifo(FIFO)
                 newpid = os.fork()
-            except OSError:
-                print("error in fork")
+
+            except OSError as oe: 
+                if oe.errno != errno.EEXIST:
+                    raise
 
             if newpid == 0:
-                os.close(r)
-                w = os.fdopen(w,'w')
-                w.write("Running JSON Script...")
-
-                with open(self.filePath) as infile:
-                    data = json.load(infile)
-                    for i in range(len(data)):
-                        dbHandler.insertDoc(data[i])
-                        w.write("Sending Objects to Database... %d/%d" %(i+1,len(data)))
-                        print(1)
-                        time.sleep(1)
-
-                w.write("Finished")
-
-                self.statusBar().showMessage('Ready')
-
-                w.close()
+                print("Opening FIFO in child...")
+                with open(FIFO, 'w') as fifo:
                     
-                running = False
-                print(str(running) + " 2")
-                os._exit(0)
+                    fifo.write("Running JSON Script...")
+
+                    with open(self.filePath) as infile:
+                        data = json.load(infile)
+                        for i in range(len(data)):
+                            dbHandler.insertDoc(data[i])
+                            fifo.write("Sending Objects to Database... %d/%d" %(i+1,len(data)))
+                            print(1)
+                            time.sleep(1)
+
+                    fifo.write("Finished")
+
+                    self.statusBar().showMessage('Ready')
+
+                    fifo.close()
+                        
+                    os._exit(0)
 
         else:
             self.b.appendPlainText("Failed to Connect to Database")
             return
 
-        os.close(w)
-        r = os.fdopen(r)
-        num=0
-        while running:
+        while True:
             print("parent")
-            message = r.read()
-            print(message)
-            self.b.appendPlainText(message)
-            num  = num + 1
-            print(str(running) + " 1")
-            if num == 5:
-                break
-            
+
+            print("Opening FIFO...")
+            with open(FIFO) as fifo:
+                print("FIFO opened")
+                while True:
+                    message = fifo.read()
+                    if len(message) == 0:
+                        print("Writer closed")
+                        break
+
+                    print(message)
+                    self.b.appendPlainText(message)
                 
 
     def saveScript(self):
