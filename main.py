@@ -82,6 +82,7 @@ class Manager(QMainWindow):
         self.filePath = None
 
         self.fileContents = QTextEdit()
+        self.fileContents.setText("[\n    {\n        \"\": \"\"\n    }\n]")
         self.fileContents.textChanged.connect(self.isChanged)
         self.changed = False 
         # check if file is loaded and set flag to use to ask if save necessary before running or closing
