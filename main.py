@@ -37,14 +37,13 @@ class Manager(QMainWindow):
         #load data from database
         #self.db = DatabaseHandler(self.dbData['collections'], self.dbData['dbname'], self.dbData['host'], self.dbData['port'], tableSize, pageNum) # move to loop and give individual collections
         #print(self.db.mDbDocs)
-
-        # login = loginScreen()
-        # if login.exec_():
-        #     self.user = login.user
+        
         self.prefs = Preferences('config', prefDict = DefaultGeneralConfig.prefDict) # name of preference file minus json
         self.prefs.loadConfig()
-        # print(self.prefs)
+        
         self.dbData = self.prefs.prefDict['mongodb']
+
+        self.isRunning = False
 
         login = loginScreen()
         if login.exec_():
@@ -82,7 +81,7 @@ class Manager(QMainWindow):
         self.filePath = None
 
         self.fileContents = QTextEdit()
-        self.fileContents.setText("[\n    {\n        \"\": \"\"\n    }\n]")
+        # self.fileContents.setText("[\n    {\n        \"\": \"\"\n    }\n]")
         self.fileContents.textChanged.connect(self.isChanged)
         self.changed = False 
         # check if file is loaded and set flag to use to ask if save necessary before running or closing
@@ -141,24 +140,28 @@ class Manager(QMainWindow):
         tbsave = QAction(QIcon("icons/save.png"),"save",self)
         tbsave.triggered.connect(self.saveScript)
         topTBar.addAction(tbsave)
-            
+        
         tbfiles = QAction(QIcon("icons/export-file.png"),"export",self)
         tbfiles.triggered.connect(self.exportScript)
         topTBar.addAction(tbfiles)
-        
-        tbrun = QAction(QIcon("icons/play.png"),"run",self)
+
+        self.actions = []
+
+        tbrun = QAction(QIcon("icons/play.png"), "run", self)
         tbrun.triggered.connect(self.runScript)
-        topTBar.addAction(tbrun)
+        self.actions.append(tbrun)
             
         tbpause = QAction(QIcon("icons/pause.png"),"pause",self)
-        # tbpause.triggered.connect(self.getfiles)
-        topTBar.addAction(tbpause)
+        tbpause.triggered.connect(self.pauseScript)
+        self.actions.append(tbpause)
+
+        self.runAction = self.actions[0]
+        
+        topTBar.addAction(self.runAction)
 
         tbstop = QAction(QIcon("icons/stop.png"),"stop",self)
         # tbpause.triggered.connect(self.getfiles)
         topTBar.addAction(tbstop)
-
-
 
         # ----------------- Side Toolbar ---------------------------
         sideTBar = QToolBar(self)
@@ -225,6 +228,7 @@ class Manager(QMainWindow):
     '''
     def runScript(self):
         # make sure file is not deleted before saving
+
         if self.changed:
             quit_msg = "Changes made will be saved.\nAre you sure you want to run this script?"
             reply = QMessageBox.question(self, 'Message', 
@@ -239,6 +243,8 @@ class Manager(QMainWindow):
                 return   
             else:
                 pass
+
+        self.setIsRunning(True)
 
         self.appendToBoard("Checking Database Connection...")
 
@@ -264,11 +270,29 @@ class Manager(QMainWindow):
 
         else:
             self.appendToBoard("Failed to Connect to Database")
+            self.setIsRunning(False)
             return
+
+    def pauseScript(self):
+        if self.isRunning:
+            self.isPaused = True
+
+        self.thread1.pause()
+    
+    def setIsRunning(self,state):
+        if state == True:
+            self.runAction = self.actions[1]
+        else:
+            self.runAction = self.actions[0]
+
+        self.isRunning = state
+
+
 
     @pyqtSlot(int)
     def threadDone(self, tId):
         self.appendToBoard("Finished " + str(tId))
+        self.setIsRunning(False)
 
     #create custom signal to ubdate UI
     @pyqtSlot(str)
@@ -276,7 +300,6 @@ class Manager(QMainWindow):
         # print(message)
         self.brd.appendPlainText(message)
         QCoreApplication.processEvents()
-
 
     def saveScript(self):
         if not self.filePath:

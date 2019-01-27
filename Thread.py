@@ -9,13 +9,14 @@ from PyQt5.QtGui import *
 
 class Thread1(QObject):
 
-    update = pyqtSignal(str)
-    done = pyqtSignal(int)
+    update = pyqtSignal(str) # signal data ready to be appended to th board
+    done = pyqtSignal(int) # done signal
 
     def __init__(self, filePath, dbHandler):
         QObject.__init__(self)
         self.filePath = filePath
         self.dbHandler = dbHandler
+        self.pause = False
 
     @pyqtSlot()
     def addToDatabase(self):
@@ -26,14 +27,23 @@ class Thread1(QObject):
         # print("Opening Child FIFO...")
         self.update.emit("Running JSON Script...")
         time.sleep(1)
-                        
+
+        if self.filePath == None:
+            self.stop()
+            self.done.emit(thread_id)
+            return    
+
         with open(self.filePath) as infile:
+            
             data = json.load(infile)
             for i in range(len(data)):
-                self.dbHandler.insertDoc(data[i])
-                self.update.emit("Sending Objects to Database... %d/%d" %(i+1,len(data)))
-                time.sleep(1)
-                # print(1)
+                if not self.pause:
+                    self.dbHandler.insertDoc(data[i])
+                    self.update.emit("Sending Objects to Database... %d/%d" %(i+1,len(data)))
+                    time.sleep(1)
+                    # print(1)
+                else:
+                    continue
 
         # self.update.emit("Finished")
         self.done.emit(thread_id)
@@ -41,6 +51,11 @@ class Thread1(QObject):
  
     # def updateSignal(self, msg):
     #     self.update.emit(msg)
+    def stop(self):
+        pass
+
+    def pause(self):
+        self.pause = not self.pause
         
 
 # class Thread2(QThread):
