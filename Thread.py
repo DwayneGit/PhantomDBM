@@ -7,11 +7,10 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import * 
 
-from updateSignal import *
-
 class Thread1(QObject):
 
     update = pyqtSignal(str)
+    done = pyqtSignal(int)
 
     def __init__(self, filePath, dbHandler):
         QObject.__init__(self)
@@ -22,7 +21,7 @@ class Thread1(QObject):
     def addToDatabase(self):
 
         # thread_name = QThread.currentThread().objectName()
-        # thread_id = int(QThread.currentThreadId())  # cast to int() is necessary
+        thread_id = int(QThread.currentThreadId())  # cast to int() is necessary
 
         # print("Opening Child FIFO...")
         self.update.emit("Running JSON Script...")
@@ -36,7 +35,8 @@ class Thread1(QObject):
                 time.sleep(1)
                 # print(1)
 
-        self.update.emit("Finished") 
+        # self.update.emit("Finished")
+        self.done.emit(thread_id)
         time.sleep(1)
  
     # def updateSignal(self, msg):

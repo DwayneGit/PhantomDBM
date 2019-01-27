@@ -246,14 +246,15 @@ class Manager(QMainWindow):
 
             self.appendToBoard("Connected to Dabase.")
 
-            self.thread1 = Thread1(self.filePath, dbHandler)
-            thread = QThread(self)
+            self.thread1 = Thread1(self.filePath, dbHandler) # instanciate the Q object
+            thread = QThread(self) # create a thread
 
-            self.thread1.moveToThread(thread)
+            self.thread1.moveToThread(thread) # send object to its own thread
 
-            self.thread1.update.connect(self.appendToBoard)
+            self.thread1.update.connect(self.appendToBoard) # link signals to functions
+            self.thread1.done.connect(self.threadDone)
             
-            thread.started.connect(self.thread1.addToDatabase)
+            thread.started.connect(self.thread1.addToDatabase) # connect function to be started in thread
             thread.start()
             
             # self.Thread2 = Thread2()
@@ -263,6 +264,10 @@ class Manager(QMainWindow):
         else:
             self.appendToBoard("Failed to Connect to Database")
             return
+
+    @pyqtSlot(int)
+    def threadDone(self, tId):
+        self.appendToBoard("Finished " + str(tId))
 
     #create custom signal to ubdate UI
     @pyqtSlot(str)
