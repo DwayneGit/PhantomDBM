@@ -1,28 +1,28 @@
-import sys
-import os
 
-import errno
-import logging
+import os
+import re
+import sys
 import json
 import time
-import re
+import errno
 import pprint
+import logging
 
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
-from PyQt5.QtGui import * 
-from Center import center_window
-from Dialogs import *
-from Preferences import *
 from Users import *
+from Dialogs import *
+from PyQt5.QtGui import * 
+from Preferences import *
 from DBConnection import *
+from PyQt5.QtCore import *
+from PyQt5.QtWidgets import *
+from Center import center_window
+
+from Thread import *
 
 bufferSize = 1000
 
 class Manager(QMainWindow):
     
-
-    update = pyqtSignal()
     def __init__(self):
         super().__init__()
         self.left = 10
@@ -45,7 +45,6 @@ class Manager(QMainWindow):
         self.prefs.loadConfig()
         # print(self.prefs)
         self.dbData = self.prefs.prefDict['mongodb']
-        self.update.connect(self.appendToBoard)
 
         login = loginScreen()
         if login.exec_():
@@ -54,8 +53,13 @@ class Manager(QMainWindow):
             self.move(center_window(self))
         else:
             self.reject()
-        
-    def initUI(self):    
+
+    # @pyqtSlot()
+    # def updateBrd():
+    #     ''' Give evidence that a bag was punched. '''
+    #     print('Bag was punched.')
+
+    def initUI(self):
         '''
         initiates application UI
 		'''   
@@ -129,27 +133,27 @@ class Manager(QMainWindow):
         #------------------ Top Toolbar ----------------------------
         topTBar = QToolBar(self)
         
-        tbfile = QAction(QIcon("import-file.png"),"import",self)
+        tbfile = QAction(QIcon("icons/import-file.png"),"import",self)
         tbfile.triggered.connect(self.getfile)
         topTBar.addAction(tbfile)
         
-        tbsave = QAction(QIcon("save.png"),"save",self)
+        tbsave = QAction(QIcon("icons/save.png"),"save",self)
         tbsave.triggered.connect(self.saveScript)
         topTBar.addAction(tbsave)
             
-        tbfiles = QAction(QIcon("export-file.png"),"export",self)
+        tbfiles = QAction(QIcon("icons/export-file.png"),"export",self)
         tbfiles.triggered.connect(self.exportScript)
         topTBar.addAction(tbfiles)
         
-        tbrun = QAction(QIcon("play.png"),"run",self)
+        tbrun = QAction(QIcon("icons/play.png"),"run",self)
         tbrun.triggered.connect(self.runScript)
         topTBar.addAction(tbrun)
             
-        tbpause = QAction(QIcon("pause.png"),"pause",self)
+        tbpause = QAction(QIcon("icons/pause.png"),"pause",self)
         # tbpause.triggered.connect(self.getfiles)
         topTBar.addAction(tbpause)
 
-        tbstop = QAction(QIcon("stop.png"),"stop",self)
+        tbstop = QAction(QIcon("icons/stop.png"),"stop",self)
         # tbpause.triggered.connect(self.getfiles)
         topTBar.addAction(tbstop)
 
@@ -158,19 +162,19 @@ class Manager(QMainWindow):
         # ----------------- Side Toolbar ---------------------------
         sideTBar = QToolBar(self)
         
-        tbopen = QAction(QIcon("internet.png"),"open",self)
+        tbopen = QAction(QIcon("icons/internet.png"),"open",self)
         # tbopen.triggered.connect()
         sideTBar.addAction(tbopen)
         
-        tbload = QAction(QIcon("load-file.png"),"open",self)
+        tbload = QAction(QIcon("icons/load-file.png"),"open",self)
         tbload.triggered.connect(self.startExplorer)
         sideTBar.addAction(tbload)
         
-        tbedit = QAction(QIcon("editor.png"),"open",self)
+        tbedit = QAction(QIcon("icons/editor.png"),"open",self)
         # tbedit.triggered.connect()
         sideTBar.addAction(tbedit)
         
-        tbsettings = QAction(QIcon("settings.png"),"open",self)
+        tbsettings = QAction(QIcon("icons/settings.png"),"open",self)
         tbsettings.triggered.connect(self.showPref)
         sideTBar.addAction(tbsettings)
 
@@ -235,77 +239,35 @@ class Manager(QMainWindow):
             else:
                 pass
 
-        self.update.emit("Checking Database Connection...")
+        self.appendToBoard("Checking Database Connection...")
 
         dbHandler = DatabaseHandler(self.dbData)
         if dbHandler.serverStatus() == True:
 
-            self.update.emit("Connected to Dabase.")
+            self.appendToBoard("Connected to Dabase.")
+
+            self.thread1 = Thread1(self.filePath, dbHandler)
+            thread = QThread(self)
+
+            self.thread1.moveToThread(thread)
+
+            self.thread1.update.connect(self.appendToBoard)
             
-            FIFO = 'tmp/mypipe'
+            thread.started.connect(self.thread1.addToDatabase)
+            thread.start()
             
-            try:
-                os.mkfifo(FIFO)
-            except OSError as oe:
-                if oe.errno != errno.EEXIST:
-                    raise
-
-            try:
-                pid = os.fork()
-            except OSError as oe:
-                raise
-
-            if pid == 0:
-                newpid = os.fork()
-                if newpid == 0:
-                    print("Opening Parent FIFO...")
-                    with open(FIFO) as fifo:
-                        print("Parent FIFO Opened.")
-                        while True:
-                            # print(2)
-                            message = fifo.readline()
-                            self.update.emit(message)
-                            print(message)
-
-                            if len(message) == 0:
-                                print("Writer closed")
-                                break
-                    fifo.close()
-                    sys.exit()
-
-                print("Opening Child FIFO...")
-                with open(FIFO, 'w') as fifo:
-                    print("Child FIFO Opened.")
-
-                    fifo.write("Running JSON Script..." + "\n")
-                    time.sleep(1)
-                    fifo.flush()
-                        
-                    with open(self.filePath) as infile:
-                        data = json.load(infile)
-                        for i in range(len(data)):
-                            dbHandler.insertDoc(data[i])
-                            fifo.write("Sending Objects to Database... %d/%d" %(i+1,len(data)) + "\n")
-                            time.sleep(1)
-                            fifo.flush()
-                            # print(1)
-
-                    fifo.write("Finished" + "\r")
-                    fifo.flush()
-
-                self.statusBar().showMessage('Ready')
-                time.sleep(1)
-                fifo.close()
-
-                sys.exit()
+            # self.Thread2 = Thread2()
+            # self.connect(self.Thread2, SIGNAL("finished()"), self.done)
+            # self.Thread2.start()
 
         else:
             self.appendToBoard("Failed to Connect to Database")
             return
-    
 
     #create custom signal to ubdate UI
+    @pyqtSlot(str)
     def appendToBoard(self, message):
+        # print(message)
         self.brd.appendPlainText(message)
         QCoreApplication.processEvents()
 
