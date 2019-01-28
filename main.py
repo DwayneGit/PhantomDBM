@@ -22,7 +22,8 @@ from Thread import *
 bufferSize = 1000
 
 class Manager(QMainWindow):
-    
+    __runs = 0
+    __completedRuns = 0
     def __init__(self):
         super().__init__()
         self.left = 10
@@ -44,6 +45,7 @@ class Manager(QMainWindow):
         self.dbData = self.prefs.prefDict['mongodb']
 
         self.isRunning = False
+        self.isPaused = True
 
         login = loginScreen()
         if login.exec_():
@@ -81,7 +83,7 @@ class Manager(QMainWindow):
         self.filePath = None
 
         self.fileContents = QTextEdit()
-        # self.fileContents.setText("[\n    {\n        \"\": \"\"\n    }\n]")
+        self.fileContents.setText("[\n    {\n        \"\": \"\"\n    }\n]")
         self.fileContents.textChanged.connect(self.isChanged)
         self.changed = False 
         # check if file is loaded and set flag to use to ask if save necessary before running or closing
@@ -140,28 +142,20 @@ class Manager(QMainWindow):
         tbsave = QAction(QIcon("icons/save.png"),"save",self)
         tbsave.triggered.connect(self.saveScript)
         topTBar.addAction(tbsave)
-        
+            
         tbfiles = QAction(QIcon("icons/export-file.png"),"export",self)
         tbfiles.triggered.connect(self.exportScript)
         topTBar.addAction(tbfiles)
-
-        self.actions = []
-
-        tbrun = QAction(QIcon("icons/play.png"), "run", self)
-        tbrun.triggered.connect(self.runScript)
-        self.actions.append(tbrun)
-            
-        tbpause = QAction(QIcon("icons/pause.png"),"pause",self)
-        tbpause.triggered.connect(self.pauseScript)
-        self.actions.append(tbpause)
-
-        self.runAction = self.actions[0]
         
-        topTBar.addAction(self.runAction)
+        self.tbrun = QAction()
+        self.setRunBtnAction( False)
+        topTBar.addAction(self.tbrun)
 
         tbstop = QAction(QIcon("icons/stop.png"),"stop",self)
-        # tbpause.triggered.connect(self.getfiles)
+        tbstop.triggered.connect(self.stopRun)
         topTBar.addAction(tbstop)
+
+
 
         # ----------------- Side Toolbar ---------------------------
         sideTBar = QToolBar(self)
@@ -228,9 +222,8 @@ class Manager(QMainWindow):
     '''
     def runScript(self):
         # make sure file is not deleted before saving
-
         if self.changed:
-            quit_msg = "Changes made will be saved.\nAre you sure you want to run this script?"
+            quit_msg = "Changes made will be saved.\nAre you sure you want to run this script?\nFunctionality to be implemented."
             reply = QMessageBox.question(self, 'Message', 
                             quit_msg, QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel, QMessageBox.Cancel)
 
@@ -243,8 +236,13 @@ class Manager(QMainWindow):
                 return   
             else:
                 pass
+        
+        if self.filePath == None:
+            print("No File To Run!")
+            return
 
-        self.setIsRunning(True)
+        self.setRunState(True)
+        Manager.__runs += 1
 
         self.appendToBoard("Checking Database Connection...")
 
@@ -270,29 +268,53 @@ class Manager(QMainWindow):
 
         else:
             self.appendToBoard("Failed to Connect to Database")
-            self.setIsRunning(False)
+            self.setRunState(False)
             return
 
-    def pauseScript(self):
+    def stopRun(self):
         if self.isRunning:
-            self.isPaused = True
+            self.thread1.setStopFlag()
+            self.setIsRunning(False)
 
-        self.thread1.pause()
-    
-    def setIsRunning(self,state):
-        if state == True:
-            self.runAction = self.actions[1]
+    def pauseRun(self):
+        if self.isRunning:
+            self.setRunBtnIcon(QIcon("icons/play_pause.png"))
+            self.setIsRunning(False)
         else:
-            self.runAction = self.actions[0]
+            self.setRunBtnIcon(QIcon("icons/pause.png"))
+            self.setIsRunning(True)
 
+        self.thread1.togglePauseFlag()
+
+    def setRunState(self, state):
+        self.setIsRunning(state)
+        self.setRunBtnAction(state)
+
+    def setIsRunning(self, state):
         self.isRunning = state
+    
+    def setRunBtnIcon(self, icon):
+        self.tbrun.setIcon(icon)
 
+    def setRunBtnAction(self, state):
+        if state == False:
+            self.setRunBtnIcon(QIcon("icons/play.png"))
+            self.tbrun.setIconText("run")
+            if Manager.__runs > 0:
+                self.tbrun.triggered.disconnect(self.pauseRun)
+            self.tbrun.triggered.connect(self.runScript)
 
+        elif state == True: 
+            self.setRunBtnIcon(QIcon("icons/pause.png"))
+            self.tbrun.setIconText("pause")
+            self.tbrun.triggered.disconnect(self.runScript)
+            self.tbrun.triggered.connect(self.pauseRun)
 
-    @pyqtSlot(int)
-    def threadDone(self, tId):
-        self.appendToBoard("Finished " + str(tId))
-        self.setIsRunning(False)
+    @pyqtSlot(str)
+    def threadDone(self, msg):
+        self.appendToBoard(msg)
+        Manager.__completedRuns += 1
+        self.setRunState(False)
 
     #create custom signal to ubdate UI
     @pyqtSlot(str)
