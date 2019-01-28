@@ -51,7 +51,7 @@ class Thread1(QObject):
                     continue
 
         # self.update.emit("Finished")
-        self.done.emit(+ str(self.thread_id) + ": Run Complete.")
+        self.done.emit(str(self.thread_id) + ": Run Complete.")
         time.sleep(1)
  
     # def updateSignal(self, msg):
