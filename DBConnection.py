@@ -11,7 +11,7 @@ from pymongo import errors as pyErrs
 from collections import OrderedDict
 
 class APIHandler():
-    def __init__(self, apiData):
+    def __init__(self, apiData, log):
         self.apiConfig = apiData
         self.apiName = apiData['apiname']
         self.apiRequestType = apiData['request']
@@ -66,7 +66,8 @@ class DatabaseHandler():
 
         return db.list_collection_names()
 
-    def __init__(self, dbData, mCollection = None, findSkip = 0):
+    def __init__(self, dbData, log, mCollection = None, findSkip = 0):
+        self.log = log
         self.dbConfig = dbData
         self.mDbName = dbData['dbname']
         self.mDbPortNum = dbData['port']
@@ -91,7 +92,7 @@ class DatabaseHandler():
             self.client.server_info()
             return True
         except pyErrs.ServerSelectionTimeoutError as err:
-            print(err)
+            self.log.logError(err)
         
         return False
 
@@ -202,7 +203,7 @@ class DatabaseHandler():
         return True
 
     def findDoc(self, findMe):
-        print(findMe)
+        self.log.logInfo("Document to find " + findMe)
         docs = self.db[self.mDbCollection]
         self.mDbDocs = []
 
@@ -245,7 +246,11 @@ class DatabaseHandler():
 
     def errMsgs(self, code):
         msg = None
-        if code == 0: msg ="One or more fields have an invalid type.\nPlease check that you have followed the model."
+        if code == -1:
+            self.log.logError('Error inserting document')
+            return
+
+        elif code == 0: msg ="One or more fields have an invalid type.\nPlease check that you have followed the model."
         elif code == 2: msg = "Entry cannot be completely empty."
         elif code == 3: msg = "No results found."
             
@@ -255,8 +260,4 @@ class DatabaseHandler():
         errMsg.buttonClicked.connect(errMsg.close)
         errMsg.exec_()
         return
-        
-        if code == -1:
-            print('Error inserting document')
-            return
 

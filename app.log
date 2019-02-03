@@ -1,0 +1,255 @@
+2019-02-02 17:02:34,530 - INFO - /home/dwayne/Desktop/Workspace/PhantomDBM/scripts/hello_world.json loaded.
+2019-02-02 17:08:18,671 - INFO - Program Started.
+2019-02-02 17:08:20,616 - INFO - Successfully Logged In.
+2019-02-02 17:08:39,284 - INFO - hello_world.json loaded.
+2019-02-02 17:09:52,063 - INFO - Program Started.
+2019-02-02 17:09:53,719 - INFO - Successfully Logged In.
+2019-02-02 17:10:00,314 - INFO - Program Ended
+2019-02-03 09:50:06,680 - INFO - Program Started.
+2019-02-03 09:50:08,229 - INFO - Successfully Logged In.
+2019-02-03 09:50:29,010 - INFO - hello_world.json loaded.
+2019-02-03 09:50:31,341 - INFO - Checking Database Connection...
+2019-02-03 09:50:31,345 - INFO - Connected to Database.
+2019-02-03 09:50:31,345 - INFO - Running JSON Script...
+2019-02-03 09:50:32,401 - INFO - Sending Objects to Database... 1/2
+2019-02-03 09:50:33,403 - INFO - Sending Objects to Database... 2/2
+2019-02-03 09:50:34,403 - INFO - 140436958074624: Run Complete.
+2019-02-03 09:50:34,403 - INFO - 140436958074624: Run Complete.
+2019-02-03 09:50:50,682 - INFO - Program Ended
+2019-02-03 10:58:28,264 - INFO - Program Started.
+2019-02-03 10:58:29,985 - INFO - Successfully Logged In.
+2019-02-03 10:59:22,891 - INFO - Program Started.
+2019-02-03 10:59:24,072 - INFO - Successfully Logged In.
+2019-02-03 10:59:37,010 - INFO - Checking Database Connection...
+2019-02-03 10:59:37,015 - INFO - Connected to Database.
+2019-02-03 10:59:37,015 - INFO - Running JSON Script...
+2019-02-03 10:59:38,017 - INFO - Sending Objects to Database... 1/1
+2019-02-03 10:59:39,018 - INFO - 140248700925696: Run Complete.
+2019-02-03 11:00:54,209 - INFO - Program Started.
+2019-02-03 11:00:55,424 - INFO - Successfully Logged In.
+2019-02-03 11:01:12,047 - INFO - No File To Run!
+2019-02-03 11:01:16,326 - INFO - Checking Database Connection...
+2019-02-03 11:01:16,331 - INFO - Connected to Database.
+2019-02-03 11:01:16,331 - INFO - Running JSON Script...
+2019-02-03 11:01:17,334 - INFO - Sending Objects to Database... 1/1
+2019-02-03 11:01:18,335 - INFO - 139710426998528: Run Complete.
+2019-02-03 11:05:36,934 - INFO - Program Started.
+2019-02-03 11:05:38,182 - INFO - Successfully Logged In.
+2019-02-03 11:05:41,061 - INFO - Checking Database Connection...
+2019-02-03 11:05:41,067 - INFO - Connected to Database.
+2019-02-03 11:05:41,068 - INFO - Running JSON Script...
+2019-02-03 11:05:50,975 - INFO - Program Ended
+2019-02-03 11:06:33,351 - INFO - Program Started.
+2019-02-03 11:06:34,639 - INFO - Successfully Logged In.
+2019-02-03 11:06:38,693 - INFO - Checking Database Connection...
+2019-02-03 11:06:38,698 - INFO - Connected to Database.
+2019-02-03 11:06:38,698 - INFO - Running JSON Script...
+2019-02-03 11:06:39,868 - INFO - 139929976559360: Run Terminated Before Completion
+2019-02-03 11:06:39,868 - INFO - 139929976559360: Run Terminated Before Completion
+2019-02-03 11:06:42,072 - INFO - Program Ended
+2019-02-03 11:07:55,789 - INFO - Program Started.
+2019-02-03 11:07:57,253 - INFO - Successfully Logged In.
+2019-02-03 11:07:59,247 - INFO - Checking Database Connection...
+2019-02-03 11:07:59,251 - INFO - Connected to Database.
+2019-02-03 11:07:59,251 - INFO - Running JSON Script...
+2019-02-03 11:08:01,092 - INFO - 140457233344256: Run Terminated Before Completion
+2019-02-03 11:08:01,092 - INFO - 140457233344256: Run Terminated Before Completion
+2019-02-03 11:08:03,192 - INFO - Program Ended
+2019-02-03 11:10:31,017 - INFO - Program Started.
+2019-02-03 11:10:34,466 - INFO - Successfully Logged In.
+2019-02-03 11:10:35,686 - INFO - No File To Run!
+2019-02-03 11:10:42,822 - INFO - No File To Run!
+2019-02-03 11:11:03,449 - INFO - Program Ended
+2019-02-03 11:12:23,866 - INFO - Program Started.
+2019-02-03 11:12:25,040 - INFO - Successfully Logged In.
+2019-02-03 11:12:37,682 - INFO - Checking Database Connection...
+2019-02-03 11:12:37,687 - INFO - Connected to Database.
+2019-02-03 11:12:37,687 - INFO - Running JSON Script...
+2019-02-03 11:12:38,690 - INFO - Sending Objects to Database... 1/1
+2019-02-03 11:12:39,691 - INFO - 139817255905024: Run Complete.
+2019-02-03 11:13:45,652 - INFO - Checking Database Connection...
+2019-02-03 11:13:45,656 - INFO - Connected to Database.
+2019-02-03 11:13:45,657 - INFO - Running JSON Script...
+2019-02-03 11:13:46,659 - INFO - Sending Objects to Database... 1/1
+2019-02-03 11:13:47,660 - INFO - 139816737953536: Run Complete.
+2019-02-03 11:19:48,738 - INFO - Program Started.
+2019-02-03 11:22:10,359 - INFO - Program Started.
+2019-02-03 11:22:45,741 - INFO - Program Started.
+2019-02-03 11:26:11,928 - INFO - Program Started.
+2019-02-03 11:27:38,289 - INFO - Program Started.
+2019-02-03 11:27:53,805 - INFO - Program Started.
+2019-02-03 11:28:33,226 - INFO - Program Started.
+2019-02-03 11:28:59,571 - INFO - Program Started.
+2019-02-03 11:30:10,288 - INFO - Program Started.
+2019-02-03 11:30:38,226 - INFO - Program Started.
+2019-02-03 11:31:00,082 - INFO - Program Started.
+2019-02-03 11:31:21,850 - INFO - Program Started.
+2019-02-03 11:31:50,807 - INFO - Program Started.
+2019-02-03 11:32:07,757 - INFO - Program Started.
+2019-02-03 11:32:16,746 - INFO - Program Started.
+2019-02-03 11:36:11,760 - INFO - Program Started.
+2019-02-03 11:36:40,924 - INFO - Program Started.
+2019-02-03 11:37:10,090 - INFO - Program Started.
+2019-02-03 11:37:29,245 - INFO - Program Started.
+2019-02-03 11:37:57,284 - INFO - Program Started.
+2019-02-03 11:38:40,171 - INFO - Program Started.
+2019-02-03 11:39:22,884 - INFO - Program Started.
+2019-02-03 11:43:50,151 - INFO - Program Started.
+2019-02-03 11:44:14,086 - INFO - Program Started.
+2019-02-03 11:44:38,095 - INFO - Program Started.
+2019-02-03 11:44:54,527 - INFO - Program Started.
+2019-02-03 11:45:29,565 - INFO - Program Started.
+2019-02-03 11:46:02,951 - INFO - Program Started.
+2019-02-03 11:47:03,300 - INFO - Program Started.
+2019-02-03 11:47:43,496 - INFO - Program Started.
+2019-02-03 11:48:29,545 - INFO - Program Started.
+2019-02-03 11:48:38,743 - INFO - Program Started.
+2019-02-03 11:49:03,096 - INFO - Program Started.
+2019-02-03 12:00:06,926 - INFO - Program Started.
+2019-02-03 12:05:03,013 - INFO - Program Started.
+2019-02-03 12:06:01,967 - INFO - Program Started.
+2019-02-03 12:06:14,327 - INFO - Program Started.
+2019-02-03 12:13:24,203 - INFO - Program Started.
+2019-02-03 12:13:40,753 - INFO - Program Started.
+2019-02-03 12:14:18,409 - INFO - Program Started.
+2019-02-03 12:16:17,310 - INFO - Program Started.
+2019-02-03 12:16:22,756 - INFO - Successfully Logged In.
+2019-02-03 12:16:30,324 - INFO - Checking Database Connection...
+2019-02-03 12:16:30,329 - INFO - Connected to Database.
+2019-02-03 12:16:30,331 - INFO - Running JSON Script...
+2019-02-03 12:16:31,335 - INFO - Sending Objects to Database... 1/1
+2019-02-03 12:16:32,336 - INFO - 140018584631040: Run Complete.
+2019-02-03 12:16:34,396 - INFO - Checking Database Connection...
+2019-02-03 12:16:34,401 - INFO - Connected to Database.
+2019-02-03 12:16:34,403 - INFO - Running JSON Script...
+2019-02-03 12:16:35,406 - INFO - Sending Objects to Database... 1/1
+2019-02-03 12:16:36,407 - INFO - 140018064545536: Run Complete.
+2019-02-03 12:16:44,482 - INFO - Program Started.
+2019-02-03 12:22:00,714 - INFO - Program Started.
+2019-02-03 12:25:20,349 - INFO - Program Started.
+2019-02-03 12:26:16,783 - INFO - Program Started.
+2019-02-03 12:26:43,302 - INFO - Program Started.
+2019-02-03 12:31:49,684 - INFO - Program Started.
+2019-02-03 12:34:45,323 - INFO - Program Started.
+2019-02-03 12:35:09,081 - INFO - Program Started.
+2019-02-03 12:37:29,260 - INFO - Program Started.
+2019-02-03 12:38:06,361 - INFO - Program Started.
+2019-02-03 12:38:51,375 - INFO - Program Started.
+2019-02-03 12:39:06,780 - INFO - Program Started.
+2019-02-03 12:39:59,158 - INFO - Program Started.
+2019-02-03 12:43:35,167 - INFO - Program Started.
+2019-02-03 12:43:56,730 - INFO - Program Started.
+2019-02-03 12:44:20,650 - INFO - Program Started.
+2019-02-03 12:49:38,879 - INFO - Program Started.
+2019-02-03 12:49:38,891 - INFO - 140562718046016: Cleaning temporary scripts...
+2019-02-03 12:50:04,917 - INFO - Program Started.
+2019-02-03 12:50:04,929 - INFO - 140311903283008: Cleaning temporary scripts...
+2019-02-03 12:50:04,929 - INFO - 140311903283008: 0 files deleted
+2019-02-03 12:52:23,023 - INFO - Program Started.
+2019-02-03 12:52:23,034 - INFO - 139789672011584: Cleaning temporary scripts...
+2019-02-03 12:52:23,037 - INFO - 139789672011584: 0 files deleted
+2019-02-03 12:52:25,070 - INFO - No login program exited.
+2019-02-03 12:52:28,050 - INFO - Program Started.
+2019-02-03 12:52:28,063 - INFO - 139646455793472: Cleaning temporary scripts...
+2019-02-03 12:52:28,065 - INFO - 139646455793472: 0 files deleted
+2019-02-03 12:52:29,802 - INFO - No login program exited.
+2019-02-03 13:02:14,240 - INFO - Program Started.
+2019-02-03 13:02:14,243 - INFO - 139707737098048: Cleaning temporary scripts...
+2019-02-03 13:02:14,243 - INFO - 139707737098048: 0 files deleted
+2019-02-03 13:02:17,294 - INFO - Successfully Logged In.
+2019-02-03 13:02:50,179 - INFO - Nothing To Run.
+ Please make changes to the default script or load your own script to run. 
+2019-02-03 13:02:57,491 - INFO - Nothing To Run.
+ Please make changes to the default script or load your own script to run. 
+2019-02-03 13:03:13,959 - INFO - Checking Database Connection...
+2019-02-03 13:03:13,968 - INFO - Connected to Database.
+2019-02-03 13:03:13,968 - INFO - 139706666768128Running JSON Script...
+2019-02-03 13:03:14,970 - INFO - 139706666768128Sending Objects to Database... 1/2
+2019-02-03 13:03:15,972 - INFO - 139706666768128Sending Objects to Database... 2/2
+2019-02-03 13:03:16,973 - INFO - 139706666768128: Run Complete.
+2019-02-03 13:04:41,637 - INFO - Program Started.
+2019-02-03 13:04:41,640 - INFO - 140216540325696: Cleaning temporary scripts...
+2019-02-03 13:04:41,643 - INFO - 140216540325696: script_0030219_190313.json has been deleted
+2019-02-03 13:04:41,643 - INFO - 140216540325696: 1 files deleted
+2019-02-03 13:04:54,523 - INFO - Successfully Logged In.
+2019-02-03 13:04:59,026 - INFO - Nothing To Run.
+ Please make changes to the default script or load your own script to run. 
+2019-02-03 13:05:05,251 - INFO - Checking Database Connection...
+2019-02-03 13:05:05,257 - INFO - Connected to Database.
+2019-02-03 13:05:05,258 - INFO - 140215463966464: Running JSON Script...
+2019-02-03 13:05:06,260 - INFO - 140215463966464: Sending Objects to Database... 1/2
+2019-02-03 13:05:07,262 - INFO - 140215463966464: Sending Objects to Database... 2/2
+2019-02-03 13:05:08,263 - INFO - 140215463966464: Run Complete.
+2019-02-03 13:05:43,213 - INFO - Program Ended
+2019-02-03 13:06:32,608 - INFO - Program Started.
+2019-02-03 13:06:32,611 - INFO - 140710896781120: Cleaning temporary scripts...
+2019-02-03 13:06:32,611 - INFO - 140710896781120: 0 files deleted
+2019-02-03 13:06:34,018 - INFO - Successfully Logged In.
+2019-02-03 13:06:43,985 - INFO - Checking Database Connection...
+2019-02-03 13:06:43,990 - INFO - Connected to Database.
+2019-02-03 13:06:43,990 - INFO - 140709889824512: Running JSON Script...
+2019-02-03 13:06:44,992 - INFO - 140709889824512: Sending Objects to Database... 1/1
+2019-02-03 13:06:45,993 - INFO - 140709889824512: Run Complete.
+2019-02-03 13:07:03,985 - INFO - Checking Database Connection...
+2019-02-03 13:07:03,989 - INFO - Connected to Database.
+2019-02-03 13:07:03,990 - INFO - 140709302630144: Running JSON Script...
+2019-02-03 13:07:04,992 - INFO - 140709302630144: Sending Objects to Database... 1/1
+2019-02-03 13:07:05,993 - INFO - 140709302630144: Run Complete.
+2019-02-03 13:07:34,106 - INFO - Program Started.
+2019-02-03 13:07:34,109 - INFO - 140204429371200: Cleaning temporary scripts...
+2019-02-03 13:07:34,111 - INFO - 140204429371200: script_0030219_190703.json has been deleted
+2019-02-03 13:07:34,111 - INFO - 140204429371200: script_0030219_190643.json has been deleted
+2019-02-03 13:07:34,111 - INFO - 140204429371200: 2 files deleted
+2019-02-03 13:07:37,673 - INFO - No login program exited.
+2019-02-03 13:08:08,801 - INFO - Program Started.
+2019-02-03 13:08:08,804 - INFO - 139983592486720: Cleaning temporary scripts...
+2019-02-03 13:08:08,804 - INFO - 139983592486720: 0 files deleted
+2019-02-03 13:08:12,761 - INFO - Successfully Logged In.
+2019-02-03 13:08:54,879 - INFO - Program Ended
+2019-02-03 13:09:57,186 - INFO - Program Started.
+2019-02-03 13:09:57,198 - INFO - 140303078287168: Cleaning temporary scripts...
+2019-02-03 13:09:57,201 - INFO - 140303078287168: 0 files deleted
+2019-02-03 13:10:01,146 - INFO - Successfully Logged In.
+2019-02-03 13:10:39,743 - INFO - Program Ended
+2019-02-03 13:10:42,688 - INFO - Program Started.
+2019-02-03 13:10:42,700 - INFO - 139624677287744: Cleaning temporary scripts...
+2019-02-03 13:10:42,702 - INFO - 139624677287744: 0 files deleted
+2019-02-03 13:10:45,039 - INFO - No login program exited.
+2019-02-03 13:25:02,753 - INFO - Program Started.
+2019-02-03 13:25:02,763 - INFO - 140215749592896: Cleaning temporary scripts...
+2019-02-03 13:25:02,766 - INFO - 140215749592896: 0 files deleted
+2019-02-03 13:25:04,325 - INFO - Successfully Logged In.
+2019-02-03 13:25:12,448 - INFO - Program Started.
+2019-02-03 13:25:12,459 - INFO - 140023174805312: Cleaning temporary scripts...
+2019-02-03 13:25:12,462 - INFO - 140023174805312: 0 files deleted
+2019-02-03 13:25:13,500 - INFO - Successfully Logged In.
+2019-02-03 13:25:41,518 - INFO - Program Ended
+2019-02-03 13:25:42,145 - INFO - Program Started.
+2019-02-03 13:25:42,157 - INFO - 140503973676864: Cleaning temporary scripts...
+2019-02-03 13:25:42,159 - INFO - 140503973676864: 0 files deleted
+2019-02-03 13:25:43,140 - INFO - Successfully Logged In.
+2019-02-03 13:29:00,520 - INFO - Program Started.
+2019-02-03 13:29:00,531 - INFO - 140390014576448: Cleaning temporary scripts...
+2019-02-03 13:29:00,534 - INFO - 140390014576448: 0 files deleted
+2019-02-03 13:29:01,817 - INFO - Successfully Logged In.
+2019-02-03 13:29:04,669 - INFO - Program Ended
+2019-02-03 13:29:15,574 - INFO - Program Started.
+2019-02-03 13:29:15,586 - INFO - 140312778725184: Cleaning temporary scripts...
+2019-02-03 13:29:15,588 - INFO - 140312778725184: 0 files deleted
+2019-02-03 13:29:17,028 - INFO - Successfully Logged In.
+2019-02-03 13:29:19,449 - INFO - Program Ended
+2019-02-03 13:29:44,663 - INFO - Program Started.
+2019-02-03 13:29:44,676 - INFO - 140008928638784: Cleaning temporary scripts...
+2019-02-03 13:29:44,676 - INFO - 140008928638784: 0 files deleted
+2019-02-03 13:29:45,340 - INFO - Successfully Logged In.
+2019-02-03 13:29:56,251 - INFO - Program Ended
+2019-02-03 13:30:33,910 - INFO - Program Started.
+2019-02-03 13:30:33,921 - INFO - 140173165373248: Cleaning temporary scripts...
+2019-02-03 13:30:33,924 - INFO - 140173165373248: 0 files deleted
+2019-02-03 13:30:34,562 - INFO - Successfully Logged In.
+2019-02-03 13:30:38,049 - INFO - Program Ended
+2019-02-03 13:30:42,529 - INFO - Program Started.
+2019-02-03 13:30:42,541 - INFO - 139942848968512: Cleaning temporary scripts...
+2019-02-03 13:30:42,543 - INFO - 139942848968512: 0 files deleted
+2019-02-03 13:30:42,972 - INFO - Successfully Logged In.
+2019-02-03 13:30:56,634 - INFO - Program Ended

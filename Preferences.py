@@ -31,7 +31,8 @@ class DefaultGeneralConfig:
                 }
 
 class Preferences():
-    def __init__(self, configFileName, prefDict = None):
+    def __init__(self, configFileName, log, prefDict = None):
+        self.log = log
         self.configFile = configFileName + '.json'
         self.prefDict = prefDict
     
@@ -46,7 +47,7 @@ class Preferences():
             if not self.prefDict == None:
                 self.saveConfig()
             else:
-                print("Preferences does not exist")
+                self.log.logError("Preferences does not exist")
             
     def saveConfig( self, **kwargs ):
         """

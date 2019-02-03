@@ -1,2 +1,5 @@
 # ignore cache folder
 __pycache__
+
+# temporary script created with for run with out save
+tmp

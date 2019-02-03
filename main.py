@@ -1,23 +1,31 @@
-
 import os
 import re
 import sys
 import json
-import time
 import errno
 import pprint
 import logging
 
-from Users import *
-from Dialogs import *
 from PyQt5.QtGui import * 
-from Preferences import *
-from DBConnection import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
+
+from Users import *
+from Dialogs import *
+from Preferences import *
+from DBConnection import *
+from cleanTmpScript import *
 from Center import center_window
 
+import breezess.breeze_resources
+
+import time
+from datetime import datetime
+from time import gmtime, strftime
+
 from Thread import *
+
+from Logger import PhantomLogger
 
 bufferSize = 1000
 
@@ -39,9 +47,14 @@ class Manager(QMainWindow):
         #self.db = DatabaseHandler(self.dbData['collections'], self.dbData['dbname'], self.dbData['host'], self.dbData['port'], tableSize, pageNum) # move to loop and give individual collections
         #print(self.db.mDbDocs)
         
-        self.prefs = Preferences('config', prefDict = DefaultGeneralConfig.prefDict) # name of preference file minus json
+        self.log = PhantomLogger()
+        self.log.logInfo("Program Started.")
+
+        self.prefs = Preferences('config', prefDict = DefaultGeneralConfig.prefDict, log = self.log) # name of preference file minus json
         self.prefs.loadConfig()
-        
+
+        self.tmpScriptCleaner()
+
         self.dbData = self.prefs.prefDict['mongodb']
 
         self.isRunning = False
@@ -49,11 +62,13 @@ class Manager(QMainWindow):
 
         login = loginScreen()
         if login.exec_():
+            self.log.logInfo("Successfully Logged In.")
             self.user = login.user
             self.initUI()
             self.move(center_window(self))
         else:
-            self.reject()
+            self.log.logInfo("No login program exited.")
+            sys.exit()
 
     # @pyqtSlot()
     # def updateBrd():
@@ -94,6 +109,13 @@ class Manager(QMainWindow):
 
         splitter1.setSizes([300,200])
         # self.setStatusBar(StatusBar())
+        self.statusBar().showMessage('Ready')
+
+        self.progressBar = QProgressBar()
+
+        self.statusBar().addPermanentWidget(self.progressBar)
+        self.progressBar.setGeometry(5,5,5,5)
+
         '''
         self.db = DatabaseHandler(self.dbData, pageNum)
         for i in range(len(self.db.mDbCollections)):
@@ -132,6 +154,7 @@ class Manager(QMainWindow):
         helpMenu = mainMenu.addMenu('Help')
         
     def setUpToolBar(self):
+
         #------------------ Top Toolbar ----------------------------
         topTBar = QToolBar(self)
         
@@ -154,8 +177,6 @@ class Manager(QMainWindow):
         tbstop = QAction(QIcon("icons/stop.png"),"stop",self)
         tbstop.triggered.connect(self.stopRun)
         topTBar.addAction(tbstop)
-
-
 
         # ----------------- Side Toolbar ---------------------------
         sideTBar = QToolBar(self)
@@ -214,7 +235,6 @@ class Manager(QMainWindow):
         newTitle = newTitle +  " - " + fileName[2]
         self.setWindowTitle(newTitle) 
         self.currTitle = newTitle
-        print(fileName[2])
 
     '''
     runScript:
@@ -222,39 +242,45 @@ class Manager(QMainWindow):
     '''
     def runScript(self):
         # make sure file is not deleted before saving
+        filePath = self.filePath
+
         if self.changed:
-            quit_msg = "Changes made will be saved.\nAre you sure you want to run this script?\nFunctionality to be implemented."
+            save_msg = "Changes made have not been saved.\nAre you sure you want to run this script?\nFunctionality to be implemented."
             reply = QMessageBox.question(self, 'Message', 
-                            quit_msg, QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel, QMessageBox.Cancel)
+                            save_msg, QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel, QMessageBox.Cancel)
 
             if reply == QMessageBox.Yes:
-                if self.filePath:
+                if filePath:
                     self.saveScript()
                 else:
                     self.exportScript()
             elif reply == QMessageBox.Cancel:
                 return   
-            else:
-                pass
-        
-        if self.filePath == None:
-            print("No File To Run!")
+            elif reply == QMessageBox.No:
+                filePath = self.tmpScript()
+
+        if filePath == None:
+            self.appendToBoard("Nothing To Run. Please make changes to the default script or load your own script to run. ")
             return
 
         self.setRunState(True)
         Manager.__runs += 1
 
-        self.appendToBoard("Checking Database Connection...")
+        self.log.logInfo("Checking Database Connection...")
 
-        dbHandler = DatabaseHandler(self.dbData)
+        dbHandler = DatabaseHandler(self.dbData, self.log)
         if dbHandler.serverStatus() == True:
 
-            self.appendToBoard("Connected to Dabase.")
+            self.log.logInfo("Connected to Database.")
 
-            self.thread1 = Thread1(self.filePath, dbHandler) # instanciate the Q object
+            self.thread1 = Thread1(filePath, dbHandler, self.log) # instanciate the Q object
             thread = QThread(self) # create a thread
 
-            self.thread1.moveToThread(thread) # send object to its own thread
+            try:
+                self.thread1.moveToThread(thread) # send object to its own thread
+            except:
+                self.appendToBoard("error moving to thread")
+
 
             self.thread1.update.connect(self.appendToBoard) # link signals to functions
             self.thread1.done.connect(self.threadDone)
@@ -319,7 +345,7 @@ class Manager(QMainWindow):
     #create custom signal to ubdate UI
     @pyqtSlot(str)
     def appendToBoard(self, message):
-        # print(message)
+        self.log.logInfo(message)
         self.brd.appendPlainText(message)
         QCoreApplication.processEvents()
 
@@ -346,6 +372,23 @@ class Manager(QMainWindow):
             self.filePath = fileName
             self.saveScript()
 
+    def tmpScript(self, temp = None):
+        
+        fileName = "tmp/script_"+ strftime("%w%d%m%y_%H%M%S", gmtime()) +".json"
+            
+        tmpfilePath = fileName
+
+        with open(tmpfilePath, 'w') as outfile:
+            outfile.write(eval(json.dumps(self.fileContents.toPlainText(), indent=4)))
+        
+        return tmpfilePath
+
+    def tmpScriptCleaner(self):
+
+        self.cleanScripts = cleanTmpScripts(self.log, 0) # for now deletes all previous temp files on startup
+        self.cleanScripts.start()
+
+
     def closeEvent(self, event):
         if self.changed:
             quit_msg = "Your changes have not been saved.\nAre you sure you want to exit the program?"
@@ -357,7 +400,7 @@ class Manager(QMainWindow):
             else:
                 event.ignore()
         else:
-            pass
+            self.log.logInfo("Program Ended")
 
     def showPref(self):
         p = PreferencesDialog(self.user)
@@ -390,6 +433,12 @@ if __name__ == '__main__':
     
     app = QApplication(sys.argv)
     app.setStyle("plastique")
+
+    # file = QFile(":/light.qss")
+    # file.open(QFile.ReadOnly | QFile.Text)
+    # stream = QTextStream(file)
+    # app.setStyleSheet(stream.readAll())
+
     manager = Manager()
     manager.statusBar().showMessage("Ready")    
     sys.exit(app.exec_())

@@ -12,12 +12,13 @@ class Thread1(QObject):
     update = pyqtSignal(str) # signal data ready to be appended to th board
     done = pyqtSignal(str) # done signal
 
-    def __init__(self, filePath, dbHandler):
+    def __init__(self, filePath, dbHandler, log):
         QObject.__init__(self)
         self.filePath = filePath
         self.dbHandler = dbHandler
         self.pauseFlag = False
         self.stopFlag = False
+        self.log = log
 
     @pyqtSlot()
     def addToDatabase(self):
@@ -26,7 +27,7 @@ class Thread1(QObject):
         self.thread_id = int(QThread.currentThreadId())  # cast to int() is necessary
 
         # print("Opening Child FIFO...")
-        self.update.emit("Running JSON Script...")
+        self.log.logInfo(str(self.thread_id) + ": Running JSON Script...")
         time.sleep(1)
 
         # if self.filePath == None: # dont do because user may want to run script with out saving handle in main and add functionality for this situation
@@ -43,7 +44,7 @@ class Thread1(QObject):
                     return
                 elif not self.pauseFlag:
                     self.dbHandler.insertDoc(data[i])
-                    self.update.emit("Sending Objects to Database... %d/%d" %(i+1,len(data)))
+                    self.update.emit(str(self.thread_id) + ": Sending Objects to Database... %d/%d" %(i+1,len(data)))
                     time.sleep(1)
                     i += 1
                     # print(1)
@@ -57,34 +58,10 @@ class Thread1(QObject):
     # def updateSignal(self, msg):
     #     self.update.emit(msg)
     def setStopFlag(self):
+        self.log.logInfo(str(self.thread_id) + ": Run Terminated Before Completion")
         self.done.emit(str(self.thread_id) + ": Run Terminated Before Completion")
         self.stopFlag = True
 
     def togglePauseFlag(self):
         self.pauseFlag = not self.pauseFlag
-        
-
-# class Thread2(QThread):
-
-#     def __init__(self):
-#         QThread.__init__(self)
-
-#     def __del__(self):
-#         print("Opening Parent FIFO...")
-#         with open(FIFO) as fifo:
-#             print("Parent FIFO Opened.")
-#             while True:
-#                 # print(2)
-#                 message = fifo.readline()
-#                 self.update.emit(message)
-#                 print(message)
-
-#                 if len(message) == 0:
-#                     print("Writer closed")
-#                     break
-
-#         fifo.close()
-#         sys.exit()
-
-#     def run(self):
-#         # your logic here       
+  
