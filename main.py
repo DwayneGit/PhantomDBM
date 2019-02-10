@@ -12,6 +12,7 @@ from PyQt5.QtWidgets import *
 
 from Users import *
 from Dialogs import *
+from Menubar import *
 from Preferences import *
 from DBConnection import *
 from cleanTmpScript import *
@@ -34,6 +35,10 @@ class Manager(QMainWindow):
     __completedRuns = 0
     def __init__(self):
         super().__init__()
+        #set window icon
+        scriptDir = os.path.dirname(os.path.realpath(__file__))
+        self.setWindowIcon(QIcon(scriptDir + os.path.sep + 'icons/phantom.png'))
+
         self.left = 10
         self.top = 10
         self.width = 900
@@ -82,10 +87,12 @@ class Manager(QMainWindow):
         self.progTitle = 'Phantom DBM'
         self.currTitle = self.progTitle
 
-        self.setWindowTitle(self.progTitle)  
+        self.setWindowTitle(self.progTitle)
+        self.setWindowIcon(QIcon('icons/phantom.png'))  
         self.setGeometry(self.left,self.top,self.width, self.height) # set screen size (left, top, width, height
 
         splitter1 = QSplitter(Qt.Horizontal)
+
 
         # Add text field
         self.brd = QPlainTextEdit(self)
@@ -97,13 +104,44 @@ class Manager(QMainWindow):
         self.fileLoaded = True
         self.filePath = None
 
+        self.editWidget=QWidget()
+
+        editLayout=QVBoxLayout()
+        editLayout.setContentsMargins(0, 0, 0, 0)
+
+        editTopWidget = QWidget()
+        editTopLayout = QHBoxLayout()
+        editTopLayout.addStretch()
+        editTopLayout.setContentsMargins(0, 0, 0, 0)
+
+        self.addrDropdownMenu = QComboBox()
+        addrDropdownSize = QSize(175,25)
+        self.addrDropdownMenu.setFixedSize(addrDropdownSize)
+
+
+        self.addAddrBtn = QPushButton()
+        # self.addAddrBtn.setStyleSheet("border: 1px solid black; background: white")
+        addAddrBtnSize = QSize(25,25)
+        self.addAddrBtn.setFixedSize(addAddrBtnSize)
+        
+        editTopLayout.addWidget(self.addAddrBtn)
+        editTopLayout.addWidget(self.addrDropdownMenu)
+
+        editTopWidget.setLayout(editTopLayout)
+
+        editLayout.addWidget(editTopWidget)
+
         self.fileContents = QTextEdit()
         self.fileContents.setText("[\n    {\n        \"\": \"\"\n    }\n]")
         self.fileContents.textChanged.connect(self.isChanged)
+        editLayout.addWidget(self.fileContents)
+
+        self.editWidget.setLayout(editLayout)
+
         self.changed = False 
         # check if file is loaded and set flag to use to ask if save necessary before running or closing
         splitter1.addWidget(self.brd)
-        splitter1.addWidget(self.fileContents)
+        splitter1.addWidget(self.editWidget)
 
         self.setCentralWidget(splitter1)
 
@@ -130,7 +168,9 @@ class Manager(QMainWindow):
         '''
 
         self.setUpToolBar()
-        self.initMenuBar()
+        
+        self.mb = Menubar(self)
+        self.mb.initMenubar()
  
         self.show()
 
@@ -139,20 +179,6 @@ class Manager(QMainWindow):
             self.changed = True
             self.setWindowTitle("* " + self.currTitle) 
 
-    def initMenuBar(self):
-        extractAction = QAction("Exit", self)
-        extractAction.setShortcut("Ctrl+Q")
-        extractAction.setStatusTip('Leave The App')
-        extractAction.triggered.connect(sys.exit)
-
-        mainMenu = self.menuBar()
-        fileMenu = mainMenu.addMenu('File')
-        fileMenu.addAction(extractAction)
-
-        editMenu = mainMenu.addMenu('Edit')
-
-        helpMenu = mainMenu.addMenu('Help')
-        
     def setUpToolBar(self):
 
         #------------------ Top Toolbar ----------------------------
@@ -403,7 +429,7 @@ class Manager(QMainWindow):
             self.log.logInfo("Program Ended")
 
     def showPref(self):
-        p = PreferencesDialog(self.user)
+        p = PreferencesDialog(self.user, self.log)
         p.exec_()
 
     # def setTabs(self):

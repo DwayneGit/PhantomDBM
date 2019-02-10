@@ -6,24 +6,25 @@ from Preferences import *
 from DBConnection import *
 
 class PreferencesDialog(QDialog):
-    def __init__(self, user, parent = None):
+    def __init__(self, user, log, parent = None):
         super(PreferencesDialog, self).__init__(parent)
         '''
         Initialize the window
         '''
-        self.loadPreferences()
         
         self.user = user
         self.svd = False
+        self.log = log
+        
+        self.loadPreferences()
 
         self.initUI()
 
     def loadPreferences(self):
-        self.prefs = Preferences('config', prefDict = DefaultGeneralConfig.prefDict) # name of preference file minus json
+        self.prefs = Preferences('config', self.log, prefDict = DefaultGeneralConfig.prefDict) # name of preference file minus json
         self.prefs.loadConfig()
         self.prefDict = self.prefs.prefDict
         self.instancesPrefDict = self.prefDict
-
            
         self.colList = self.getListOfCollections()
 

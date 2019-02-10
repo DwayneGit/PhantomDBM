@@ -5,14 +5,15 @@ add signal to edit ui to get rid of error:
         https://stackoverflow.com/questions/46693355/pyqt5-typeerror-signal-has-0-arguments-but-1-provided
 
 next:
-    - seperate files
+    - seperate files (divide operations)
     - logging ✓
     - run scripts from program with out saving ✓
     - api
     - themes
     - website
-    - menubar
+    - menubar ✓
+    - tabbed script edit window
     - automated instruction scripts
         - scripts that will help with handling other operations when sending data
           such as updateding other data entries if the one being inserted requires that
-          (standard alterations occur naturally)
+          (standard alterations occur naturally) in yaml format
