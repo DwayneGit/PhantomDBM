@@ -104,44 +104,14 @@ class Manager(QMainWindow):
         self.fileLoaded = True
         self.filePath = None
 
-        self.editWidget=QWidget()
-
-        editLayout=QVBoxLayout()
-        editLayout.setContentsMargins(0, 0, 0, 0)
-
-        editTopWidget = QWidget()
-        editTopLayout = QHBoxLayout()
-        editTopLayout.addStretch()
-        editTopLayout.setContentsMargins(0, 0, 0, 0)
-
-        self.addrDropdownMenu = QComboBox()
-        addrDropdownSize = QSize(175,25)
-        self.addrDropdownMenu.setFixedSize(addrDropdownSize)
-
-
-        self.addAddrBtn = QPushButton()
-        # self.addAddrBtn.setStyleSheet("border: 1px solid black; background: white")
-        addAddrBtnSize = QSize(25,25)
-        self.addAddrBtn.setFixedSize(addAddrBtnSize)
-        
-        editTopLayout.addWidget(self.addAddrBtn)
-        editTopLayout.addWidget(self.addrDropdownMenu)
-
-        editTopWidget.setLayout(editTopLayout)
-
-        editLayout.addWidget(editTopWidget)
-
         self.fileContents = QTextEdit()
         self.fileContents.setText("[\n    {\n        \"\": \"\"\n    }\n]")
         self.fileContents.textChanged.connect(self.isChanged)
-        editLayout.addWidget(self.fileContents)
-
-        self.editWidget.setLayout(editLayout)
-
+        
         self.changed = False 
         # check if file is loaded and set flag to use to ask if save necessary before running or closing
         splitter1.addWidget(self.brd)
-        splitter1.addWidget(self.editWidget)
+        splitter1.addWidget(self.fileContents)
 
         self.setCentralWidget(splitter1)
 
@@ -206,11 +176,6 @@ class Manager(QMainWindow):
 
         # ----------------- Side Toolbar ---------------------------
         sideTBar = QToolBar(self)
-        
-        tbopen = QAction(QIcon("icons/internet.png"),"open",self)
-        # tbopen.triggered.connect()
-        sideTBar.addAction(tbopen)
-        
         tbload = QAction(QIcon("icons/load-file.png"),"open",self)
         tbload.triggered.connect(self.startExplorer)
         sideTBar.addAction(tbload)
@@ -223,8 +188,42 @@ class Manager(QMainWindow):
         tbsettings.triggered.connect(self.showPref)
         sideTBar.addAction(tbsettings)
 
-        self.addToolBar(Qt.TopToolBarArea,topTBar)
-        self.addToolBar(Qt.RightToolBarArea,sideTBar)
+        spacer = QWidget()
+        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        # toolBar is a pointer to an existing toolbar
+        sideTBar.addWidget(spacer)
+        
+        tbopen = QAction(QIcon("icons/internet.png"),"open",self)
+        # tbopen.triggered.connect()
+        sideTBar.addAction(tbopen)
+        
+        dropdownSize = QSize(175,31)
+        # self.addrDropdownMenu = QComboBox()
+        # self.addrDropdownMenu.setFixedSize(dropdownSize)
+
+        # sideTBar.addWidget(self.addrDropdownMenu)
+        
+        self.dbnameMenu = QComboBox()
+        self.dbnameMenu.setFixedSize(dropdownSize)
+        self.dbnameMenu.addItems(DatabaseHandler.getDatabaseList(self.dbData['host'], self.dbData['port']))
+
+        index = self.dbnameMenu.findText(self.prefs.prefDict['mongodb']['dbname'])
+        self.dbnameMenu.setCurrentIndex(index)
+        self.dbnameMenu.currentTextChanged.connect(self.databaseNameChanged)
+
+        sideTBar.addWidget(self.dbnameMenu)
+        
+        self.collnameMenu = QComboBox()
+        self.collnameMenu.setFixedSize(dropdownSize)
+        self.collnameMenu.addItems(DatabaseHandler.getCollectionList(self.dbData['host'], self.dbData['port'], self.dbData['dbname']))
+        
+        index = self.collnameMenu.findText(self.prefs.prefDict['mongodb']['collection'])
+        self.collnameMenu.setCurrentIndex(index)
+        self.collnameMenu.currentTextChanged.connect(self.collectionNameChanged)
+        sideTBar.addWidget(self.collnameMenu)
+
+        self.addToolBar(Qt.TopToolBarArea, topTBar)
+        self.addToolBar(Qt.TopToolBarArea, sideTBar)
 
     def startExplorer(self):
         fx = FileDialogDemo()
@@ -271,7 +270,7 @@ class Manager(QMainWindow):
         filePath = self.filePath
 
         if self.changed:
-            save_msg = "Changes made have not been saved.\nAre you sure you want to run this script?\nFunctionality to be implemented."
+            save_msg = "Changes made have not been saved.\nWould you like to save before running this script?"
             reply = QMessageBox.question(self, 'Message', 
                             save_msg, QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel, QMessageBox.Cancel)
 
@@ -430,13 +429,54 @@ class Manager(QMainWindow):
 
     def showPref(self):
         p = PreferencesDialog(self.user, self.log)
-        p.exec_()
+        # print(self.prefs.prefDict)
+        if p.exec_():
+            self.prefs.loadConfig()
+            self.dbData = self.prefs.prefDict['mongodb']
+            
+            self.reloadDbNames()
+            self.reloadCollectionNames(self.dbData['dbname'])
+
+        else:
+            pass
+
+    def collectionNameChanged(self):
+        self.dbData['collection'] = self.collnameMenu.currentText()
+
+    def databaseNameChanged(self):
+        self.reloadCollectionNames(self.dbnameMenu.currentText())
+        self.dbData['dbname'] = self.dbnameMenu.currentText()
+
+    def reloadCollectionNames(self, dbname):
+            self.collnameMenu.clear()
+            self.collnameMenu.addItems(DatabaseHandler.getCollectionList(self.dbData['host'], self.dbData['port'], dbname))
+            index = self.collnameMenu.findText(self.prefs.prefDict['mongodb']['collection'])
+            self.collnameMenu.setCurrentIndex(index)
+
+    def reloadDbNames(self):
+
+            self.dbnameMenu.clear()
+            self.dbnameMenu.addItems(DatabaseHandler.getDatabaseList(self.dbData['host'], self.dbData['port']))
+            index = self.dbnameMenu.findText(self.prefs.prefDict['mongodb']['dbname'])
+            self.dbnameMenu.setCurrentIndex(index)
+
+    # def changeColl(coll):
+    #         if coll == "" or coll==None:
+    #             return
+    #         elif self.clrFlag == True:
+    #             self.clrFlag = False
+    #             return
+            
+    #         self.prefDict['mongodb']['collection'] = coll
+
+    #         index = colEditBtn.findText(self.prefDict['mongodb']['collection'])
+    #         colEditBtn.setCurrentIndex(index)
 
     # def setTabs(self):
     #     '''
     #     Create TABS for each collection
     #     '''
-    #     self.collectionNames = DatabaseHandler.getCollectionList(self.dbData)
+    #     self.collectionNames = DatabaseHandler.__getCollectionList(self.dbData)
 
     #     self.tabWidget = QTabWidget(self)
     #     self.tabWidget.setTabPosition(QTabWidget.West)

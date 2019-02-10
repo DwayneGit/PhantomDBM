@@ -85,12 +85,41 @@ class PreferencesDialog(QDialog):
     def saveDbTab(self):
         # self.prefDict['db'] = self.dbBtnGroup.checkedButton().text().lower()
         # print(self.dbBtnGroup.checkedButton().text().lower())
-        # # items = (self.dbForm.itemAt(i) for i in range(self.dbForm.count())) 
-        # for w in range(3, 9, 2):
-        #     print(self.dbForm.itemAt(w).widget().text())
+        if self.prefDict['db'] == "mongodb":
+            self.prefDict['mongodb']['dbname'] = self.dbForm.itemAt(3).widget().currentText()
+            print(self.prefDict['mongodb']['dbname'])
 
-        # print(self.dbForm.itemAt(11).widget().currentText())
-        pass
+            self.prefDict['mongodb']['collection'] = self.dbForm.itemAt(11).widget().currentText()
+            print(self.prefDict['mongodb']['collection'])
+
+            self.prefDict['mongodb']['host'] = self.dbForm.itemAt(5).widget().text()
+            print(self.prefDict['mongodb']['host'])
+
+            self.prefDict['mongodb']['port'] = int(self.dbForm.itemAt(7).widget().text())
+            print(self.prefDict['mongodb']['port'])
+
+            self.prefDict['mongodb']['tableSize'] = int(self.dbForm.itemAt(9).widget().text())
+            print(self.prefDict['mongodb']['tableSize'])
+
+
+
+        elif self.prefDict['db'] == "sql":
+            pass
+
+        self.prefs.saveConfig()
+        
+        # items = (self.dbForm.itemAt(i) for i in range(self.dbForm.count())) 
+        # for w in range(3, 12, 2):
+        #     widget = self.dbForm.itemAt(w).widget()
+        #     if isinstance(widget, QComboBox):
+        #         # print(widget.currentIndex())
+        #         print(widget.currentText())
+        #     else:
+        #         print(widget.text())
+
+
+
+        # pass
                 
         
 
@@ -99,8 +128,8 @@ class PreferencesDialog(QDialog):
         self.accept()
 
     def cancelPreferences(self):
-        if self.svd == True:
-            print("closeing with true")
+        if self.svd == False:
+            print("closeing with false")
             self.reject() #if canceled with out previously being saved
         else:
             self.accept()

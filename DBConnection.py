@@ -55,14 +55,13 @@ class APIHandler():
 
 class DatabaseHandler():
 
-    def getDatabaseList( host, port):
+    def getDatabaseList(host, port):
         c = MongoClient(host, port)
         return c.database_names()
 
-    def getCollectionList(dbData):
-
-        client = MongoClient(host = dbData['host'], port =dbData['port'], document_class=OrderedDict)
-        db = client[dbData['dbname']] 
+    def getCollectionList(host, port, dbname):
+        client = MongoClient(host=host, port=port, document_class=OrderedDict)
+        db = client[dbname] 
 
         return db.list_collection_names()
 
