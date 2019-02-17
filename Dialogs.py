@@ -29,7 +29,7 @@ class PreferencesDialog(QDialog):
         self.colList = self.getListOfCollections()
 
     def getListOfCollections(self):
-        return DatabaseHandler.getCollectionList(self.prefs.prefDict['mongodb'])
+        return DatabaseHandler.getCollectionList(self.prefDict['mongodb']['host'], self.prefDict['mongodb']['port'], self.prefDict['mongodb']['dbname'])
 
     def initUI(self):
         #Window initial size

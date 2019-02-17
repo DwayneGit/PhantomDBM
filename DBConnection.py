@@ -38,19 +38,19 @@ class APIHandler():
             return False
 
     def putData(self, data):
-        response = requests.put('https://httpbin.org/post', data )
+        response = requests.put('https://httpbin.org/post', data)
         return response
 
     def postData(self, data):
-        response = requests.post('https://httpbin.org/post', data )
+        response = requests.post('https://httpbin.org/post', data)
         return response
 
-    def getData(self, params = None):
-        response = requests.get('https://httpbin.org/post' , params)
+    def getData(self, params=None):
+        response = requests.get('https://httpbin.org/post', params)
         return response
 
     def deleteData(self):
-        response = requests.delete('https://httpbin.org/post' )
+        response = requests.delete('https://httpbin.org/post')
         return response
 
 class DatabaseHandler():
@@ -65,14 +65,17 @@ class DatabaseHandler():
 
         return db.list_collection_names()
 
-    def __init__(self, dbData, log, mCollection = None, findSkip = 0):
+    def __init__(self, dbData, log, mCollection=None, findSkip=0):
         self.log = log
+
         self.dbConfig = dbData
-        self.mDbName = dbData['dbname']
-        self.mDbPortNum = dbData['port']
-        self.mDbCollection =  dbData['collection']
-        self.mDbHost = dbData['host']
-        self.fLimit = dbData['tableSize']
+
+        self.mDbName = dbConfig['dbname']
+        self.mDbPortNum = dbConfig['port']
+        self.mDbCollection = dbConfig['collection']
+        self.mDbHost = dbConfig['host']
+        self.fLimit = dbConfig['tableSize']
+        
         self.model = None
         self.fSkip = findSkip
         #for docs from all collections in db#self.mDbDocs = [[0 for x in range(0)] for y in range (len(self.mDbCollections))] # creates a matrix of with len(self.mDbCollections) number of empty lists
@@ -84,7 +87,7 @@ class DatabaseHandler():
     def serverStatus(self):
         maxSevSelDelay = 2
         try:
-            self.client = MongoClient(host =self.mDbHost, port =self.mDbPortNum, 
+            self.client = MongoClient(host=self.mDbHost, port=self.mDbPortNum, 
                         document_class=OrderedDict, serverSelectionTimeoutMS=maxSevSelDelay)
         
             # The ismaster command is cheap and does not require auth.
@@ -148,40 +151,40 @@ class DatabaseHandler():
 
         return True
 
-    # def isRightType(self, obj, tpe):
-    #     #print(obj)
-    #     if re.search(r"\[.*\]",tpe) and isinstance(obj,list):
-    #         #elements = re.split(r",|\s,|;|\s;", obj)
-    #         for ele in obj:
-    #             if isinstance(ele, str):
-    #                 if not re.search(r"Str",tpe):
-    #                     return False
-    #             elif isinstance(ele, bool): #bool is subclass of int so print first so bool wont be mistaken for ints
-    #                 if not re.search(r"Bool",tpe):
-    #                     return False
-    #             elif isinstance(ele, (int, float)):
-    #                 if not re.search(r"Num",tpe):
-    #                     return False
+    def isRightType(self, obj, tpe):
+        #print(obj)
+        if re.search(r"\[.*\]",tpe) and isinstance(obj,list):
+            #elements = re.split(r",|\s,|;|\s;", obj)
+            for ele in obj:
+                if isinstance(ele, str):
+                    if not re.search(r"Str",tpe):
+                        return False
+                elif isinstance(ele, bool): #bool is subclass of int so print first so bool wont be mistaken for ints
+                    if not re.search(r"Bool",tpe):
+                        return False
+                elif isinstance(ele, (int, float)):
+                    if not re.search(r"Num",tpe):
+                        return False
 
-    #         return True
+            return True
 
-    #     elif not re.search(r"\[.*\]",tpe) and isinstance(obj,list):
-    #         return False
+        elif not re.search(r"\[.*\]",tpe) and isinstance(obj,list):
+            return False
 
-    #     else:
-    #         if obj == None:
-    #             return True
-    #         elif isinstance(obj, str):
-    #             if re.search(r"Str",tpe):
-    #                 return True
-    #         elif isinstance(obj, bool):
-    #             if re.search(r"Bool",tpe):
-    #                 return True
-    #         elif isinstance(obj, (int, float)):
-    #             if re.search(r"Num",tpe):
-    #                 return True
+        else:
+            if obj == None:
+                return True
+            elif isinstance(obj, str):
+                if re.search(r"Str",tpe):
+                    return True
+            elif isinstance(obj, bool):
+                if re.search(r"Bool",tpe):
+                    return True
+            elif isinstance(obj, (int, float)):
+                if re.search(r"Num",tpe):
+                    return True
 
-    #     return False
+        return False
                 
     def updateDoc(self, filt, update):
         if self.model:
@@ -249,7 +252,7 @@ class DatabaseHandler():
             self.log.logError('Error inserting document')
             return
 
-        elif code == 0: msg ="One or more fields have an invalid type.\nPlease check that you have followed the model."
+        elif code == 0: msg = "One or more fields have an invalid type.\nPlease check that you have followed the model."
         elif code == 2: msg = "Entry cannot be completely empty."
         elif code == 3: msg = "No results found."
             

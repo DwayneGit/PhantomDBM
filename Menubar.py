@@ -9,6 +9,8 @@ class Menubar():
         self.mainWidget = mainWidget
 
         self.mainMenu = self.mainWidget.menuBar()
+        self.recentFilesList = None
+
 
     def initMenubar(self):
         self.fileMenu()
@@ -114,3 +116,13 @@ class Menubar():
         helpMenu.addAction(updateAction)
         helpMenu.addSeparator()
         helpMenu.addAction(aboutAction)
+
+    def loadRecentFiles(self):
+        pass
+
+    def appendRecentFile(self):
+        pass
+
+    def getRecentFilesList(self):
+        return self.recentFilesList
+    

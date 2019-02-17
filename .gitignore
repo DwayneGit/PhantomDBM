@@ -3,3 +3,6 @@ __pycache__
 
 # temporary script created with for run with out save
 tmp
+
+# ignore log
+app.log

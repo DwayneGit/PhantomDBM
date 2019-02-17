@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- example 1 -->
+<link method="search" store="reference" key="new_key" format="auto">
+  <from_db>dbName</from_db>
+  <from_collection>collectionName</from_collection>
+  <search criteria="single">
+    <look_up method="pattern" pattern="">
+        <for_key>search_for_this_key</for_key>
+        <in_key>in_this_key</in_key>
+    </look_up>
+    
+<link/>
+
+<!-- example 2 -->
+<link method="search" store="complete" key="new_key" format="list">
+  <from_db>dbName</from_db>
+  <from_collection>collectionName</from_collection>
+  <search criteria="multi" criteria_match="specified">
+
+    <look_up method="pattern" pattern="\w+" match="yes">
+        <for_key>search_for_ID</for_key>
+        <in_key>ID</in_key>
+    </look_up>
+
+    <look_up method="pattern" pattern="[A-Za-z]+" match="yes">
+        <for_key>search_for_NAME</for_key>
+        <in_key>NAME</in_key>
+    </look_up>
+
+    <look_up method="pattern" pattern="[A-Za-z ]+">
+        <for_key>search_for_this_HAIRCOLOR</for_key>
+        <in_key>HAIRCOLOR</in_key>
+    </look_up>
+    
+<link/>

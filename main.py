@@ -296,8 +296,8 @@ class Manager(QMainWindow):
         dbHandler = DatabaseHandler(self.dbData, self.log)
         if dbHandler.serverStatus() == True:
 
-            self.log.logInfo("Connected to Database.")
-
+            self.log.logInfo("Connected to Database. " + self.dbData['dbname'] + " collection " + self.dbData['collection'])
+            print(self.dbData)
             self.thread1 = Thread1(filePath, dbHandler, self.log) # instanciate the Q object
             thread = QThread(self) # create a thread
 
@@ -370,7 +370,7 @@ class Manager(QMainWindow):
     #create custom signal to ubdate UI
     @pyqtSlot(str)
     def appendToBoard(self, message):
-        self.log.logInfo(message)
+        # self.log.logInfo(message)
         self.brd.appendPlainText(message)
         QCoreApplication.processEvents()
 

@@ -814,3 +814,247 @@
 2019-02-10 16:07:12,410 - INFO - 139764830402368: 0 files deleted
 2019-02-10 16:07:14,185 - INFO - Successfully Logged In.
 2019-02-10 16:07:26,868 - INFO - Program Ended
+2019-02-15 10:34:49,602 - INFO - Program Started.
+2019-02-15 10:34:49,744 - INFO - 140039867926336: Cleaning temporary scripts...
+2019-02-15 10:34:49,771 - INFO - 140039867926336: 0 files deleted
+2019-02-15 10:34:51,675 - INFO - Successfully Logged In.
+2019-02-15 11:42:25,058 - INFO - Program Started.
+2019-02-15 11:42:25,070 - INFO - 140069718681408: Cleaning temporary scripts...
+2019-02-15 11:42:25,072 - INFO - 140069718681408: 0 files deleted
+2019-02-15 11:42:26,719 - INFO - Successfully Logged In.
+2019-02-15 11:49:55,969 - INFO - Program Ended
+2019-02-15 11:50:01,219 - INFO - Program Started.
+2019-02-15 11:50:01,230 - INFO - 140185969178432: Cleaning temporary scripts...
+2019-02-15 11:50:01,232 - INFO - 140185969178432: 0 files deleted
+2019-02-15 11:50:04,651 - INFO - Successfully Logged In.
+2019-02-15 11:50:10,401 - INFO - Program Ended
+2019-02-15 11:50:23,859 - INFO - Program Started.
+2019-02-15 11:50:23,872 - INFO - 140315798378304: Cleaning temporary scripts...
+2019-02-15 11:50:23,875 - INFO - 140315798378304: 0 files deleted
+2019-02-15 11:50:25,081 - INFO - Successfully Logged In.
+2019-02-15 11:50:29,983 - INFO - Program Ended
+2019-02-15 11:51:11,840 - INFO - Program Started.
+2019-02-15 11:51:11,853 - INFO - 140460879152960: Cleaning temporary scripts...
+2019-02-15 11:51:11,857 - INFO - 140460879152960: 0 files deleted
+2019-02-15 11:51:13,312 - INFO - Successfully Logged In.
+2019-02-15 13:02:21,652 - INFO - Checking Database Connection...
+2019-02-15 13:02:21,658 - INFO - Connected to Database.
+2019-02-15 13:02:21,658 - INFO - 140459447936768: Running JSON Script...
+2019-02-15 13:02:22,696 - INFO - 140459447936768: Sending Objects to Database... 1/46
+2019-02-15 13:02:23,697 - INFO - 140459447936768: Sending Objects to Database... 2/46
+2019-02-15 13:02:24,699 - INFO - 140459447936768: Sending Objects to Database... 3/46
+2019-02-15 13:02:25,700 - INFO - 140459447936768: Sending Objects to Database... 4/46
+2019-02-15 13:02:26,702 - INFO - 140459447936768: Sending Objects to Database... 5/46
+2019-02-15 13:02:27,704 - INFO - 140459447936768: Sending Objects to Database... 6/46
+2019-02-15 13:02:28,706 - INFO - 140459447936768: Sending Objects to Database... 7/46
+2019-02-15 13:02:29,707 - INFO - 140459447936768: Sending Objects to Database... 8/46
+2019-02-15 13:02:30,709 - INFO - 140459447936768: Sending Objects to Database... 9/46
+2019-02-15 13:02:31,711 - INFO - 140459447936768: Sending Objects to Database... 10/46
+2019-02-15 13:02:32,713 - INFO - 140459447936768: Sending Objects to Database... 11/46
+2019-02-15 13:02:33,714 - INFO - 140459447936768: Sending Objects to Database... 12/46
+2019-02-15 13:02:34,716 - INFO - 140459447936768: Sending Objects to Database... 13/46
+2019-02-15 13:02:35,718 - INFO - 140459447936768: Sending Objects to Database... 14/46
+2019-02-15 13:02:36,720 - INFO - 140459447936768: Sending Objects to Database... 15/46
+2019-02-15 13:02:37,721 - INFO - 140459447936768: Sending Objects to Database... 16/46
+2019-02-15 13:02:38,723 - INFO - 140459447936768: Sending Objects to Database... 17/46
+2019-02-15 13:02:39,725 - INFO - 140459447936768: Sending Objects to Database... 18/46
+2019-02-15 13:02:40,727 - INFO - 140459447936768: Sending Objects to Database... 19/46
+2019-02-15 13:02:41,728 - INFO - 140459447936768: Sending Objects to Database... 20/46
+2019-02-15 13:02:42,730 - INFO - 140459447936768: Sending Objects to Database... 21/46
+2019-02-15 13:02:43,732 - INFO - 140459447936768: Sending Objects to Database... 22/46
+2019-02-15 13:02:44,734 - INFO - 140459447936768: Sending Objects to Database... 23/46
+2019-02-15 13:02:45,735 - INFO - 140459447936768: Sending Objects to Database... 24/46
+2019-02-15 13:02:46,737 - INFO - 140459447936768: Sending Objects to Database... 25/46
+2019-02-15 13:02:47,739 - INFO - 140459447936768: Sending Objects to Database... 26/46
+2019-02-15 13:02:48,740 - INFO - 140459447936768: Sending Objects to Database... 27/46
+2019-02-15 13:02:49,742 - INFO - 140459447936768: Sending Objects to Database... 28/46
+2019-02-15 13:02:50,744 - INFO - 140459447936768: Sending Objects to Database... 29/46
+2019-02-15 13:02:51,746 - INFO - 140459447936768: Sending Objects to Database... 30/46
+2019-02-15 13:02:52,747 - INFO - 140459447936768: Sending Objects to Database... 31/46
+2019-02-15 13:02:53,749 - INFO - 140459447936768: Sending Objects to Database... 32/46
+2019-02-15 13:02:54,751 - INFO - 140459447936768: Sending Objects to Database... 33/46
+2019-02-15 13:02:55,753 - INFO - 140459447936768: Sending Objects to Database... 34/46
+2019-02-15 13:02:56,755 - INFO - 140459447936768: Sending Objects to Database... 35/46
+2019-02-15 13:02:57,757 - INFO - 140459447936768: Sending Objects to Database... 36/46
+2019-02-15 13:02:58,759 - INFO - 140459447936768: Sending Objects to Database... 37/46
+2019-02-15 13:02:59,760 - INFO - 140459447936768: Sending Objects to Database... 38/46
+2019-02-15 13:03:00,762 - INFO - 140459447936768: Sending Objects to Database... 39/46
+2019-02-15 13:03:01,763 - INFO - 140459447936768: Sending Objects to Database... 40/46
+2019-02-15 13:03:02,765 - INFO - 140459447936768: Sending Objects to Database... 41/46
+2019-02-15 13:03:03,767 - INFO - 140459447936768: Sending Objects to Database... 42/46
+2019-02-15 13:03:04,769 - INFO - 140459447936768: Sending Objects to Database... 43/46
+2019-02-15 13:03:05,770 - INFO - 140459447936768: Sending Objects to Database... 44/46
+2019-02-15 13:03:06,772 - INFO - 140459447936768: Sending Objects to Database... 45/46
+2019-02-15 13:03:07,774 - INFO - 140459447936768: Sending Objects to Database... 46/46
+2019-02-15 13:03:08,775 - INFO - 140459447936768: Run Complete.
+2019-02-15 13:19:27,449 - INFO - Program Ended
+2019-02-15 13:19:49,335 - INFO - Program Started.
+2019-02-15 13:19:49,347 - INFO - 140338942326592: Cleaning temporary scripts...
+2019-02-15 13:19:49,349 - INFO - 140338942326592: 0 files deleted
+2019-02-15 13:19:54,783 - INFO - Successfully Logged In.
+2019-02-15 13:20:24,938 - INFO - Checking Database Connection...
+2019-02-15 13:20:24,945 - INFO - Connected to Database. jstudy collection characters
+2019-02-15 13:20:24,945 - INFO - 140337578239744: Running JSON Script...
+2019-02-15 13:20:25,947 - INFO - 140337578239744: Sending Objects to Database... 1/46
+2019-02-15 13:20:26,949 - INFO - 140337578239744: Sending Objects to Database... 2/46
+2019-02-15 13:20:27,951 - INFO - 140337578239744: Sending Objects to Database... 3/46
+2019-02-15 13:20:28,953 - INFO - 140337578239744: Sending Objects to Database... 4/46
+2019-02-15 13:20:29,954 - INFO - 140337578239744: Sending Objects to Database... 5/46
+2019-02-15 13:20:30,956 - INFO - 140337578239744: Sending Objects to Database... 6/46
+2019-02-15 13:20:31,958 - INFO - 140337578239744: Sending Objects to Database... 7/46
+2019-02-15 13:20:32,959 - INFO - 140337578239744: Sending Objects to Database... 8/46
+2019-02-15 13:20:33,961 - INFO - 140337578239744: Sending Objects to Database... 9/46
+2019-02-15 13:20:34,963 - INFO - 140337578239744: Sending Objects to Database... 10/46
+2019-02-15 13:20:35,965 - INFO - 140337578239744: Sending Objects to Database... 11/46
+2019-02-15 13:20:36,967 - INFO - 140337578239744: Sending Objects to Database... 12/46
+2019-02-15 13:20:37,968 - INFO - 140337578239744: Sending Objects to Database... 13/46
+2019-02-15 13:20:38,970 - INFO - 140337578239744: Sending Objects to Database... 14/46
+2019-02-15 13:20:39,971 - INFO - 140337578239744: Sending Objects to Database... 15/46
+2019-02-15 13:20:40,973 - INFO - 140337578239744: Sending Objects to Database... 16/46
+2019-02-15 13:20:41,975 - INFO - 140337578239744: Sending Objects to Database... 17/46
+2019-02-15 13:20:42,976 - INFO - 140337578239744: Sending Objects to Database... 18/46
+2019-02-15 13:20:43,977 - INFO - 140337578239744: Sending Objects to Database... 19/46
+2019-02-15 13:20:44,979 - INFO - 140337578239744: Sending Objects to Database... 20/46
+2019-02-15 13:20:45,981 - INFO - 140337578239744: Sending Objects to Database... 21/46
+2019-02-15 13:20:46,983 - INFO - 140337578239744: Sending Objects to Database... 22/46
+2019-02-15 13:20:47,985 - INFO - 140337578239744: Sending Objects to Database... 23/46
+2019-02-15 13:20:48,987 - INFO - 140337578239744: Sending Objects to Database... 24/46
+2019-02-15 13:20:49,988 - INFO - 140337578239744: Sending Objects to Database... 25/46
+2019-02-15 13:20:50,990 - INFO - 140337578239744: Sending Objects to Database... 26/46
+2019-02-15 13:20:51,992 - INFO - 140337578239744: Sending Objects to Database... 27/46
+2019-02-15 13:20:52,993 - INFO - 140337578239744: Sending Objects to Database... 28/46
+2019-02-15 13:20:53,995 - INFO - 140337578239744: Sending Objects to Database... 29/46
+2019-02-15 13:20:54,997 - INFO - 140337578239744: Sending Objects to Database... 30/46
+2019-02-15 13:20:55,999 - INFO - 140337578239744: Sending Objects to Database... 31/46
+2019-02-15 13:20:57,001 - INFO - 140337578239744: Sending Objects to Database... 32/46
+2019-02-15 13:20:58,002 - INFO - 140337578239744: Sending Objects to Database... 33/46
+2019-02-15 13:20:59,004 - INFO - 140337578239744: Sending Objects to Database... 34/46
+2019-02-15 13:21:00,006 - INFO - 140337578239744: Sending Objects to Database... 35/46
+2019-02-15 13:21:01,007 - INFO - 140337578239744: Sending Objects to Database... 36/46
+2019-02-15 13:21:02,009 - INFO - 140337578239744: Sending Objects to Database... 37/46
+2019-02-15 13:21:03,011 - INFO - 140337578239744: Sending Objects to Database... 38/46
+2019-02-15 13:21:04,012 - INFO - 140337578239744: Sending Objects to Database... 39/46
+2019-02-15 13:21:05,014 - INFO - 140337578239744: Sending Objects to Database... 40/46
+2019-02-15 13:21:06,016 - INFO - 140337578239744: Sending Objects to Database... 41/46
+2019-02-15 13:21:07,018 - INFO - 140337578239744: Sending Objects to Database... 42/46
+2019-02-15 13:21:08,019 - INFO - 140337578239744: Sending Objects to Database... 43/46
+2019-02-15 13:21:09,021 - INFO - 140337578239744: Sending Objects to Database... 44/46
+2019-02-15 13:21:10,023 - INFO - 140337578239744: Sending Objects to Database... 45/46
+2019-02-15 13:21:11,024 - INFO - 140337578239744: Sending Objects to Database... 46/46
+2019-02-15 13:21:12,026 - INFO - 140337578239744: Run Complete.
+2019-02-15 13:22:51,881 - INFO - Program Ended
+2019-02-15 13:22:54,313 - INFO - Program Started.
+2019-02-15 13:22:54,325 - INFO - 139647922927424: Cleaning temporary scripts...
+2019-02-15 13:22:54,327 - INFO - 139647922927424: 0 files deleted
+2019-02-15 13:22:55,469 - INFO - Successfully Logged In.
+2019-02-15 13:23:16,184 - INFO - Checking Database Connection...
+2019-02-15 13:23:16,190 - INFO - Connected to Database. test collection testToo
+2019-02-15 13:23:16,190 - INFO - 139646718088960: Running JSON Script...
+2019-02-15 13:23:17,245 - INFO - 139646718088960: Sending Objects to Database... 1/2
+2019-02-15 13:23:18,247 - INFO - 139646718088960: Sending Objects to Database... 2/2
+2019-02-15 13:23:19,249 - INFO - 139646718088960: Run Complete.
+2019-02-15 13:24:48,694 - INFO - Checking Database Connection...
+2019-02-15 13:24:48,698 - INFO - Connected to Database. jstudy collection characters
+2019-02-15 13:24:48,698 - INFO - 139646388512512: Running JSON Script...
+2019-02-15 13:24:49,700 - INFO - 139646388512512: Sending Objects to Database... 1/46
+2019-02-15 13:24:50,702 - INFO - 139646388512512: Sending Objects to Database... 2/46
+2019-02-15 13:24:51,703 - INFO - 139646388512512: Sending Objects to Database... 3/46
+2019-02-15 13:24:52,705 - INFO - 139646388512512: Sending Objects to Database... 4/46
+2019-02-15 13:24:53,707 - INFO - 139646388512512: Sending Objects to Database... 5/46
+2019-02-15 13:24:54,709 - INFO - 139646388512512: Sending Objects to Database... 6/46
+2019-02-15 13:24:55,711 - INFO - 139646388512512: Sending Objects to Database... 7/46
+2019-02-15 13:24:56,712 - INFO - 139646388512512: Sending Objects to Database... 8/46
+2019-02-15 13:24:57,714 - INFO - 139646388512512: Sending Objects to Database... 9/46
+2019-02-15 13:24:58,716 - INFO - 139646388512512: Sending Objects to Database... 10/46
+2019-02-15 13:24:59,717 - INFO - 139646388512512: Sending Objects to Database... 11/46
+2019-02-15 13:25:00,719 - INFO - 139646388512512: Sending Objects to Database... 12/46
+2019-02-15 13:25:01,721 - INFO - 139646388512512: Sending Objects to Database... 13/46
+2019-02-15 13:25:02,723 - INFO - 139646388512512: Sending Objects to Database... 14/46
+2019-02-15 13:25:03,725 - INFO - 139646388512512: Sending Objects to Database... 15/46
+2019-02-15 13:25:04,726 - INFO - 139646388512512: Sending Objects to Database... 16/46
+2019-02-15 13:25:05,728 - INFO - 139646388512512: Sending Objects to Database... 17/46
+2019-02-15 13:25:06,729 - INFO - 139646388512512: Sending Objects to Database... 18/46
+2019-02-15 13:25:07,731 - INFO - 139646388512512: Sending Objects to Database... 19/46
+2019-02-15 13:25:08,733 - INFO - 139646388512512: Sending Objects to Database... 20/46
+2019-02-15 13:25:09,734 - INFO - 139646388512512: Sending Objects to Database... 21/46
+2019-02-15 13:25:10,736 - INFO - 139646388512512: Sending Objects to Database... 22/46
+2019-02-15 13:25:11,738 - INFO - 139646388512512: Sending Objects to Database... 23/46
+2019-02-15 13:25:12,739 - INFO - 139646388512512: Sending Objects to Database... 24/46
+2019-02-15 13:25:13,741 - INFO - 139646388512512: Sending Objects to Database... 25/46
+2019-02-15 13:25:14,743 - INFO - 139646388512512: Sending Objects to Database... 26/46
+2019-02-15 13:25:15,745 - INFO - 139646388512512: Sending Objects to Database... 27/46
+2019-02-15 13:25:16,747 - INFO - 139646388512512: Sending Objects to Database... 28/46
+2019-02-15 13:25:17,749 - INFO - 139646388512512: Sending Objects to Database... 29/46
+2019-02-15 13:25:18,751 - INFO - 139646388512512: Sending Objects to Database... 30/46
+2019-02-15 13:25:19,753 - INFO - 139646388512512: Sending Objects to Database... 31/46
+2019-02-15 13:25:20,754 - INFO - 139646388512512: Sending Objects to Database... 32/46
+2019-02-15 13:25:21,756 - INFO - 139646388512512: Sending Objects to Database... 33/46
+2019-02-15 13:25:22,758 - INFO - 139646388512512: Sending Objects to Database... 34/46
+2019-02-15 13:25:23,760 - INFO - 139646388512512: Sending Objects to Database... 35/46
+2019-02-15 13:25:24,762 - INFO - 139646388512512: Sending Objects to Database... 36/46
+2019-02-15 13:25:25,763 - INFO - 139646388512512: Sending Objects to Database... 37/46
+2019-02-15 13:25:26,765 - INFO - 139646388512512: Sending Objects to Database... 38/46
+2019-02-15 13:25:27,767 - INFO - 139646388512512: Sending Objects to Database... 39/46
+2019-02-15 13:25:28,769 - INFO - 139646388512512: Sending Objects to Database... 40/46
+2019-02-15 13:25:29,771 - INFO - 139646388512512: Sending Objects to Database... 41/46
+2019-02-15 13:25:30,773 - INFO - 139646388512512: Sending Objects to Database... 42/46
+2019-02-15 13:25:31,775 - INFO - 139646388512512: Sending Objects to Database... 43/46
+2019-02-15 13:25:32,777 - INFO - 139646388512512: Sending Objects to Database... 44/46
+2019-02-15 13:25:33,779 - INFO - 139646388512512: Sending Objects to Database... 45/46
+2019-02-15 13:25:34,780 - INFO - 139646388512512: Sending Objects to Database... 46/46
+2019-02-15 13:25:35,782 - INFO - 139646388512512: Run Complete.
+2019-02-15 13:42:21,604 - INFO - Checking Database Connection...
+2019-02-15 13:42:21,609 - INFO - Connected to Database. jstudy collection characters
+2019-02-15 13:42:21,610 - INFO - 139647013746432: Running JSON Script...
+2019-02-15 13:42:22,612 - INFO - 139647013746432: Sending Objects to Database... 1/46
+2019-02-15 13:42:23,614 - INFO - 139647013746432: Sending Objects to Database... 2/46
+2019-02-15 13:42:24,615 - INFO - 139647013746432: Sending Objects to Database... 3/46
+2019-02-15 13:42:25,617 - INFO - 139647013746432: Sending Objects to Database... 4/46
+2019-02-15 13:42:26,619 - INFO - 139647013746432: Sending Objects to Database... 5/46
+2019-02-15 13:42:27,620 - INFO - 139647013746432: Sending Objects to Database... 6/46
+2019-02-15 13:42:28,621 - INFO - 139647013746432: Sending Objects to Database... 7/46
+2019-02-15 13:42:29,623 - INFO - 139647013746432: Sending Objects to Database... 8/46
+2019-02-15 13:42:30,625 - INFO - 139647013746432: Sending Objects to Database... 9/46
+2019-02-15 13:42:31,626 - INFO - 139647013746432: Sending Objects to Database... 10/46
+2019-02-15 13:42:32,628 - INFO - 139647013746432: Sending Objects to Database... 11/46
+2019-02-15 13:42:33,630 - INFO - 139647013746432: Sending Objects to Database... 12/46
+2019-02-15 13:42:34,631 - INFO - 139647013746432: Sending Objects to Database... 13/46
+2019-02-15 13:42:35,633 - INFO - 139647013746432: Sending Objects to Database... 14/46
+2019-02-15 13:42:36,635 - INFO - 139647013746432: Sending Objects to Database... 15/46
+2019-02-15 13:42:37,637 - INFO - 139647013746432: Sending Objects to Database... 16/46
+2019-02-15 13:42:38,639 - INFO - 139647013746432: Sending Objects to Database... 17/46
+2019-02-15 13:42:39,640 - INFO - 139647013746432: Sending Objects to Database... 18/46
+2019-02-15 13:42:40,642 - INFO - 139647013746432: Sending Objects to Database... 19/46
+2019-02-15 13:42:41,644 - INFO - 139647013746432: Sending Objects to Database... 20/46
+2019-02-15 13:42:42,645 - INFO - 139647013746432: Sending Objects to Database... 21/46
+2019-02-15 13:42:43,647 - INFO - 139647013746432: Sending Objects to Database... 22/46
+2019-02-15 13:42:44,649 - INFO - 139647013746432: Sending Objects to Database... 23/46
+2019-02-15 13:42:45,651 - INFO - 139647013746432: Sending Objects to Database... 24/46
+2019-02-15 13:42:46,653 - INFO - 139647013746432: Sending Objects to Database... 25/46
+2019-02-15 13:42:47,655 - INFO - 139647013746432: Sending Objects to Database... 26/46
+2019-02-15 13:42:48,657 - INFO - 139647013746432: Sending Objects to Database... 27/46
+2019-02-15 13:42:49,659 - INFO - 139647013746432: Sending Objects to Database... 28/46
+2019-02-15 13:42:50,660 - INFO - 139647013746432: Sending Objects to Database... 29/46
+2019-02-15 13:42:51,662 - INFO - 139647013746432: Sending Objects to Database... 30/46
+2019-02-15 13:42:52,663 - INFO - 139647013746432: Sending Objects to Database... 31/46
+2019-02-15 13:42:53,665 - INFO - 139647013746432: Sending Objects to Database... 32/46
+2019-02-15 13:42:54,667 - INFO - 139647013746432: Sending Objects to Database... 33/46
+2019-02-15 13:42:55,668 - INFO - 139647013746432: Sending Objects to Database... 34/46
+2019-02-15 13:42:56,670 - INFO - 139647013746432: Sending Objects to Database... 35/46
+2019-02-15 13:42:57,671 - INFO - 139647013746432: Sending Objects to Database... 36/46
+2019-02-15 13:42:58,673 - INFO - 139647013746432: Sending Objects to Database... 37/46
+2019-02-15 13:42:59,675 - INFO - 139647013746432: Sending Objects to Database... 38/46
+2019-02-15 13:43:00,677 - INFO - 139647013746432: Sending Objects to Database... 39/46
+2019-02-15 13:43:01,679 - INFO - 139647013746432: Sending Objects to Database... 40/46
+2019-02-15 13:43:02,681 - INFO - 139647013746432: Sending Objects to Database... 41/46
+2019-02-15 13:43:03,683 - INFO - 139647013746432: Sending Objects to Database... 42/46
+2019-02-15 13:43:04,686 - INFO - 139647013746432: Sending Objects to Database... 43/46
+2019-02-15 13:43:05,687 - INFO - 139647013746432: Sending Objects to Database... 44/46
+2019-02-15 13:43:06,689 - INFO - 139647013746432: Sending Objects to Database... 45/46
+2019-02-15 13:43:07,691 - INFO - 139647013746432: Sending Objects to Database... 46/46
+2019-02-15 13:43:08,692 - INFO - 139647013746432: Run Complete.
+2019-02-15 14:29:48,393 - INFO - Program Ended
+2019-02-15 14:29:50,907 - INFO - Program Started.
+2019-02-15 14:29:50,918 - INFO - 139707095906112: Cleaning temporary scripts...
+2019-02-15 14:29:50,920 - INFO - 139707095906112: 0 files deleted
+2019-02-15 14:29:52,643 - INFO - Successfully Logged In.
