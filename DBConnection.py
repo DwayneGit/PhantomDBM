@@ -68,13 +68,13 @@ class DatabaseHandler():
     def __init__(self, dbData, log, mCollection=None, findSkip=0):
         self.log = log
 
-        self.dbConfig = dbData
+        self.mDbName = dbData['dbname']
+        self.mDbPortNum = dbData['port']
+        self.mDbCollection = dbData['collection']
+        self.mDbHost = dbData['host']
+        self.fLimit = dbData['tableSize']
 
-        self.mDbName = dbConfig['dbname']
-        self.mDbPortNum = dbConfig['port']
-        self.mDbCollection = dbConfig['collection']
-        self.mDbHost = dbConfig['host']
-        self.fLimit = dbConfig['tableSize']
+        self.dbConfig = dbData
         
         self.model = None
         self.fSkip = findSkip
@@ -151,94 +151,107 @@ class DatabaseHandler():
 
         return True
 
-    def isRightType(self, obj, tpe):
-        #print(obj)
-        if re.search(r"\[.*\]",tpe) and isinstance(obj,list):
-            #elements = re.split(r",|\s,|;|\s;", obj)
-            for ele in obj:
-                if isinstance(ele, str):
-                    if not re.search(r"Str",tpe):
-                        return False
-                elif isinstance(ele, bool): #bool is subclass of int so print first so bool wont be mistaken for ints
-                    if not re.search(r"Bool",tpe):
-                        return False
-                elif isinstance(ele, (int, float)):
-                    if not re.search(r"Num",tpe):
-                        return False
+    # def isRightType(self, obj, tpe):
+    #     #print(obj)
+    #     if re.search(r"\[.*\]",tpe) and isinstance(obj,list):
+    #         #elements = re.split(r",|\s,|;|\s;", obj)
+    #         for ele in obj:
+    #             if isinstance(ele, str):
+    #                 if not re.search(r"Str",tpe):
+    #                     return False
+    #             elif isinstance(ele, bool): #bool is subclass of int so print first so bool wont be mistaken for ints
+    #                 if not re.search(r"Bool",tpe):
+    #                     return False
+    #             elif isinstance(ele, (int, float)):
+    #                 if not re.search(r"Num",tpe):
+    #                     return False
 
-            return True
+    #         return True
 
-        elif not re.search(r"\[.*\]",tpe) and isinstance(obj,list):
-            return False
+    #     elif not re.search(r"\[.*\]",tpe) and isinstance(obj,list):
+    #         return False
 
-        else:
-            if obj == None:
-                return True
-            elif isinstance(obj, str):
-                if re.search(r"Str",tpe):
-                    return True
-            elif isinstance(obj, bool):
-                if re.search(r"Bool",tpe):
-                    return True
-            elif isinstance(obj, (int, float)):
-                if re.search(r"Num",tpe):
-                    return True
+    #     else:
+    #         if obj == None:
+    #             return True
+    #         elif isinstance(obj, str):
+    #             if re.search(r"Str",tpe):
+    #                 return True
+    #         elif isinstance(obj, bool):
+    #             if re.search(r"Bool",tpe):
+    #                 return True
+    #         elif isinstance(obj, (int, float)):
+    #             if re.search(r"Num",tpe):
+    #                 return True
 
-        return False
+    #     return False
                 
-    def updateDoc(self, filt, update):
-        if self.model:
+    # def updateDoc(self, filt, update):
+    #     if self.model:
 
-            #print(next(iter(update.values())))
-            #print(self.model[next(iter(update.keys()))])
-            if not self.isRightType(next(iter(update.values())), self.model[next(iter(update.keys()))]) and not( next(iter(update.keys())) == "_id"):
-                self.errMsgs(0)
-                return False
+    #         #print(next(iter(update.values())))
+    #         #print(self.model[next(iter(update.keys()))])
+    #         if not self.isRightType(next(iter(update.values())), self.model[next(iter(update.keys()))]) and not( next(iter(update.keys())) == "_id"):
+    #             self.errMsgs(0)
+    #             return False
 
-        try:
-            self.db[self.mDbCollection].update_one(filt,{'$set':update})
+    #     try:
+    #         self.db[self.mDbCollection].update_one(filt,{'$set':update})
             
-        except:
-            self.errMsgs(-1)
-            return False
+    #     except:
+    #         self.errMsgs(-1)
+    #         return False
 
-        return True
+    #     return True
 
-    def findDoc(self, findMe):
+    def findDoc(self, **search_data):
         self.log.logInfo("Document to find " + findMe)
-        docs = self.db[self.mDbCollection]
-        self.mDbDocs = []
+        if search_data['db_name']:
+            db = self.client[search_data['db_name']]
+        else:
+            db = self.db
 
-        if self.model:
-            self.mDbDocs.append(OrderedDict(self.model))
+        if search_data['collection']:
+            docs = db[search_data['collection']]
+        else:
+            docs = db[self.mDbCollection]
 
-        for doc in docs.find(findMe):
-            if not doc["_id"] == "__Model__":
-                self.mDbDocs.append(OrderedDict(doc))
+        results = []
+
+        # if self.model:
+        #     self.mDbDocs.append(OrderedDict(self.model))
+
+        for doc in docs.find(search_data['criteria']):
+            results.append(OrderedDict(doc))
 
         
-        if (self.model and len(self.mDbDocs) < 2) or (not self.model and len(self.mDbDocs) < 0):
-            self.errMsgs(3)
-            return False
+        # if (self.model and len(self.mDbDocs) < 2) or (not self.model and len(self.mDbDocs) < 0):
+        #     self.errMsgs(3)
+        #     return False
         
-        return True
+        if len(results) > 1:
+            return results
+        elif len(results) == 1:
+            return results[0]
+        
+        return False
         
 
-    def removeDoc(self, document_id):
-        docIdQuery = dict(OrderedDict(document_id))
-        self.db[self.mDbCollection].delete_one(docIdQuery)
+    # def removeDoc(self, document_id):
+    #     docIdQuery = dict(OrderedDict(document_id))
+    #     self.db[self.mDbCollection].delete_one(docIdQuery)
 
-    def reload(self):
-        docs = self.db[self.mDbCollection]
-        self.mDbDocs = []
+    # def reload(self):
+    #     docs = self.db[self.mDbCollection]
+    #     self.mDbDocs = []
         
-        if self.model:
-            self.mDbDocs.append(OrderedDict(self.model))
+    #     if self.model:
+    #         self.mDbDocs.append(OrderedDict(self.model))
 
-        for doc in docs.find(limit = self.fLimit, skip = self.fLimit*self.fSkip):
-            #print(doc)
-            if not doc["_id"] == "__Model__":
-                self.mDbDocs.append(OrderedDict(doc))
+    #     for doc in docs.find(limit = self.fLimit, skip = self.fLimit*self.fSkip):
+    #         #print(doc)
+    #         if not doc["_id"] == "__Model__":
+    #             self.mDbDocs.append(OrderedDict(doc))
 
     # def createCollection(self, collectionName, data):
     #     self.db[collectionName].insert_one(data)
