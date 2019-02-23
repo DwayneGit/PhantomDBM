@@ -3,7 +3,7 @@ import logging
 import logging.config
 from time import gmtime, strftime
 
-class PhantomLogger():
+class phtm_logger():
     def __init__(self):
         
         with open('log_config.yml', 'r') as f:

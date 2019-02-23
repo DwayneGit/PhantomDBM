@@ -1,7 +1,7 @@
 import untangle
 import re
 import copy
-from Logger import PhantomLogger
+from phtm_logger import phtm_logger
 from DBConnection import DatabaseHandler
 
 class DMIHandler():

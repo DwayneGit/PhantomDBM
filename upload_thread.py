@@ -1,13 +1,9 @@
-import sys
-import os
 import json
 import time
 
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
-from PyQt5.QtGui import * 
+from PyQt5.QtCore import pyqtSlot, pyqtSignal, QObject, QThread
 
-class Thread1(QObject):
+class upload_thread(QObject):
 
     update = pyqtSignal(str) # signal data ready to be appended to th board
     done = pyqtSignal(str) # done signal
@@ -33,10 +29,10 @@ class Thread1(QObject):
         # if self.filePath == None: # dont do because user may want to run script with out saving handle in main and add functionality for this situation
         #     self.stop()
         #     self.done.emit(thread_id)
-        #     return    
+        #     return
 
         with open(self.filePath) as infile:
-            
+
             data = json.load(infile)
             i = 0
             while i < len(data):
@@ -44,7 +40,7 @@ class Thread1(QObject):
                     return
                 elif not self.pauseFlag:
                     self.dbHandler.insertDoc(data[i])
-                    self.update.emit(str(self.thread_id) + ": Sending Objects to Database... %d/%d" %(i+1,len(data)))
+                    self.update.emit(str(self.thread_id) + ": Sending Objects to Database... %d/%d" %(i+1, len(data)))
                     time.sleep(1)
                     i += 1
                     # print(1)
@@ -54,7 +50,7 @@ class Thread1(QObject):
         # self.update.emit("Finished")
         self.done.emit(str(self.thread_id) + ": Run Complete.")
         time.sleep(1)
- 
+
     # def updateSignal(self, msg):
     #     self.update.emit(msg)
     def setStopFlag(self):

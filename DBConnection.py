@@ -55,13 +55,15 @@ class APIHandler():
 
 class DatabaseHandler():
 
+    @staticmethod
     def getDatabaseList(host, port):
         c = MongoClient(host, port)
         return c.database_names()
 
+    @staticmethod
     def getCollectionList(host, port, dbname):
         client = MongoClient(host=host, port=port, document_class=OrderedDict)
-        db = client[dbname] 
+        db = client[dbname]
 
         return db.list_collection_names()
 
@@ -205,7 +207,7 @@ class DatabaseHandler():
     #     return True
 
     def findDoc(self, **search_data):
-        self.log.logInfo("Document to find " + findMe)
+        self.log.logInfo("Document to find " + search_data['findMe'])
         if search_data['db_name']:
             db = self.client[search_data['db_name']]
         else:
