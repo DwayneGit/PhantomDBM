@@ -1,8 +1,8 @@
 # ignore cache folder
-__pycache__
+__pycache__/
 
 # temporary script created with for run with out save
-tmp
+tmp/
 
 # ignore log
-app.log
+*.log
