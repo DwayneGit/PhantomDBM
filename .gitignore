@@ -11,3 +11,6 @@ tmp/
 test.py
 instructions/test.xml
 breezess
+
+# vscode settings folder
+.vscode
