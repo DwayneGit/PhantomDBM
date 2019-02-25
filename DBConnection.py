@@ -207,14 +207,14 @@ class DatabaseHandler():
     #     return True
 
     def findDoc(self, **search_data):
-        self.log.logInfo("Document to find " + search_data['findMe'])
+        # self.log.logInfo("Info to find " + search_data['criteria'])
         if search_data['db_name']:
             db = self.client[search_data['db_name']]
         else:
             db = self.db
 
-        if search_data['collection']:
-            docs = db[search_data['collection']]
+        if search_data['collection_name']:
+            docs = db[search_data['collection_name']]
         else:
             docs = db[self.mDbCollection]
 

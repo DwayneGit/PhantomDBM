@@ -69,7 +69,7 @@ class Manager(QMainWindow):
     def initUI(self):
         '''
         initiates application UI
-		'''   
+		'''
         self.progTitle = 'Phantom DBM'
         self.currTitle = self.progTitle
 

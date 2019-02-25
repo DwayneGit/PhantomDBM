@@ -6,3 +6,8 @@ tmp/
 
 # ignore log
 *.log
+
+# ignore files used for testing new addtions
+test.py
+!scripts/hello_world.json
+instructions/test.xml

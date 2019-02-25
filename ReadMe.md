@@ -10,6 +10,8 @@ done:
 testing:
     - menubar ✓
     - logging ✓
+    - automated instruction scripts
+        - link element ✓
 
 next:
     - automated instruction scripts

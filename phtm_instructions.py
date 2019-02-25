@@ -6,8 +6,8 @@ from pprint import pprint
 
 import untangle
 
-from phtm_logger import phtm_logger
-from DBConnection import DatabaseHandler
+# from phtm_logger import phtm_logger
+# from DBConnection import DatabaseHandler
 
 class DMIHandler():
     def __init__(self, db_handler, xml_file, log):
@@ -27,7 +27,7 @@ class DMIHandler():
     def configure_instruction_settings(self):
         pass
 
-    def multiple_elements(self, key):
+    def __multiple_elements(self, key):
         if isinstance(key, list):
             return True
         return False
@@ -36,8 +36,7 @@ class DMIHandler():
         # print(type(data))
         temp_data = copy.deepcopy(data) # deep copy data to be manipulated
         for link in self.root.link:
-                self.__handle_link(link, temp_data)
-
+            self.__handle_link(link, temp_data)
         return temp_data
 
     def __handle_link(self, link, data):
@@ -47,8 +46,8 @@ class DMIHandler():
         criteria = {}
         search_data = {}
 
-        if not link.from_db :
-                search_data['db_name'] = link.from_db.cdata
+        if not link.from_db:
+            search_data['db_name'] = link.from_db.cdata
 
         if not link.from_collection:
             search_data['collection_name'] = link.from_collection.cdata
@@ -56,7 +55,7 @@ class DMIHandler():
         for srch in link.search:
 
             for lkup in srch.look_up:
-            
+
                 if not isinstance(lkup.from_key.cdata, str):
                     print("value to look up is not a string")
                     return
@@ -86,7 +85,7 @@ class DMIHandler():
                 search_data['criteria'] = direct_queue
                 self.__search_db(search_data, data, link, srch)
 
-            else:   
+            else:
                 for item in pattern_queue:
                     '''
                         form search critera by setting the key search in as value to find
@@ -98,8 +97,8 @@ class DMIHandler():
                     if isinstance(pattern_lkup_key.in_key, list):
                         criteria['$or'] = []
                         for key in pattern_lkup_key.in_key:
-                            temp={}
-                            point = re.split("\W+", key.cdata)
+                            temp = {}
+                            point = re.split(r"\W+", key.cdata)
                             new_key = ""
                             for path in point:
                                 new_key += "." + path
@@ -115,7 +114,7 @@ class DMIHandler():
                         search_data['criteria'].update(direct_queue)
                     else:
                         search_data['criteria'] = criteria
-                    
+
                     self.__search_db(search_data, data, link, srch)
 
 
@@ -146,43 +145,3 @@ class DMIHandler():
 
             else:
                 data[search['add_key']] = found_doc
-
-DATA = {
-        "inKanji" : "食べる",
-        "inKana" : "たべる",
-        "romanji" : "taberu",
-        "cls" : 1,
-        "translation" : ["eat", "live on"],
-        "jlptLvl" : 5,
-        "pos" : "verb"
-    }
-
-xml_file = "instructions/test.xml"
-# obj= untangle.parse(xml_file)
-
-# print(len(obj.root.link))
-# pattern_queue = list('たべる')
-# print(pattern_queue)
-
-dbData = {
-        "collection": "jstudy",
-        "dbname": "vocab",
-        "host": "localhost",
-        "port": 27017,
-        "tableSize": 100
-    }
-
-log = phtm_logger()
-
-db_handler = DatabaseHandler(dbData, log)
-dmi = DMIHandler(db_handler, xml_file, log)
-
-pprint(dmi.manipulate(DATA))
-
-# point = re.split("\W+", 'dakuten->character->1')
-# if len(point) > 1:
-#     new_key = ""
-#     for path in point:
-#         new_key += "." + path
-#     new_key = new_key[1:]
-# print(new_key)
