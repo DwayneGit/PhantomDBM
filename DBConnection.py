@@ -37,20 +37,20 @@ class APIHandler():
             print( self.apiURI['base'], 'is down!' ) 
             return False
 
-    def putData(self, data):
-        response = requests.put('https://httpbin.org/post', data)
+    def putData(self, uri, data):
+        response = requests.put(uri, data)
         return response
 
-    def postData(self, data):
-        response = requests.post('https://httpbin.org/post', data)
+    def postData(self, uri, data):
+        response = requests.post(uri, data)
         return response
 
-    def getData(self, params=None):
-        response = requests.get('https://httpbin.org/post', params)
+    def getData(self, uri, params=None):
+        response = requests.get(uri, params)
         return response
 
-    def deleteData(self):
-        response = requests.delete('https://httpbin.org/post')
+    def deleteData(self, uri):
+        response = requests.delete(uri)
         return response
 
 class DatabaseHandler():
@@ -67,7 +67,7 @@ class DatabaseHandler():
 
         return db.list_collection_names()
 
-    def __init__(self, dbData, log, mCollection=None, findSkip=0):
+    def __init__(self, dbData, log, authentication=None):
         self.log = log
 
         self.mDbName = dbData['dbname']
@@ -76,10 +76,13 @@ class DatabaseHandler():
         self.mDbHost = dbData['host']
         self.fLimit = dbData['tableSize']
 
+        self.client = None
+        self.auth = authentication
+
         self.dbConfig = dbData
         
         self.model = None
-        self.fSkip = findSkip
+        # self.fSkip = findSkip
         #for docs from all collections in db#self.mDbDocs = [[0 for x in range(0)] for y in range (len(self.mDbCollections))] # creates a matrix of with len(self.mDbCollections) number of empty lists
 
         self.mDbDocs = []
@@ -87,16 +90,33 @@ class DatabaseHandler():
         self.connectToDatabase()
 
     def serverStatus(self):
-        maxSevSelDelay = 2
-        try:
-            self.client = MongoClient(host=self.mDbHost, port=self.mDbPortNum, 
-                        document_class=OrderedDict, serverSelectionTimeoutMS=maxSevSelDelay)
-        
-            # The ismaster command is cheap and does not require auth.
-            self.client.server_info()
-            return True
-        except pyErrs.ServerSelectionTimeoutError as err:
-            self.log.logError(err)
+        max_sev_sel_delay = 2
+        if self.auth and (not self.auth.user or not self.auth.password):
+            print("Please provide both username and password")
+
+        elif self.auth and (self.auth.username and self.auth.password):
+            try:
+                self.client = MongoClient(host=self.mDbHost, port=self.mDbPortNum,
+                                          document_class=OrderedDict, serverSelectionTimeoutMS=max_sev_sel_delay,
+                                          username=self.auth.username, password=self.auth.password,
+                                          authSource=self.auth.source, authMechanism=self.auth.mechanism)
+
+                # The ismaster command is cheap and does not require auth.
+                self.client.server_info()
+                return True
+            except pyErrs.ServerSelectionTimeoutError as err:
+                self.log.logError(err)
+
+        else:
+            try:
+                self.client = MongoClient(host=self.mDbHost, port=self.mDbPortNum, 
+                                          document_class=OrderedDict, serverSelectionTimeoutMS=max_sev_sel_delay)
+
+                # The ismaster command is cheap and does not require auth.
+                self.client.server_info()
+                return True
+            except pyErrs.ServerSelectionTimeoutError as err:
+                self.log.logError(err)
         
         return False
 
