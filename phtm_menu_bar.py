@@ -1,16 +1,16 @@
 import sys
 
-from PyQt5.QtWidgets import QAction
+from PyQt5.QtWidgets import QAction, QMenuBar
 
 import file_ctrl as f_ctrl
 
-class phtm_menu_bar():
+class phtm_menu_bar(QMenuBar):
     def __init__(self, main_window):
+        super().__init__()
         self.mw = main_window
 
-        self.main_menu = self.mw.menuBar()
+        self.main_menu = self
         self.recentFilesList = None
-
 
     def init_menu_bar(self):
         self.fileMenu()

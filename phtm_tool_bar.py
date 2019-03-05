@@ -6,28 +6,31 @@ from PyQt5.QtWidgets import QToolBar, QAction, QWidget, QSizePolicy, QComboBox
 
 from DBConnection import DatabaseHandler
 
+import style.style_template as styles
+
 import run_ctrl as r_ctrl
 import file_ctrl as f_ctrl
 
 class phtm_tool_bar():
     """ application toolbars class """
-    def __init__(self, main_window):
+    def __init__(self, main_window, icon_set):
         self.mw = main_window
+        self.icon_set=icon_set
     
     def setUpToolBar(self):
 
         #------------------ Top Toolbar ----------------------------
-        topTBar = QToolBar(self.mw)
+        topTBar = styles.phtm_tool_bar()
         
-        tbfile = QAction(QIcon("icons/import-file.png"),"import",self.mw)
+        tbfile = QAction(QIcon(self.icon_set.import_file),"import",self.mw)
         tbfile.triggered.connect(lambda: f_ctrl.getfile(self.mw))
         topTBar.addAction(tbfile)
         
-        tbsave = QAction(QIcon("icons/save.png"),"save",self.mw)
+        tbsave = QAction(QIcon(self.icon_set.save),"save",self.mw)
         tbsave.triggered.connect(lambda: f_ctrl.saveScript(self.mw))
         topTBar.addAction(tbsave)
             
-        tbfiles = QAction(QIcon("icons/export-file.png"),"export",self.mw)
+        tbfiles = QAction(QIcon(self.icon_set.export_file),"export",self.mw)
         tbfiles.triggered.connect(lambda: f_ctrl.exportScript(self.mw))
         topTBar.addAction(tbfiles)
         
@@ -35,21 +38,21 @@ class phtm_tool_bar():
         self.mw.setRunBtnAction(False)
         topTBar.addAction(self.tbrun)
 
-        tbstop = QAction(QIcon("icons/stop.png"),"stop",self.mw)
+        tbstop = QAction(QIcon(self.icon_set.stop),"stop",self.mw)
         tbstop.triggered.connect(lambda: r_ctrl.stopRun(self.mw))
         topTBar.addAction(tbstop)
 
         # ----------------- Side Toolbar ---------------------------
-        sideTBar = QToolBar(self.mw)
-        tbload = QAction(QIcon("icons/load-file.png"),"open",self.mw)
+        sideTBar = styles.phtm_tool_bar()
+        tbload = QAction(QIcon(self.icon_set.load_file),"open",self.mw)
         # tbload.triggered.connect()
         sideTBar.addAction(tbload)
         
-        tbedit = QAction(QIcon("icons/editor.png"),"open",self.mw)
+        tbedit = QAction(QIcon(self.icon_set.edit),"open",self.mw)
         # tbedit.triggered.connect()
         sideTBar.addAction(tbedit)
         
-        tbsettings = QAction(QIcon("icons/settings.png"),"open",self.mw)
+        tbsettings = QAction(QIcon(self.icon_set.settings),"open",self.mw)
         tbsettings.triggered.connect(self.mw.showPref)
         sideTBar.addAction(tbsettings)
 
@@ -58,7 +61,7 @@ class phtm_tool_bar():
         # toolBar is a pointer to an existing toolbar
         sideTBar.addWidget(spacer)
         
-        tbopen = QAction(QIcon("icons/internet.png"),"open",self.mw)
+        tbopen = QAction(QIcon(self.icon_set.wifi),"open",self.mw)
         # tbopen.triggered.connect()
         sideTBar.addAction(tbopen)
         
@@ -68,7 +71,7 @@ class phtm_tool_bar():
 
         # sideTBar.addWidget(self.mw.addrDropdownMenu)
         
-        self.dbnameMenu = QComboBox()
+        self.dbnameMenu = styles.phtm_combo_box()
         self.dbnameMenu.setFixedSize(dropdownSize)
         self.dbnameMenu.addItems(DatabaseHandler.getDatabaseList(self.mw.dbData['host'], self.mw.dbData['port']))
 
@@ -78,7 +81,7 @@ class phtm_tool_bar():
 
         sideTBar.addWidget(self.dbnameMenu)
         
-        self.collnameMenu = QComboBox()
+        self.collnameMenu = styles.phtm_combo_box()
         self.collnameMenu.setFixedSize(dropdownSize)
         self.collnameMenu.addItems(DatabaseHandler.getCollectionList(self.mw.dbData['host'], self.mw.dbData['port'], self.mw.dbData['dbname']))
         

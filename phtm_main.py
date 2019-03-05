@@ -17,6 +17,10 @@ from DBConnection import *
 from phtm_tool_bar import phtm_tool_bar
 from Center import center_window
 
+import style.style_template as styles
+
+from phtm_title_bar import phtm_title_bar
+
 from file_ctrl import tmpScriptCleaner
 import run_ctrl as r_ctrl
 import file_ctrl as f_ctrl
@@ -28,8 +32,6 @@ from phtm_logger import phtm_logger
 BUFFERSIZE = 1000
 
 class Manager(QMainWindow):
-    __runs = 0
-    __completedRuns = 0
     def __init__(self):
         super().__init__()
         #set window icon
@@ -41,13 +43,51 @@ class Manager(QMainWindow):
         self.width = 900
         self.height = 520
 
+        self.oldPos = self.pos()
+
+        # self.__layout = QVBoxLayout()
+        self.layout().setSpacing(0) 
+
+        self.title_bar = phtm_title_bar(self)
+        self.title_bar.generate_title_bar()
+
+        self.addToolBar(Qt.TopToolBarArea, self.title_bar)
+
+        self.main_window = main_window(self)
+        self.main_window.statusBar().showMessage("Ready")
+
+        self.setCentralWidget(self.main_window)
+        # self.setStyleSheet("""
+        #     Manager {
+        #         background-color: rgb(46, 51, 58);
+        #         color: white;
+        #         border-style: none;
+        #     }
+        # """)
+
+        # self.setLayout(self.__layout)
+
+        self.setGeometry(self.left, self.top, self.width, self.height) # set screen size (left, top, width, height
+        self.move(center_window(self))
+
+
+class main_window(styles.phtm_main_window):
+    __runs = 0
+    __completedRuns = 0
+    def __init__(self, parent=None):
+        super().__init__(style="ghost")
+
         self.dmi_settings = None
+        self.parent = parent
+        # self.__oldPos = QPoint
 
         self.log = phtm_logger()
         self.log.logInfo("Program Started.")
 
         self.prefs = Preferences('config', prefDict=DefaultGeneralConfig.prefDict, log=self.log) # name of preference file minus json
         self.prefs.loadConfig()
+
+        self.icon_set=styles.phtm_icons()
 
         f_ctrl.tmpScriptCleaner(self)
 
@@ -61,7 +101,6 @@ class Manager(QMainWindow):
             self.log.logInfo("Successfully Logged In.")
             self.user = login.user
             self.initUI()
-            self.move(center_window(self))
         else:
             self.log.logInfo("No login program exited.")
             sys.exit()
@@ -73,15 +112,14 @@ class Manager(QMainWindow):
         self.progTitle = 'Phantom DBM'
         self.currTitle = self.progTitle
 
-        self.setWindowTitle(self.progTitle)
-        self.setWindowIcon(QIcon('icons/phantom.png'))
-        self.setGeometry(self.left, self.top, self.width, self.height) # set screen size (left, top, width, height
+        self.parent.setWindowTitle(self.progTitle)
+        self.parent.setWindowIcon(QIcon('icons/phantom.png'))
 
         splitter1 = QSplitter(Qt.Horizontal)
 
 
         # Add text field
-        self.brd = QPlainTextEdit(self)
+        self.brd = styles.phtm_plain_text_edit()
         self.brd.setReadOnly(True)
         self.brd.insertPlainText("Welcome to Phantom Database Manager (DBM).")
         # self.brd.move(10,10)
@@ -90,8 +128,8 @@ class Manager(QMainWindow):
         self.fileLoaded = True
         self.filePath = None
 
-        self.fileContents = QTextEdit()
-        self.fileContents.setText("[\n    {\n        \"\": \"\"\n    }\n]")
+        self.fileContents = styles.phtm_plain_text_edit()
+        self.fileContents.appendPlainText("[\n    {\n        \"\": \"\"\n    }\n]")
         self.fileContents.textChanged.connect(self.isChanged)
 
         self.changed = False
@@ -101,7 +139,7 @@ class Manager(QMainWindow):
 
         self.setCentralWidget(splitter1)
 
-        splitter1.setSizes([300,200])
+        splitter1.setSizes([300,212])
         # self.setStatusBar(StatusBar())
         self.statusBar().showMessage('Ready')
 
@@ -110,25 +148,27 @@ class Manager(QMainWindow):
         self.statusBar().addPermanentWidget(self.progressBar)
         self.progressBar.setGeometry(5, 5, 5, 5)
 
-        self.phtm_tool_bar = phtm_tool_bar(self)
+        self.phtm_tool_bar = phtm_tool_bar(self, self.icon_set)
         self.phtm_tool_bar.setUpToolBar()
         
-        self.mb = phtm_menu_bar(self)
-        self.mb.init_menu_bar()
+        self.menu_bar = phtm_menu_bar(self)
+        self.menu_bar.init_menu_bar()
+
+        self.setMenuWidget(self.menu_bar)
  
         self.show()
 
     def isChanged(self):
         if not self.changed:
             self.changed = True
-            self.setWindowTitle("* " + self.currTitle)
+            self.parent.setWindowTitle("* " + self.currTitle)
 
     def editWindowTitle(self):
         # use regex to grab the name of the file from the path and added to title
         newTitle = self.progTitle
         fileName = re.split('^(.+)\/([^\/]+)$', self.filePath)
         newTitle = newTitle +  " - " + fileName[2]
-        self.setWindowTitle(newTitle) 
+        self.parent.setWindowTitle(newTitle)
         self.currTitle = newTitle
 
     def setRunState(self, state):
@@ -143,9 +183,9 @@ class Manager(QMainWindow):
 
     def setRunBtnAction(self, state):
         if state == False:
-            self.setRunBtnIcon(QIcon("icons/play.png"))
+            self.setRunBtnIcon(QIcon(self.icon_set.play))
             self.phtm_tool_bar.tbrun.setIconText("run")
-            if Manager.__runs > 0:
+            if main_window.__runs > 0:
                 self.phtm_tool_bar.tbrun.triggered.disconnect()
             self.phtm_tool_bar.tbrun.triggered.connect(lambda: r_ctrl.runScript(self, Manager.__runs, Manager.__completedRuns))
 
@@ -159,7 +199,7 @@ class Manager(QMainWindow):
     @pyqtSlot(str)
     def appendToBoard(self, message):
         # self.log.logInfo(message)
-        self.brd.appendPlainText(message)
+        self.brd.appendHtml(message)
         QCoreApplication.processEvents()
 
 
@@ -195,17 +235,21 @@ class Manager(QMainWindow):
         index = self.phtm_tool_bar.dbnameMenu.findText(self.prefs.prefDict['mongodb']['dbname'])
         self.phtm_tool_bar.dbnameMenu.setCurrentIndex(index)
 
+    # def mousePressEvent(self, evt):
+    #     self.__oldPos = evt.globalPos()
+        
+    # def mouseMoveEvent(self, evt):
+    #     delta = QPoint()
+    #     delta  = evt.globalPos() - self.__oldPos
+    #     move(x()+delta.x(), y()+delta.y())
+    #     self.__oldPos = evt.globalPos()
+
 if __name__ == '__main__':
     
     APP = QApplication(sys.argv)
-    APP.setStyle("plastique")
-
-    # file = QFile(":/light.qss")
-    # file.open(QFile.ReadOnly | QFile.Text)
-    # stream = QTextStream(file)
-    # app.setStyleSheet(stream.readAll())
 
     MANAGER = Manager()
-    MANAGER.statusBar().showMessage("Ready")    
+    MANAGER.setWindowFlags(Qt.FramelessWindowHint)
+    MANAGER.show()
     sys.exit(APP.exec_())
 

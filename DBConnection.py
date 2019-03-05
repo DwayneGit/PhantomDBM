@@ -109,7 +109,7 @@ class DatabaseHandler():
 
         else:
             try:
-                self.client = MongoClient(host=self.mDbHost, port=self.mDbPortNum, 
+                self.client = MongoClient(host=self.mDbHost, port=self.mDbPortNum,
                                           document_class=OrderedDict, serverSelectionTimeoutMS=max_sev_sel_delay)
 
                 # The ismaster command is cheap and does not require auth.
