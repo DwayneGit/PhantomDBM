@@ -7,10 +7,11 @@ from PyQt5.QtWidgets import *
 import style.style_template as styles   
     
 class phtm_title_bar(styles.phtm_title_bar):
-    def __init__(self, main_window):
+    def __init__(self, window, is_main_window=False):
         super().__init__()
-        self.main_window = main_window
+        self.window = window
         self.is_max = False
+        self.is_main_window = is_main_window
 
     def generate_title_bar(self):
 
@@ -20,34 +21,55 @@ class phtm_title_bar(styles.phtm_title_bar):
 
         exit_bttn = QToolButton()
         exit_bttn.setDefaultAction(QAction(QIcon("icons/window_icons/icons8-close-window-96.png"), "", self))
-        exit_bttn.defaultAction().triggered.connect(sys.exit)
+
+        if self.is_main_window:
+            logo_bttn = QToolButton()
+            logo_bttn.setDefaultAction(QAction(QIcon("icons/phantom.png"), "PhantomDBM", self))
+            logo_bttn.setObjectName("logo")
+            self.addWidget(logo_bttn)
+
+            spacer = QWidget()
+            spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+            self.addWidget(spacer)
+
+            min_bttn = QToolButton()
+            min_bttn.setDefaultAction(QAction(QIcon("icons/window_icons/icons8-minimize-window-48.png"), "", self))
+            min_bttn.defaultAction().triggered.connect(self.window.showMinimized)
+            self.addWidget(min_bttn)
+
+            screen_bttn = QToolButton()
+            screen_bttn.setDefaultAction(QAction(QIcon("icons/window_icons/icons8-maximize-window-48.png"), "", self))
+            screen_bttn.triggered.connect(lambda x : self.screen_toggle(screen_bttn))
+            self.addWidget(screen_bttn)
+
+            exit_bttn.defaultAction().triggered.connect(sys.exit)
+            exit_bttn.setObjectName("exit")
+
+        else:
+            spacer = QWidget()
+            spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+            self.addWidget(spacer)
+
+            exit_bttn.defaultAction().triggered.connect(self.window.close)
+            exit_bttn.setObjectName("exit")
+        
         self.addWidget(exit_bttn)
-
-        screen_bttn = QToolButton()
-        screen_bttn.setDefaultAction(QAction(QIcon("icons/window_icons/icons8-maximize-window-48.png"), "", self))
-        screen_bttn.triggered.connect(lambda x : self.screen_toggle(screen_bttn))
-        self.addWidget(screen_bttn)
-
-        min_bttn = QToolButton()
-        min_bttn.setDefaultAction(QAction(QIcon("icons/window_icons/icons8-minimize-window-48.png"), "", self))
-        min_bttn.defaultAction().triggered.connect(self.main_window.showMinimized)
-        self.addWidget(min_bttn)
     
     def screen_toggle(self, tool_button):
         if not self.is_max:
-            self.main_window.showMaximized()
+            self.window.showMaximized()
             tool_button.setDefaultAction(QAction(QIcon("icons/window_icons/icons8-restore-window-100.png"), "", self))
         elif self.is_max:
-            self.main_window.showNormal()
+            self.window.showNormal()
             tool_button.setDefaultAction(QAction(QIcon("icons/window_icons/icons8-maximize-window-48.png"), "", self))
 
         self.is_max = not self.is_max
 
     def mousePressEvent(self, event):
-        self.main_window.oldPos = event.globalPos()
+        self.window.oldPos = event.globalPos()
 
     def mouseMoveEvent(self, event):
-        delta = QPoint (event.globalPos() - self.main_window.oldPos)
+        delta = QPoint (event.globalPos() - self.window.oldPos)
         #print(delta)
-        self.main_window.move(self.main_window.x() + delta.x(), self.main_window.y() + delta.y())
-        self.main_window.oldPos = event.globalPos()
+        self.window.move(self.window.x() + delta.x(), self.window.y() + delta.y())
+        self.window.oldPos = event.globalPos()

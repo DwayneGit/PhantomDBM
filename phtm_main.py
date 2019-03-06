@@ -14,7 +14,7 @@ from Dialogs import *
 from phtm_menu_bar import phtm_menu_bar
 from Preferences import *
 from DBConnection import *
-from phtm_tool_bar import phtm_tool_bar
+from phtm_tool_bar import phtm_tool_bar, reloadCollectionNames
 from Center import center_window
 
 import style.style_template as styles
@@ -24,9 +24,6 @@ from phtm_title_bar import phtm_title_bar
 from file_ctrl import tmpScriptCleaner
 import run_ctrl as r_ctrl
 import file_ctrl as f_ctrl
-
-import breezess.breeze_resources
-
 from phtm_logger import phtm_logger
 
 BUFFERSIZE = 1000
@@ -48,7 +45,7 @@ class Manager(QMainWindow):
         # self.__layout = QVBoxLayout()
         self.layout().setSpacing(0) 
 
-        self.title_bar = phtm_title_bar(self)
+        self.title_bar = phtm_title_bar(self, True)
         self.title_bar.generate_title_bar()
 
         self.addToolBar(Qt.TopToolBarArea, self.title_bar)
@@ -128,8 +125,8 @@ class main_window(styles.phtm_main_window):
         self.fileLoaded = True
         self.filePath = None
 
-        self.fileContents = styles.phtm_plain_text_edit()
-        self.fileContents.appendPlainText("[\n    {\n        \"\": \"\"\n    }\n]")
+        self.fileContents = styles.phtm_text_edit()
+        self.fileContents.setText("[\n    {\n        \"\": \"\"\n    }\n]")
         self.fileContents.textChanged.connect(self.isChanged)
 
         self.changed = False
@@ -142,11 +139,12 @@ class main_window(styles.phtm_main_window):
         splitter1.setSizes([300,212])
         # self.setStatusBar(StatusBar())
         self.statusBar().showMessage('Ready')
+        self.statusBar().setFixedHeight(20)
 
         self.progressBar = QProgressBar()
 
         self.statusBar().addPermanentWidget(self.progressBar)
-        self.progressBar.setGeometry(5, 5, 5, 5)
+        self.progressBar.setFixedWidth(200)
 
         self.phtm_tool_bar = phtm_tool_bar(self, self.icon_set)
         self.phtm_tool_bar.setUpToolBar()
@@ -187,7 +185,7 @@ class main_window(styles.phtm_main_window):
             self.phtm_tool_bar.tbrun.setIconText("run")
             if main_window.__runs > 0:
                 self.phtm_tool_bar.tbrun.triggered.disconnect()
-            self.phtm_tool_bar.tbrun.triggered.connect(lambda: r_ctrl.runScript(self, Manager.__runs, Manager.__completedRuns))
+            self.phtm_tool_bar.tbrun.triggered.connect(lambda: r_ctrl.runScript(self, main_window.__runs, main_window.__completedRuns))
 
         elif state == True: 
             self.setRunBtnIcon(QIcon("icons/pause.png"))
@@ -218,13 +216,16 @@ class main_window(styles.phtm_main_window):
 
     def showPref(self):
         p = PreferencesDialog(self.user, self.log)
+        p.setWindowFlags(Qt.Window | Qt.FramelessWindowHint)
+        p.setAttribute(Qt.WA_NoSystemBackground)
+        p.setAttribute(Qt.WA_TranslucentBackground)
         # print(self.prefs.prefDict)
         if p.exec_():
             self.prefs.loadConfig()
             self.dbData = self.prefs.prefDict['mongodb']
             
             self.reloadDbNames()
-            self.reloadCollectionNames(self.dbData['dbname'])
+            reloadCollectionNames(self.phtm_tool_bar, self)
 
         else:
             pass

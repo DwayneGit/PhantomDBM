@@ -4,6 +4,8 @@ from PyQt5.QtWidgets import QFileDialog
 
 from cleanTmpScript import cleanTmpScripts
 
+import text_style as text_style
+
 from time import gmtime, strftime
     
 def putfile(main_window):
@@ -21,12 +23,9 @@ def getfile(main_window):
         main_window.filePath = filenames[0] # save file path
         print(main_window.filePath)
         main_window.editWindowTitle()
-        f = open(filenames[0], 'r')
         
-    with f:
         main_window.fileContents.blockSignals(True)
-        data = f.read()
-        main_window.fileContents.setText(data)
+        main_window.fileContents.setHtml(text_style.translate_text(filenames[0]))
         main_window.changed = False
         main_window.fileContents.blockSignals(False)
 
@@ -48,7 +47,7 @@ def saveScript(main_window):
 def exportScript(main_window):
     options = QFileDialog.Options()
     options |= QFileDialog.DontUseNativeDialog
-    fileName, _ = QFileDialog.getSaveFileName(main_window,"Save File","","JSON files (*.json)")
+    fileName, _ = QFileDialog.getSaveFileName(main_window, "Save File", "", "JSON files (*.json)")
     if fileName:
         main_window.filePath = fileName
         saveScript(main_window)

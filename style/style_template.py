@@ -37,7 +37,6 @@ class phtm_push_button(QPushButton):
                     border-width: 1px;
                     border-color: rgb(39, 44, 51);
                     font: bold 14px;
-                    min-width: 10em;
                     padding: 6px;
                 }
                 QPushButton:pressed {
@@ -52,7 +51,6 @@ class phtm_main_window(QMainWindow):
         self.style=style
         self.set_style()
 
-
     def set_style(self):
         if self.style == "ghost":
             self.setStyleSheet("""
@@ -64,12 +62,27 @@ class phtm_main_window(QMainWindow):
                     background-color: rgb(36, 143, 36);
                     color: rgb(217, 217, 217);
                 }
+                QMenuBar::item:selected {
+                    background: rgb(17, 89, 17);
+                }
+                QMenu {
+                    background: rgb(36, 143, 36);
+                    color: rgb(217, 217, 217);
+                }
+                QMenu::item:selected {
+                    background: rgb(17, 89, 17);
+                }
                 QStatusBar {
                     background-color: rgb(92, 0, 153);
                     color: rgb(217, 217, 217);
                 }
                 QProgressBar {
                     background-color: rgb(92, 0, 153);
+                }
+
+                QProgressBar::chunk {
+                    background-color: #05B8CC;
+                    width: 10px;
                 }
             """)
 
@@ -83,6 +96,24 @@ class phtm_plain_text_edit(QPlainTextEdit):
         if self.style == "ghost":
             self.setStyleSheet("""
                 QPlainTextEdit {
+                    background-color: rgb(46, 51, 58);
+                    border-style: outset;
+                    border-width: 1px;
+                    border-color: rgb(39, 44, 51);
+                    color: white;
+                }
+            """)
+
+class phtm_text_edit(QTextEdit):
+    def __init__(self, style="ghost"):
+        super().__init__()
+        self.style=style
+        self.set_style()
+
+    def set_style(self):
+        if self.style == "ghost":
+            self.setStyleSheet("""
+                QTextEdit {
                     background-color: rgb(46, 51, 58);
                     border-style: outset;
                     border-width: 1px;
@@ -111,15 +142,19 @@ class phtm_combo_box(QComboBox):
                     min-width: 10em;
                     padding: 6px;
                 }
-                QComboBox:pressed {
-                    background-color: rgb(39, 44, 51);
-                    border-style: inset;
-                }
                 QComboBox::drop-down{
                     border-style: outset;
                     border-width: 0px;
                     border-color: rgb(39, 44, 51);
                     color: rgb(46, 51, 58);
+                    padding: 0px;
+                }
+                QComboBox::item{
+                    background-color: rgb(46, 51, 58);
+                    color: rgb(217, 217, 217);
+                }
+                QComboBox::item::selected{
+                    background-color: rgb(39, 44, 51);
                 }
             """)
 
@@ -162,9 +197,20 @@ class phtm_title_bar(QToolBar):
                     background-color: rgb(92, 0, 153);
                     border-width: 0px;
                 }
-                QToolBar:hover {
-                    background-color: red;
+                QToolButton:hover {
+                    background-color: rgb(81, 0, 135);
                     border-width: 0px;
+                    border-style: outset;
+                    border-radius: 0px;
+                    border: 0px;
+                }
+                QToolButton#logo:hover  {
+                    background-color: rgb(92, 0, 153);
+                    border: 0px;
+                }
+                QToolButton#exit:hover  {
+                    background-color: red;
+                    border: 0px;
                 }
             """)
 
@@ -174,17 +220,42 @@ class phtm_dialog(QDialog):
         self.style=style
         self.set_style()
 
-
     def set_style(self):
         if self.style == "ghost":
             self.setStyleSheet("""
                 QDialog {
                     background-color: rgb(46, 51, 58);
+                    padding : 0px;
+                    margin : 0px;
                 }
-                QDialog {
-                    background-color: rgb(64, 12, 96);
+                QLineEdit {
+                    background-color: rgb(46, 51, 58);
+                    color: rgb(217, 217, 217);
                 }
-                QDialog {
-                    background-color: rgb(64, 12, 96);
+                QMenuBar {
+                    background-color: rgb(36, 143, 36);
+                    color: rgb(217, 217, 217);
+                }
+                QMenuBar::item:selected {
+                    background: rgb(17, 89, 17);
+                }
+                QMenu {
+                    background: rgb(36, 143, 36);
+                    color: rgb(217, 217, 217);
+                }
+                QMenu::item:selected {
+                    background: rgb(17, 89, 17);
+                }
+                QStatusBar {
+                    background-color: rgb(92, 0, 153);
+                    color: rgb(217, 217, 217);
+                }
+                QProgressBar {
+                    background-color: rgb(92, 0, 153);
+                }
+
+                QProgressBar::chunk {
+                    background-color: #05B8CC;
+                    width: 10px;
                 }
             """)
