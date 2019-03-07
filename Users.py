@@ -5,8 +5,11 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import * 
 from Center import center_window
 
+import style.style_template as styles
+
 class User:
     __usrFile = "users.json"
+    @staticmethod
     def createUser(usr):
         usrs = User.getUserList()
         if not usr.username in usrs.keys():
@@ -17,7 +20,8 @@ class User:
         else:
             print("User already exists...")
             return False
-    
+
+    @staticmethod
     def removeUser(usr):
         usrs = User.getUserList()
         if usr in usrs:
@@ -27,6 +31,7 @@ class User:
         else: 
             return False
 
+    @staticmethod
     def getUserList(db=None):
         usrs = User.__loadUsers()
         if db:
@@ -38,6 +43,7 @@ class User:
         
         return usrs
 
+    @staticmethod
     def __initUserList():
         usrs = {
             "admin" : {
@@ -49,7 +55,7 @@ class User:
         User.__updateUsers(usrs)
         return usrs
 
-
+    @staticmethod
     def __loadUsers():
         usrList = {}
         if (os.path.isfile(User.__usrFile) and
@@ -62,6 +68,7 @@ class User:
         else:
             return User.__initUserList()
 
+    @staticmethod
     def __updateUsers(usrs):
         with open(User.__usrFile, 'w') as outfile:
             json.dump(usrs, outfile, indent=4, sort_keys=True)# save to file indent=4 & sort_keys=True make the file pretty
@@ -71,7 +78,7 @@ class User:
         self.username = username
         self.password = password
         self.access = ""
-        self.db = db;
+        self.db = db
 
     def login(self):
         usrs = User.getUserList()
@@ -117,20 +124,14 @@ class User:
         return userDict
 
 class loginScreen(QDialog):
-    def __init__(self):
+    def __init__(self, parent):
         super().__init__()
-        self.left = 10
-        self.top = 10
-        self.width = 260
-        self.height = 160
+
+        self.parent = parent
 
         self.initUI()
-        self.move(center_window(self))
 
     def initUI(self):
-        self.setWindowTitle('Login')  
-        self.setGeometry(self.left,self.top,self.width, self.height) # set screen size (left, top, width, height
-        
         vBox = QVBoxLayout()
         formLay = QFormLayout()
 
@@ -144,11 +145,11 @@ class loginScreen(QDialog):
         self.dbDropdown = QComboBox()
         # self.dbDropdown.addItems(DatabaseHandler.getDatabaseList('localhost',27017))
 
-        submitBtn = QPushButton("Submit")
+        submitBtn = styles.phtm_push_button("Submit")
         submitBtn.clicked.connect(self.login)
 
-        cancelBtn = QPushButton("Cancel")
-        cancelBtn.clicked.connect(self.reject)
+        cancelBtn = styles.phtm_push_button("Cancel")
+        cancelBtn.clicked.connect(self.parent.reject)
 
         formLay.addRow(userLabel, self.userBox)
         formLay.addRow(passwordLabel, self.passwordBox)
@@ -167,5 +168,5 @@ class loginScreen(QDialog):
     def login(self):
         self.user = User(self.userBox.text(), self.passwordBox.text(), self.dbDropdown.currentText())
         # if self.user.login():
-        self.accept()
+        self.parent.accept()
 

@@ -1,42 +1,14 @@
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import * 
+
 from Center import center_window
 from Preferences import *
 from DBConnection import *
 import style.style_template as styles
 
-from phtm_title_bar import phtm_title_bar
-
-class PreferencesDialog(styles.phtm_dialog):
-    def __init__(self, user, log, parent = None):
-        super().__init__()
-        #set window icon
-        self.setWindowTitle("Preferences")
-        self.setWindowModality(Qt.ApplicationModal)
-
-        self.oldPos = self.pos()
-
-        self.__layout = QVBoxLayout()
-        self.__layout.setSpacing(0)
-        
-
-        self.title_bar = phtm_title_bar(self)
-        self.title_bar.generate_title_bar()
-
-        self.__layout.addWidget(self.title_bar)
-
-        self.preference_body = preference_body(user, log, self)
-
-        self.__layout.addWidget(self.preference_body)
-        
-        self.setLayout(self.__layout)
-
-        self.setGeometry(10,10,350, 475)
-        self.move(center_window(self))
-
 class preference_body(QDialog):
-    def __init__(self, user, log, parent=None):
+    def __init__(self, user, log, parent):
         super(preference_body, self).__init__()
         '''
         Initialize the window
@@ -145,8 +117,6 @@ class preference_body(QDialog):
 
 
         # pass
-                
-        
 
     def submitPreferences(self):
         self.savePreferences()

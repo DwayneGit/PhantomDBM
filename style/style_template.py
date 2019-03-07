@@ -5,6 +5,8 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 
+from Center import center_window
+
 class phtm_icons():
     def __init__(self, path="icons/standard_white/"):
         self.get_icons(path)
@@ -46,8 +48,26 @@ class phtm_push_button(QPushButton):
             """)
 
 class phtm_main_window(QMainWindow):
-    def __init__(self, style="ghost"):
+    def __init__(self, style="ghost", geometry=QRect(10, 10, 900, 520)):
         super().__init__() # set screen size (left, top, width, height
+
+        self.setWindowFlags(Qt.FramelessWindowHint)
+        
+        script_dir = os.path.dirname(os.path.realpath(__file__))
+        self.setWindowIcon(QIcon(script_dir + os.path.sep + 'icons/phantom.png'))
+
+        self.oldPos = self.pos()
+
+        # self.__layout = QVBoxLayout()
+        self.layout().setSpacing(0) 
+
+        self.title_bar = phtm_title_bar(self, True)
+        self.title_bar.generate_title_bar()
+
+        self.addToolBar(Qt.TopToolBarArea, self.title_bar)
+
+        self.setGeometry(geometry) # set screen size (left, top, width, height
+        self.move(center_window(self))
         self.style=style
         self.set_style()
 
@@ -178,10 +198,74 @@ class phtm_tool_bar(QToolBar):
             """)
 
 class phtm_title_bar(QToolBar):
-    def __init__(self, style="ghost"):
+    def __init__(self, window, is_main_window=False, style="ghost"):
         super().__init__()
         self.style=style
+        self.window = window
+        self.is_max = False
+        self.is_main_window = is_main_window
         self.set_style()
+
+    def generate_title_bar(self):
+
+        self.setMovable( False )
+        self.setFixedHeight(36)
+        self.setIconSize(QSize(19, 19))
+
+        exit_bttn = QToolButton()
+        exit_bttn.setDefaultAction(QAction(QIcon("icons/window_icons/icons8-close-window-96.png"), "", self))
+
+        if self.is_main_window:
+            logo_bttn = QToolButton()
+            logo_bttn.setDefaultAction(QAction(QIcon("icons/phantom.png"), "PhantomDBM", self))
+            logo_bttn.setObjectName("logo")
+            self.addWidget(logo_bttn)
+
+            spacer = QWidget()
+            spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+            self.addWidget(spacer)
+
+            min_bttn = QToolButton()
+            min_bttn.setDefaultAction(QAction(QIcon("icons/window_icons/icons8-minimize-window-48.png"), "", self))
+            min_bttn.defaultAction().triggered.connect(self.window.showMinimized)
+            self.addWidget(min_bttn)
+
+            screen_bttn = QToolButton()
+            screen_bttn.setDefaultAction(QAction(QIcon("icons/window_icons/icons8-maximize-window-48.png"), "", self))
+            screen_bttn.triggered.connect(lambda x : self.screen_toggle(screen_bttn))
+            self.addWidget(screen_bttn)
+
+            exit_bttn.defaultAction().triggered.connect(sys.exit)
+            exit_bttn.setObjectName("exit")
+
+        else:
+            spacer = QWidget()
+            spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+            self.addWidget(spacer)
+
+            exit_bttn.defaultAction().triggered.connect(self.window.close)
+            exit_bttn.setObjectName("exit")
+        
+        self.addWidget(exit_bttn)
+    
+    def screen_toggle(self, tool_button):
+        if not self.is_max:
+            self.window.showMaximized()
+            tool_button.setDefaultAction(QAction(QIcon("icons/window_icons/icons8-restore-window-100.png"), "", self))
+        elif self.is_max:
+            self.window.showNormal()
+            tool_button.setDefaultAction(QAction(QIcon("icons/window_icons/icons8-maximize-window-48.png"), "", self))
+
+        self.is_max = not self.is_max
+
+    def mousePressEvent(self, event):
+        self.window.oldPos = event.globalPos()
+
+    def mouseMoveEvent(self, event):
+        delta = QPoint (event.globalPos() - self.window.oldPos)
+        #print(delta)
+        self.window.move(self.window.x() + delta.x(), self.window.y() + delta.y())
+        self.window.oldPos = event.globalPos()
 
     def set_style(self):
         if self.style == "ghost":
@@ -215,9 +299,39 @@ class phtm_title_bar(QToolBar):
             """)
 
 class phtm_dialog(QDialog):
-    def __init__(self, style="ghost"):
+    def __init__(self, title, geometry, central_dialog=None, style="ghost"):
         super().__init__() # set screen size (left, top, width, height
+
+        # if not isinstance(central_dialog, QDialog):
+        #     return "Pass central dialog is not of type QDialog"
+        self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint)
+        self.setAttribute(Qt.WA_NoSystemBackground)
+        self.setAttribute(Qt.WA_TranslucentBackground)
+
+        self.setWindowTitle(title)
+        self.setWindowModality(Qt.ApplicationModal)
+
+        self.__central_dialog = central_dialog
+
         self.style=style
+
+        self.oldPos = self.pos()
+        
+        self.title_bar = phtm_title_bar(self)
+        self.title_bar.generate_title_bar()
+
+        self.__layout = QVBoxLayout()
+        self.__layout.setSpacing(0)
+
+        self.__layout.addWidget(self.title_bar)
+        if self.__central_dialog:
+            self.__layout.addWidget(self.__central_dialog)
+        
+        self.setLayout(self.__layout)
+
+        self.setGeometry(geometry)
+        self.move(center_window(self))
+
         self.set_style()
 
     def set_style(self):
@@ -230,14 +344,42 @@ class phtm_dialog(QDialog):
                 }
                 QLineEdit {
                     background-color: rgb(46, 51, 58);
-                    color: rgb(217, 217, 217);
+                    border-style: outset;
+                    border-width: 1px;
+                    border-color: rgb(39, 44, 51);
+                    color: white;
                 }
                 QMenuBar {
                     background-color: rgb(36, 143, 36);
                     color: rgb(217, 217, 217);
                 }
+                QTabWidget::pane {
+                    background-color: rgb(46, 51, 58);
+                    border-style: outset;
+                    border-width: 1px;
+                    border-color: rgb(39, 44, 51);
+                    color: rgb(217, 217, 217);
+                }
+                QTabBar::tab {
+                    background: rgb(39, 44, 51);
+                    border-style: outset;
+                    border-width: 1px;
+                    border-color: rgb(39, 44, 51);
+                    color: rgb(217, 217, 217);
+                    min-width: 8ex;
+                    padding: 2px;
+                }
                 QMenuBar::item:selected {
                     background: rgb(17, 89, 17);
+                }
+                QLabel{
+                    color: rgb(217, 217, 217);
+                }
+                QRadioButton {
+                    color: rgb(217, 217, 217);
+                }
+                QRadioButton::indicator {
+                    color: black;
                 }
                 QMenu {
                     background: rgb(36, 143, 36);
@@ -259,3 +401,16 @@ class phtm_dialog(QDialog):
                     width: 10px;
                 }
             """)
+
+    def get_layout(self):
+        return self.__layout
+
+    def set_central_dialog(self, dialog):
+        # if not isinstance(central_dialog, QDialog):
+        #    throw  "Pass central dialog is not of type QDialog"
+        if not self.__central_dialog:
+            self.__layout.addWidget(dialog)
+        self.__central_dialog = dialog
+
+    def central_dialog(self):
+        return self.__central_dialog
