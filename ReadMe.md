@@ -13,6 +13,9 @@ testing:
     - automated instruction scripts  
         - link element ✓  
     - seperate files (divide operations)  
+    - themes  
+    - tabbed script edit window
+        - https://stackoverflow.com/questions/19975137/how-can-i-add-a-new-tab-button-next-to-the-tabs-of-a-qmdiarea-in-tabbed-view-m
 
 next:  
     - integrate mongodb authentication  
@@ -30,8 +33,6 @@ next:
         - good for record keeping  
         - is logged.  
     - api  
-    - themes  
     - website  
         github  
-    - tabbed script edit window  
     - 

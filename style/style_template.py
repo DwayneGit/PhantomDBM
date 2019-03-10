@@ -104,6 +104,22 @@ class phtm_main_window(QMainWindow):
                     background-color: #05B8CC;
                     width: 10px;
                 }
+                QTabWidget::pane {
+                    background-color: rgb(46, 51, 58);
+                    border-style: outset;
+                    border-width: 1px;
+                    border-color: rgb(39, 44, 51);
+                    color: rgb(217, 217, 217);
+                }
+                QTabBar::tab {
+                    background: rgb(39, 44, 51);
+                    border-style: outset;
+                    border-width: 1px;
+                    border-color: rgb(39, 44, 51);
+                    color: rgb(217, 217, 217);
+                    min-width: 8ex;
+                    padding: 2px;
+                }
             """)
 
 class phtm_plain_text_edit(QPlainTextEdit):
@@ -113,7 +129,7 @@ class phtm_plain_text_edit(QPlainTextEdit):
 
         self.scroll_bar = QScrollBar()
         self.addScrollBarWidget(self.scroll_bar, Qt.AlignRight)
-        
+
         self.set_style()
 
     def set_style(self):
@@ -355,7 +371,7 @@ class phtm_dialog(QDialog):
         self.style=style
 
         self.oldPos = self.pos()
-        
+
         self.title_bar = phtm_title_bar(self)
         self.title_bar.generate_title_bar()
 
@@ -365,7 +381,7 @@ class phtm_dialog(QDialog):
         self.__layout.addWidget(self.title_bar)
         if self.__central_dialog:
             self.__layout.addWidget(self.__central_dialog)
-        
+
         self.setLayout(self.__layout)
 
         self.setGeometry(geometry)

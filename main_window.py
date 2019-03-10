@@ -90,10 +90,13 @@ class main_window(QMainWindow):
         self.fileContents.setPlainText("[\n    {\n        \"\": \"\"\n    }\n]")
         self.fileContents.textChanged.connect(self.isChanged)
 
+        self.editor_tabs = QTabWidget()
+        self.editor_tabs.addTab(self.fileContents, "JSON Template")
+
         self.changed = False
         # check if file is loaded and set flag to use to ask if save necessary before running or closing
         splitter1.addWidget(self.brd)
-        splitter1.addWidget(self.fileContents)
+        splitter1.addWidget(self.editor_tabs)
 
         self.setCentralWidget(splitter1)
 
