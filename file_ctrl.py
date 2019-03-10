@@ -21,11 +21,12 @@ def getfile(main_window):
     if dlg.exec_():
         filenames = dlg.selectedFiles()
         main_window.filePath = filenames[0] # save file path
-        print(main_window.filePath)
+        # print(main_window.filePath)
         main_window.editWindowTitle()
         
         main_window.fileContents.blockSignals(True)
-        main_window.fileContents.setHtml(text_style.translate_text(filenames[0]))
+        main_window.fileContents.clear()
+        main_window.fileContents=text_style.translate_text(filenames[0],main_window.fileContents)
         main_window.changed = False
         main_window.fileContents.blockSignals(False)
 

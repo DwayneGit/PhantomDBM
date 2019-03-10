@@ -20,6 +20,7 @@ from Center import center_window
 import style.style_template as styles
 
 from file_ctrl import tmpScriptCleaner
+from phtm_editor import phtm_editor
 import run_ctrl as r_ctrl
 import file_ctrl as f_ctrl
 from phtm_logger import phtm_logger
@@ -85,8 +86,8 @@ class main_window(QMainWindow):
         self.fileLoaded = True
         self.filePath = None
 
-        self.fileContents = styles.phtm_text_edit()
-        self.fileContents.setText("[\n    {\n        \"\": \"\"\n    }\n]")
+        self.fileContents = phtm_editor()
+        self.fileContents.setPlainText("[\n    {\n        \"\": \"\"\n    }\n]")
         self.fileContents.textChanged.connect(self.isChanged)
 
         self.changed = False
