@@ -2,20 +2,7 @@
 add signal to edit ui to get rid of error:  
     "Gdk-Message: 23:23:23.985: python3: Fatal IO error 11 (Resource temporarily unavailable) on X server :0."  
     - Help:  
-        https://stackoverflow.com/questions/46693355/pyqt5-typeerror-signal-has-0-arguments-but-1-provided  
-
-done:
-    - run scripts from program with out saving ✓  
-
-testing:
-    - menubar ✓  
-    - logging ✓  
-    - automated instruction scripts  
-        - link element ✓  
-    - seperate files (divide operations)  
-    - themes  
-    - tabbed script edit window
-        - https://stackoverflow.com/questions/19975137/how-can-i-add-a-new-tab-button-next-to-the-tabs-of-a-qmdiarea-in-tabbed-view-m
+        https://stackoverflow.com/questions/46693355/pyqt5-typeerror-signal-has-0-arguments-but-1-provided
 
 next:  
     - integrate mongodb authentication  
@@ -35,4 +22,22 @@ next:
     - api  
     - website  
         github  
-    - 
+    -  
+
+in progress:
+    - tabbed script edit window
+        - https://stackoverflow.com/questions/19975137/how-can-i-add-a-new-tab-button-next-to-the-tabs-of-a-qmdiarea-in-tabbed-view-m
+        - https://stackoverflow.com/questions/22616446/add-plus-button-to-tabwidget-pyqt4
+
+        - edit so tab text changes back after save and the rest of the code interactes with the tab widget
+
+testing:
+    - menubar ✓  
+    - logging ✓  
+    - automated instruction scripts  
+        - link element ✓  
+    - seperate files (divide operations)  
+    - themes   
+
+done:
+    - run scripts from program with out saving ✓  

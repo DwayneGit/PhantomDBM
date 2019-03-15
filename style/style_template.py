@@ -353,6 +353,129 @@ class phtm_title_bar(QToolBar):
                 }
             """)
 
+class phtm_tab_widget(QTabWidget):
+    def __init__(self):
+        super().__init__()
+
+        self.tabButton = QToolButton(self)
+        self.tabButton.setText('+')
+        self.tabButton.setObjectName("tab_button")
+
+        font = self.tabButton.font()
+        font.setBold(True)
+
+        self.tabButton.setFont(font)
+        self.setCornerWidget(self.tabButton)
+        self.tabButton.clicked.connect(self.add_page)
+        
+        self.setStyleSheet('''
+            QTabWidget::pane {
+                background-color: rgb(46, 51, 58);
+                border-style: outset;
+                border-width: 1px;
+                border-color: rgb(39, 44, 51);
+                color: rgb(217, 217, 217);
+            }
+            QTabBar::tab {
+                background: rgb(39, 44, 51);
+                border-style: outset;
+                border-width: 1px;
+                border-color: rgb(39, 44, 51);
+                color: rgb(217, 217, 217);
+                min-width: 8ex;
+                padding: 2px;
+            }
+            QToolButton#tab_button {
+                background-color: rgb(46, 51, 58);
+                color: rgb(217, 217, 217);
+                border-style: none;
+                border-width: 1px;
+                border-color: rgb(46, 51, 58);
+                font: bold 14px;
+                padding: 6px;
+            }
+            QToolButton#tab_button:pressed {
+                background-color: rgb(39, 44, 51);
+                border-style: inset;
+            }
+        ''')
+
+        self.setMovable(True)
+        self.setTabsClosable(True)
+
+        self.tabCloseRequested.connect(self.close_tab)
+
+    def close_tab(self, index):
+        print(self.count())
+        if self.count() <= 1:
+            self.add_page()
+            self.removeTab(index)
+
+        else:
+            self.removeTab(index)
+
+    def add_page(self, editor=None):
+        self.addTab(phtm_plain_text_edit(), "JSON Template")
+
+
+class pthm_tab_bar(QTabBar):
+
+    plus_clicked = pyqtSignal(str)
+
+    def __init__(self):
+        super().__init__()
+
+        self.plusButton = QPushButton("+")
+        self.plusButton.setParent(self)
+        self.plusButton.setFixedSize(20, 20)  # Small Fixed size
+        self.plusButton.clicked.connect(self.plus_clicked.emit)
+        self.movePlusButton() # Move to the correct location
+    # end Constructor
+
+        self.setStyleSheet('''
+        ''')
+
+    def sizeHint(self):
+        """Return the size of the TabBar with increased width for the plus button."""
+        sizeHint = QTabBar.sizeHint(self)
+        width = sizeHint.width()
+        height = sizeHint.height()
+        return QSize(width+25, height)
+    # end tabSizeHint
+
+    def resizeEvent(self, event):
+        """Resize the widget and make sure the plus button is in the correct location."""
+        super().resizeEvent(event)
+
+        self.movePlusButton()
+    # end resizeEvent
+
+    def tabLayoutChange(self):
+        """This virtual handler is called whenever the tab layout changes.
+        If anything changes make sure the plus button is in the correct location.
+        """
+        super().tabLayoutChange()
+
+        self.movePlusButton()
+    # end tabLayoutChange
+
+    def movePlusButton(self):
+        """Move the plus button to the correct location."""
+        # Find the width of all of the tabs
+        size = sum([self.tabRect(i).width() for i in range(self.count())])
+        # size = 0
+        # for i in range(self.count()):
+        #     size += self.tabRect(i).width()
+
+        # Set the plus button location in a visible area
+        h = self.geometry().top()
+        w = self.width()
+        if size > w: # Show just to the left of the scroll buttons
+            self.plusButton.move(w-54, h)
+        else:
+            self.plusButton.move(size, h)
+
+
 class phtm_dialog(QDialog):
     def __init__(self, title, geometry, central_dialog=None, style="ghost"):
         super().__init__() # set screen size (left, top, width, height
@@ -407,22 +530,6 @@ class phtm_dialog(QDialog):
                 QMenuBar {
                     background-color: rgb(36, 143, 36);
                     color: rgb(217, 217, 217);
-                }
-                QTabWidget::pane {
-                    background-color: rgb(46, 51, 58);
-                    border-style: outset;
-                    border-width: 1px;
-                    border-color: rgb(39, 44, 51);
-                    color: rgb(217, 217, 217);
-                }
-                QTabBar::tab {
-                    background: rgb(39, 44, 51);
-                    border-style: outset;
-                    border-width: 1px;
-                    border-color: rgb(39, 44, 51);
-                    color: rgb(217, 217, 217);
-                    min-width: 8ex;
-                    padding: 2px;
                 }
                 QMenuBar::item:selected {
                     background: rgb(17, 89, 17);

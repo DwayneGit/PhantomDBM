@@ -5,7 +5,8 @@ from PyQt5.QtGui import *
 from Center import center_window
 from Preferences import *
 from DBConnection import *
-import style.style_template as styles
+
+from style.phtm_push_button import phtm_push_button
 
 class preference_body(QDialog):
     def __init__(self, user, log, parent):
@@ -58,13 +59,13 @@ class preference_body(QDialog):
         btnWidget = QWidget()
         btnLayout = QHBoxLayout()
 
-        saveButton = styles.phtm_push_button("Save")
+        saveButton = phtm_push_button("Save")
         saveButton.clicked.connect(self.savePreferences)
         
-        submitButton = styles.phtm_push_button("Submit")
+        submitButton = phtm_push_button("Submit")
         submitButton.clicked.connect(self.submitPreferences)
         
-        cancelButton = styles.phtm_push_button("Cancel")
+        cancelButton = phtm_push_button("Cancel")
         cancelButton.clicked.connect(self.cancelPreferences)
 
         btnLayout.addWidget(saveButton)
@@ -108,7 +109,7 @@ class preference_body(QDialog):
         # items = (self.dbForm.itemAt(i) for i in range(self.dbForm.count())) 
         # for w in range(3, 12, 2):
         #     widget = self.dbForm.itemAt(w).widget()
-        #     if isinstance(widget, styles.phtm_combo_box):
+        #     if isinstance(widget, phtm_combo_box):
         #         # print(widget.currentIndex())
         #         print(widget.currentText())
         #     else:
@@ -190,7 +191,7 @@ class preference_body(QDialog):
         self.clrFlag = False
 
         colLabel = QLabel("Collection: ")
-        colEditBtn = styles.phtm_combo_box()
+        colEditBtn = phtm_combo_box()
 
         colEditBtn.addItems(self.colList)
         index = colEditBtn.findText(self.prefDict['mongodb']['collection'])
@@ -201,7 +202,7 @@ class preference_body(QDialog):
         #------------------------------ database name --------------------------------
        
         dbNameLabel = QLabel("Database Name: ")
-        dbNameBox = styles.phtm_combo_box()
+        dbNameBox = phtm_combo_box()
         dbNameBox.addItems(DatabaseHandler.getDatabaseList(self.prefs.prefDict['mongodb']['host'],self.prefs.prefDict['mongodb']['port']))
         
         index = dbNameBox.findText(self.prefDict['mongodb']['dbname'])
@@ -240,7 +241,7 @@ class preference_body(QDialog):
 
         #------------------------------ reload settings --------------------------------
 
-        reloadBtn = styles.phtm_push_button('Reload')
+        reloadBtn = phtm_push_button('Reload')
         reloadBtn.clicked.connect(self.reloadSettings)
 
         #---------------------------------- add widgets to form
@@ -284,12 +285,12 @@ class preference_body(QDialog):
         password = QLabel(''.join([char*len(self.user.password) for char in '*']))
         form.addRow(passwordLabel, password)
         
-        password = styles.phtm_push_button("Change Password")
+        password = phtm_push_button("Change Password")
         form.addWidget(password)
-        mngAccessBtn = styles.phtm_push_button("Manage Access Levels")
+        mngAccessBtn = phtm_push_button("Manage Access Levels")
         mngAccessBtn.clicked.connect(self.mngAccess)
         form.addWidget(mngAccessBtn)
-        manageDbs = styles.phtm_push_button("Manage Database Access")
+        manageDbs = phtm_push_button("Manage Database Access")
         manageDbs.clicked.connect(self.mngUsers)
         form.addWidget(manageDbs)
 
@@ -304,8 +305,8 @@ class preference_body(QDialog):
             form = QFormLayout()
 
             usrLabel = QLabel("Users: ")
-            usrDropMenu = styles.phtm_combo_box()
-            acsDropMenu = styles.phtm_combo_box()
+            usrDropMenu = phtm_combo_box()
+            acsDropMenu = phtm_combo_box()
             users = User.getUserList(self.prefDict['mongodb']['dbname'])
             #print(users)
             def getAccesses():
@@ -325,10 +326,10 @@ class preference_body(QDialog):
             getAccesses()
             form.addRow(acsLabel, acsDropMenu)
 
-            submitBtn = styles.phtm_push_button("Submit")
+            submitBtn = phtm_push_button("Submit")
             submitBtn.clicked.connect(mngAcessDialog.accept)
 
-            cancelBtn = styles.phtm_push_button("Cancel")
+            cancelBtn = phtm_push_button("Cancel")
             cancelBtn.clicked.connect(mngAcessDialog.reject)
             form.addRow(submitBtn, cancelBtn)
 
@@ -344,8 +345,8 @@ class preference_body(QDialog):
             form = QFormLayout()
 
             usrLabel = QLabel("Users: ")
-            usrDropMenu = styles.phtm_combo_box()
-            acsDropMenu = styles.phtm_combo_box()
+            usrDropMenu = phtm_combo_box()
+            acsDropMenu = phtm_combo_box()
             users = User.getUserList()
             usersdb = User.getUserList(self.prefDict['mongodb']['dbname'])
             #print(users)
@@ -372,10 +373,10 @@ class preference_body(QDialog):
             acsDropMenu.addItems(["Admin","ReadWrite","Monitor"])
             form.addRow(acsLabel, acsDropMenu)
 
-            submitBtn = styles.phtm_push_button("Add")
+            submitBtn = phtm_push_button("Add")
             submitBtn.clicked.connect(mngUsersDialog.accept)
 
-            cancelBtn = styles.phtm_push_button("Cancel")
+            cancelBtn = phtm_push_button("Cancel")
             cancelBtn.clicked.connect(mngUsersDialog.reject)
             form.addRow(submitBtn, cancelBtn)
 

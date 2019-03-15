@@ -3,7 +3,8 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 
 import sys
-import style.style_template as styles
+
+from style.phtm_plain_text_edit import phtm_plain_text_edit
 
 import text_style as text_style
 
@@ -22,7 +23,7 @@ class LineNumberArea(QWidget):
         self.myeditor.lineNumberAreaPaintEvent(event)
 
 
-class phtm_editor(styles.phtm_plain_text_edit):
+class phtm_editor(phtm_plain_text_edit):
     def __init__(self):
         super(phtm_editor, self).__init__()
         self.lineNumberArea = LineNumberArea(self)
@@ -98,14 +99,3 @@ class phtm_editor(styles.phtm_plain_text_edit):
         self.clear()
         self.appendHtml(htmlText)
         text_style.translate_text(htmlText, self)
-
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-
-    txt = phtm_editor()
-    txt.setHtml("[<br>    {\n        \"\": \"\"\n    }\n]")
-        
-    txt.show()
-
-    sys.exit(app.exec_())
-

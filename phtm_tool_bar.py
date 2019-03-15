@@ -6,7 +6,8 @@ from PyQt5.QtWidgets import QToolBar, QAction, QWidget, QSizePolicy, QComboBox
 
 from DBConnection import DatabaseHandler
 
-import style.style_template as styles
+from style.phtm_tool_bar import phtm_tool_bar as ptb
+from style.phtm_combo_box import phtm_combo_box
 
 import run_ctrl as r_ctrl
 import file_ctrl as f_ctrl
@@ -20,7 +21,7 @@ class phtm_tool_bar():
     def setUpToolBar(self):
 
         #------------------ Top Toolbar ----------------------------
-        topTBar = styles.phtm_tool_bar()
+        topTBar = ptb()
         
         tbfile = QAction(QIcon(self.icon_set.import_file),"import",self.mw)
         tbfile.triggered.connect(lambda: f_ctrl.getfile(self.mw))
@@ -43,7 +44,7 @@ class phtm_tool_bar():
         topTBar.addAction(tbstop)
 
         # ----------------- Side Toolbar ---------------------------
-        sideTBar = styles.phtm_tool_bar()
+        sideTBar = ptb()
         tbload = QAction(QIcon(self.icon_set.load_file),"open",self.mw)
         # tbload.triggered.connect()
         sideTBar.addAction(tbload)
@@ -71,7 +72,7 @@ class phtm_tool_bar():
 
         # sideTBar.addWidget(self.mw.addrDropdownMenu)
         
-        self.dbnameMenu = styles.phtm_combo_box()
+        self.dbnameMenu = phtm_combo_box()
         self.dbnameMenu.setFixedSize(dropdownSize)
         self.dbnameMenu.addItems(DatabaseHandler.getDatabaseList(self.mw.dbData['host'], self.mw.dbData['port']))
 
@@ -81,7 +82,7 @@ class phtm_tool_bar():
 
         sideTBar.addWidget(self.dbnameMenu)
         
-        self.collnameMenu = styles.phtm_combo_box()
+        self.collnameMenu = phtm_combo_box()
         self.collnameMenu.setFixedSize(dropdownSize)
         self.collnameMenu.addItems(DatabaseHandler.getCollectionList(self.mw.dbData['host'], self.mw.dbData['port'], self.mw.dbData['dbname']))
         

@@ -17,7 +17,10 @@ from DBConnection import *
 from phtm_tool_bar import phtm_tool_bar, reloadCollectionNames
 from Center import center_window
 
-import style.style_template as styles
+from style.phtm_icons import phtm_icons
+from style.phtm_dialog import phtm_dialog
+from style.phtm_tab_widget import phtm_tab_widget
+from style.phtm_plain_text_edit import phtm_plain_text_edit
 
 from file_ctrl import tmpScriptCleaner
 from phtm_editor import phtm_editor
@@ -43,7 +46,7 @@ class main_window(QMainWindow):
         self.prefs = Preferences('config', prefDict=DefaultGeneralConfig.prefDict, log=self.log) # name of preference file minus json
         self.prefs.loadConfig()
 
-        self.icon_set=styles.phtm_icons()
+        self.icon_set=phtm_icons()
 
         f_ctrl.tmpScriptCleaner(self)
 
@@ -52,7 +55,7 @@ class main_window(QMainWindow):
         self.isRunning = False
         self.isPaused = True
 
-        login = styles.phtm_dialog("Login", QRect(10, 10, 260, 160))
+        login = phtm_dialog("Login", QRect(10, 10, 260, 160))
         login.set_central_dialog(loginScreen(login))
 
         if login.exec_():
@@ -77,7 +80,7 @@ class main_window(QMainWindow):
 
 
         # Add text field
-        self.brd = styles.phtm_plain_text_edit()
+        self.brd = phtm_plain_text_edit()
         self.brd.setReadOnly(True)
         self.brd.insertPlainText("Welcome to Phantom Database Manager (DBM).")
         # self.brd.move(10,10)
@@ -90,8 +93,8 @@ class main_window(QMainWindow):
         self.fileContents.setPlainText("[\n    {\n        \"\": \"\"\n    }\n]")
         self.fileContents.textChanged.connect(self.isChanged)
 
-        self.editor_tabs = QTabWidget()
-        self.editor_tabs.addTab(self.fileContents, "JSON Template")
+        self.editor_tabs = phtm_tab_widget(self)
+        self.editor_tabs.add_editor(self.fileContents, "JSON Template")
 
         self.changed = False
         # check if file is loaded and set flag to use to ask if save necessary before running or closing
@@ -179,7 +182,7 @@ class main_window(QMainWindow):
             self.log.logInfo("Program Ended")
 
     def showPref(self):
-        p = styles.phtm_dialog("Preferences",QRect(10, 10, 350, 475))
+        p = phtm_dialog("Preferences",QRect(10, 10, 350, 475))
         p.set_central_dialog(preference_body(self.user, self.log, p))
         
         # print(self.prefs.prefDict)

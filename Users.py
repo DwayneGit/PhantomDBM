@@ -5,7 +5,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import * 
 from Center import center_window
 
-import style.style_template as styles
+from style.phtm_push_button import phtm_push_button
 
 class User:
     __usrFile = "users.json"
@@ -145,10 +145,10 @@ class loginScreen(QDialog):
         self.dbDropdown = QComboBox()
         # self.dbDropdown.addItems(DatabaseHandler.getDatabaseList('localhost',27017))
 
-        submitBtn = styles.phtm_push_button("Submit")
+        submitBtn = phtm_push_button("Submit")
         submitBtn.clicked.connect(self.login)
 
-        cancelBtn = styles.phtm_push_button("Cancel")
+        cancelBtn = phtm_push_button("Cancel")
         cancelBtn.clicked.connect(self.parent.reject)
 
         formLay.addRow(userLabel, self.userBox)
