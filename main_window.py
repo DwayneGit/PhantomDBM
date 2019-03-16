@@ -14,7 +14,7 @@ from Dialogs import *
 from phtm_menu_bar import phtm_menu_bar
 from Preferences import *
 from DBConnection import *
-from phtm_tool_bar import phtm_tool_bar, reloadCollectionNames
+from main_tool_bar import main_tool_bar, reloadCollectionNames
 from Center import center_window
 
 from style.phtm_icons import phtm_icons
@@ -73,7 +73,7 @@ class main_window(QMainWindow):
         self.progTitle = 'Phantom DBM'
         self.currTitle = self.progTitle
 
-        self.parent.setWindowTitle(self.progTitle)
+        self.setWindowTitle(self.progTitle)
         self.parent.setWindowIcon(QIcon('icons/phantom.png'))
 
         splitter1 = QSplitter(Qt.Horizontal)
@@ -89,12 +89,11 @@ class main_window(QMainWindow):
         self.fileLoaded = True
         self.filePath = None
 
-        self.fileContents = phtm_editor()
-        self.fileContents.setPlainText("[\n    {\n        \"\": \"\"\n    }\n]")
-        self.fileContents.textChanged.connect(self.isChanged)
+        # self.fileContents = phtm_editor()
+        # self.fileContents.setPlainText("[\n    {\n        \"\": \"\"\n    }\n]")
+        # self.fileContents.textChanged.connect(self.isChanged)
 
         self.editor_tabs = phtm_tab_widget(self)
-        self.editor_tabs.add_editor(self.fileContents, "JSON Template")
 
         self.changed = False
         # check if file is loaded and set flag to use to ask if save necessary before running or closing
@@ -113,8 +112,8 @@ class main_window(QMainWindow):
         self.statusBar().addPermanentWidget(self.progressBar)
         self.progressBar.setFixedWidth(200)
 
-        self.phtm_tool_bar = phtm_tool_bar(self, self.icon_set)
-        self.phtm_tool_bar.setUpToolBar()
+        self.main_tool_bar = main_tool_bar(self, self.icon_set)
+        self.main_tool_bar.setUpToolBar()
         
         self.menu_bar = phtm_menu_bar(self)
         self.menu_bar.init_menu_bar()
@@ -123,18 +122,21 @@ class main_window(QMainWindow):
  
         self.show()
 
+    def setWindowTitle(self, text):
+        self.parent.setWindowTitle(text)
+
     def isChanged(self):
         if not self.changed:
             self.changed = True
-            self.parent.setWindowTitle("* " + self.currTitle)
+            self.setWindowTitle("* " + self.currTitle)
 
-    def editWindowTitle(self):
-        # use regex to grab the name of the file from the path and added to title
-        newTitle = self.progTitle
-        fileName = re.split('^(.+)\/([^\/]+)$', self.filePath)
-        newTitle = newTitle +  " - " + fileName[2]
-        self.parent.setWindowTitle(newTitle)
-        self.currTitle = newTitle
+    # def editWindowTitle(self):
+    #     # use regex to grab the name of the file from the path and added to title
+    #     newTitle = self.progTitle
+    #     fileName = re.split('^(.+)\/([^\/]+)$', self.filePath)
+    #     newTitle = newTitle +  " - " + fileName[2]
+    #     self.setWindowTitle(newTitle)
+    #     self.currTitle = newTitle
 
     def setRunState(self, state):
         self.setIsRunning(state)
@@ -144,21 +146,21 @@ class main_window(QMainWindow):
         self.isRunning = state
     
     def setRunBtnIcon(self, icon):
-        self.phtm_tool_bar.tbrun.setIcon(icon)
+        self.main_tool_bar.tbrun.setIcon(icon)
 
     def setRunBtnAction(self, state):
         if state == False:
             self.setRunBtnIcon(QIcon(self.icon_set.play))
-            self.phtm_tool_bar.tbrun.setIconText("run")
+            self.main_tool_bar.tbrun.setIconText("run")
             if main_window.__runs > 0:
-                self.phtm_tool_bar.tbrun.triggered.disconnect()
-            self.phtm_tool_bar.tbrun.triggered.connect(lambda: r_ctrl.runScript(self, main_window.__runs, main_window.__completedRuns))
+                self.main_tool_bar.tbrun.triggered.disconnect()
+            self.main_tool_bar.tbrun.triggered.connect(lambda: r_ctrl.runScript(self, self.editor_tabs.currentWidget(), main_window.__runs, main_window.__completedRuns))
 
         elif state == True: 
             self.setRunBtnIcon(QIcon("icons/pause.png"))
-            self.phtm_tool_bar.tbrun.setIconText("pause")
-            self.phtm_tool_bar.tbrun.triggered.disconnect()
-    #         self.phtm_tool_bar.tbrun.triggered.connect(self.pauseRun)
+            self.main_tool_bar.tbrun.setIconText("pause")
+            self.main_tool_bar.tbrun.triggered.disconnect()
+    #         self.main_tool_bar.tbrun.triggered.connect(self.pauseRun)
 
     #create custom signal to ubdate UI
     @pyqtSlot(str)
@@ -191,16 +193,16 @@ class main_window(QMainWindow):
             self.dbData = self.prefs.prefDict['mongodb']
             
             self.reloadDbNames()
-            reloadCollectionNames(self.phtm_tool_bar, self)
+            reloadCollectionNames(self.main_tool_bar, self)
 
         else:
             pass
 
     def reloadDbNames(self):
-        self.phtm_tool_bar.dbnameMenu.clear()
-        self.phtm_tool_bar.dbnameMenu.addItems(DatabaseHandler.getDatabaseList(self.dbData['host'], self.dbData['port']))
-        index = self.phtm_tool_bar.dbnameMenu.findText(self.prefs.prefDict['mongodb']['dbname'])
-        self.phtm_tool_bar.dbnameMenu.setCurrentIndex(index)
+        self.main_tool_bar.dbnameMenu.clear()
+        self.main_tool_bar.dbnameMenu.addItems(DatabaseHandler.getDatabaseList(self.dbData['host'], self.dbData['port']))
+        index = self.main_tool_bar.dbnameMenu.findText(self.prefs.prefDict['mongodb']['dbname'])
+        self.main_tool_bar.dbnameMenu.setCurrentIndex(index)
 
     # def mousePressEvent(self, evt):
     #     self.__oldPos = evt.globalPos()

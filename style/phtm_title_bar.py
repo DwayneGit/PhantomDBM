@@ -27,6 +27,9 @@ class phtm_title_bar(QToolBar):
             logo_bttn.setDefaultAction(QAction(QIcon("icons/phantom.png"), "PhantomDBM", self))
             logo_bttn.setObjectName("logo")
             self.addWidget(logo_bttn)
+            
+            self.window_title = QLabel()
+            self.addWidget(self.window_title)
 
             spacer = QWidget()
             spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -73,6 +76,9 @@ class phtm_title_bar(QToolBar):
         #print(delta)
         self.window.move(self.window.x() + delta.x(), self.window.y() + delta.y())
         self.window.oldPos = event.globalPos()
+
+    def set_window_title(self, title):
+        self.window_title.setText(title)
 
     def set_style(self):
         if self.style == "ghost":

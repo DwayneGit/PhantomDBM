@@ -1,3 +1,5 @@
+import re
+
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
@@ -12,7 +14,7 @@ class phtm_tab_widget(QTabWidget):
 
         self.parent = parent
 
-        self.tab_set_changed = {}
+        self.tab_data = {}
 
         self.tabButton = QToolButton(self)
         self.tabButton.setText('+')
@@ -21,12 +23,16 @@ class phtm_tab_widget(QTabWidget):
         font = self.tabButton.font()
         font.setBold(True)
 
+        self.add_editor()
+
         self.tabButton.setFont(font)
         self.setCornerWidget(self.tabButton)
         self.tabButton.clicked.connect(self.add_editor)
 
         self.tabBar().currentChanged.connect(lambda index: self.editWindowTitle(index))
-        
+        self.set_style()
+
+    def set_style(self):
         self.setStyleSheet('''
             QTabWidget::pane {
                 background-color: rgb(46, 51, 58);
@@ -65,7 +71,7 @@ class phtm_tab_widget(QTabWidget):
         self.tabCloseRequested.connect(self.close_tab)
 
     def close_tab(self, index):
-        print(self.count())
+        # print(self.count())
         if self.count() <= 1:
             self.add_editor()
             self.removeTab(index)
@@ -73,34 +79,35 @@ class phtm_tab_widget(QTabWidget):
         else:
             self.removeTab(index)
 
-    def add_editor(self, editor=None, name=None):
+    def add_editor(self, editor=None):
 
         if editor:
-            self.addTab(editor, name)
+            # print(editor.file_path)
+            file_name = re.split('^(.+)\/([^\/]+)$', editor.file_path)
+            self.addTab(editor, editor.title)
 
             editor.textChanged.connect( lambda: self.isChanged(self.currentIndex()))
-            self.tab_set_changed[name] = False
 
         else:
             default_tab = phtm_editor()
             default_tab.setPlainText("[\n    {\n        \"\": \"\"\n    }\n]")
             
-            default_name = "JSON Template"
+            default_tab.title = "JSON Template"
 
-            if default_name in self.tab_set_changed:
-                default_name += " " + str(self.default_tab_count)
+            for index in range(self.count()):
+                if default_tab.title == self.tabText(index):
+                    default_tab.title += " " + str(self.default_tab_count)
 
             self.default_tab_count += 1
 
-            self.addTab(default_tab, default_name)
+            self.addTab(default_tab, default_tab.title)
 
-            default_tab.textChanged.connect( lambda x: self.isChanged(self.currentIndex()))
-            self.tab_set_changed[default_name] = False
+            default_tab.textChanged.connect( lambda: self.isChanged(self.currentIndex()))
 
     def isChanged(self, index):
-        if not self.tab_set_changed[self.get_tab_text(self.tabText(index))]:
-            self.tab_set_changed[self.tabText(index)] = True
-            self.setTabText(index,"* " + self.tabText(index))
+        if not self.widget(index).is_changed:
+            self.widget(index).is_changed = True
+            self.setTabText(index, "* " + self.tabText(index))
 
     def editWindowTitle(self, index):
         # use regex to grab the name of the file from the path and added to title
@@ -108,11 +115,18 @@ class phtm_tab_widget(QTabWidget):
         newTitle = self.tabText(index) + " - " + newTitle
         self.parent.setWindowTitle(newTitle)
         self.parent.currTitle = newTitle
-        print(newTitle)
+        # print(newTitle)
 
-    def get_tab_text(self, text):
+    def get_index(self, editor):
+        return self.indexOf(editor)
+
+    def get_tab_text(self, index):
         # print(text[0:2])
-        if text[0:2] == "* ":
+        if self.tabText(index)[0:2] == "* ":
             # print(text[2:])
-            return text[2:]
-        else: return text
+            return self.tabText(index)[2:]
+        else: return self.tabText(index)
+
+    def editTabTitle(self, title):
+        self.setTabText(self.currentIndex(), title)
+        # print(self.tabText(self.currentIndex()))

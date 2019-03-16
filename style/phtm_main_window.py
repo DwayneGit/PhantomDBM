@@ -33,6 +33,9 @@ class phtm_main_window(QMainWindow):
         self.style=style
         self.set_style()
 
+    def setWindowTitle(self, text):
+        self.title_bar.set_window_title(text)
+
     def set_style(self):
         if self.style == "ghost":
             self.setStyleSheet("""

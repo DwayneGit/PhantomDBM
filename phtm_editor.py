@@ -3,6 +3,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 
 import sys
+import re
 
 from style.phtm_plain_text_edit import phtm_plain_text_edit
 
@@ -27,6 +28,10 @@ class phtm_editor(phtm_plain_text_edit):
     def __init__(self):
         super(phtm_editor, self).__init__()
         self.lineNumberArea = LineNumberArea(self)
+
+        self.title = None
+        self.file_path = None
+        self.is_changed = False
 
         self.blockCountChanged.connect(self.updateLineNumberAreaWidth)
         self.updateRequest.connect(self.updateLineNumberArea)
@@ -99,3 +104,17 @@ class phtm_editor(phtm_plain_text_edit):
         self.clear()
         self.appendHtml(htmlText)
         text_style.translate_text(htmlText, self)
+
+    def set_file_path(self, path):
+        self.file_path = path
+
+        file_name = re.split('^(.+)\/([^\/]+)$', path)
+        self.title = file_name[2]
+
+    # def setTabTitle(self, index, title):
+    #     # use regex to grab the name of the file from the path and added to title
+    #     newTitle = self.parent.progTitle
+    #     newTitle = self.tabText(index) + " - " + newTitle
+    #     self.parent.setWindowTitle(newTitle)
+    #     self.parent.currTitle = newTitle
+    #     print(newTitle)

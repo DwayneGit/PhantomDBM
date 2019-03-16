@@ -1,18 +1,20 @@
 import json
+import re
 
 from PyQt5.QtWidgets import QFileDialog
 
 from cleanTmpScript import cleanTmpScripts
+from phtm_editor import phtm_editor
 
 import text_style as text_style
 
 from time import gmtime, strftime
     
-def putfile(main_window):
+def putfile(main_window, curr_tab):
     fname = QFileDialog.getOpenFileName(main_window, 'Open file', 
         'c:\\',"Image files (*.jpg *.gif *.png)")
     
-def getfile(main_window):
+def getfile(main_window, curr_tab):
     dlg = QFileDialog()
     dlg.setFileMode(QFileDialog.AnyFile)
     dlg.setNameFilter("JSON files (*.json)")
@@ -20,47 +22,51 @@ def getfile(main_window):
     
     if dlg.exec_():
         filenames = dlg.selectedFiles()
-        main_window.filePath = filenames[0] # save file path
-        # print(main_window.filePath)
-        main_window.editWindowTitle()
-        
-        main_window.fileContents.blockSignals(True)
-        main_window.fileContents.clear()
-        main_window.fileContents=text_style.translate_text(filenames[0],main_window.fileContents)
-        main_window.changed = False
-        main_window.fileContents.blockSignals(False)
+        file_path = filenames[0] # save file path
+        # print(main_window.file_path)
+        # main_window.editWindowTitle()
 
-def saveScript(main_window):
-    if not main_window.filePath:
-        exportScript(main_window)
+        new_editor= phtm_editor()
+        new_editor.clear()
+        new_editor=text_style.translate_text(filenames[0],new_editor)
+        new_editor.set_file_path(file_path)
+
+        main_window.editor_tabs.add_editor(new_editor)
+
+def saveScript(main_window, curr_tab):
+        
+    if not curr_tab.file_path:
+        exportScript(main_window, curr_tab)
         return
+
     main_window.statusBar().showMessage("Saving File ...")
     # pprint.pprint(re.sub('\'|\n', '', main_window.fileContents.toPlainText()))
-    with open(main_window.filePath, 'w') as outfile:
-        outfile.write(eval(json.dumps(main_window.fileContents.toPlainText(), indent=4)))
-    if main_window.filePath:
-        main_window.editWindowTitle()
-    else:
-        main_window.setWindowTitle(main_window.currTitle)
+    with open(curr_tab.file_path, 'w') as outfile:
+        outfile.write(eval(json.dumps(curr_tab.toPlainText(), indent=4)))
+    
+    if curr_tab.file_path:
+        main_window.editor_tabs.editTabTitle(curr_tab.title)
+    # else:
+    #     main_window.editor_tabs.setTabTitle(main_window.currTitle)
 
-    main_window.changed = False 
+    curr_tab.is_changed = False 
 
-def exportScript(main_window):
+def exportScript(main_window, curr_tab):
     options = QFileDialog.Options()
     options |= QFileDialog.DontUseNativeDialog
     fileName, _ = QFileDialog.getSaveFileName(main_window, "Save File", "", "JSON files (*.json)")
     if fileName:
-        main_window.filePath = fileName
-        saveScript(main_window)
+        curr_tab.file_path = fileName
+        saveScript(main_window, curr_tab)
 
-def tmpScript(main_window, temp = None):
+def tmpScript(main_window, curr_tab, temp = None):
     
     fileName = "tmp/script_"+ strftime("%w%d%m%y_%H%M%S", gmtime()) +".json"
         
     tmpfilePath = fileName
 
     with open(tmpfilePath, 'w') as outfile:
-        outfile.write(eval(json.dumps(main_window.fileContents.toPlainText(), indent=4)))
+        outfile.write(eval(json.dumps(curr_tab.toPlainText(), indent=4)))
     
     return tmpfilePath
 

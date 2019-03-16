@@ -6,13 +6,13 @@ from PyQt5.QtWidgets import QToolBar, QAction, QWidget, QSizePolicy, QComboBox
 
 from DBConnection import DatabaseHandler
 
-from style.phtm_tool_bar import phtm_tool_bar as ptb
+from style.phtm_tool_bar import phtm_tool_bar
 from style.phtm_combo_box import phtm_combo_box
 
 import run_ctrl as r_ctrl
 import file_ctrl as f_ctrl
 
-class phtm_tool_bar():
+class main_tool_bar():
     """ application toolbars class """
     def __init__(self, main_window, icon_set):
         self.mw = main_window
@@ -21,18 +21,18 @@ class phtm_tool_bar():
     def setUpToolBar(self):
 
         #------------------ Top Toolbar ----------------------------
-        topTBar = ptb()
+        topTBar = phtm_tool_bar()
         
         tbfile = QAction(QIcon(self.icon_set.import_file),"import",self.mw)
-        tbfile.triggered.connect(lambda: f_ctrl.getfile(self.mw))
+        tbfile.triggered.connect(lambda: f_ctrl.getfile(self.mw, self.mw.editor_tabs.currentWidget()))
         topTBar.addAction(tbfile)
         
         tbsave = QAction(QIcon(self.icon_set.save),"save",self.mw)
-        tbsave.triggered.connect(lambda: f_ctrl.saveScript(self.mw))
+        tbsave.triggered.connect(lambda: f_ctrl.saveScript(self.mw, self.mw.editor_tabs.currentWidget()))
         topTBar.addAction(tbsave)
             
         tbfiles = QAction(QIcon(self.icon_set.export_file),"export",self.mw)
-        tbfiles.triggered.connect(lambda: f_ctrl.exportScript(self.mw))
+        tbfiles.triggered.connect(lambda: f_ctrl.exportScript(self.mw, self.mw.editor_tabs.currentWidget()))
         topTBar.addAction(tbfiles)
         
         self.tbrun = QAction()
@@ -44,7 +44,7 @@ class phtm_tool_bar():
         topTBar.addAction(tbstop)
 
         # ----------------- Side Toolbar ---------------------------
-        sideTBar = ptb()
+        sideTBar = phtm_tool_bar()
         tbload = QAction(QIcon(self.icon_set.load_file),"open",self.mw)
         # tbload.triggered.connect()
         sideTBar.addAction(tbload)

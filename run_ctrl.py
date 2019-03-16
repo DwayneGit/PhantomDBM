@@ -11,24 +11,24 @@ import file_ctrl as f_ctrl
 runScript:
 run script to load files into the database
 '''
-def runScript(main_window, run_counter, completed_run_counter):
+def runScript(main_window, curr_tab, run_counter, completed_run_counter):
     # make sure file is not deleted before saving
-    file_path = main_window.filePath
+    file_path = curr_tab.file_path
 
-    if main_window.changed:
+    if curr_tab.is_changed:
         save_msg = "Changes made have not been saved.\nWould you like to save before running this script?"
         reply = QMessageBox.question(main_window, 'Message', 
                         save_msg, QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel, QMessageBox.Cancel)
 
         if reply == QMessageBox.Yes:
             if file_path:
-                f_ctrl.saveScript(main_window)
+                f_ctrl.saveScript(main_window, curr_tab)
             else:
-                f_ctrl.exportScript(main_window)
+                f_ctrl.exportScript(main_window, curr_tab)
         elif reply == QMessageBox.Cancel:
             return   
         elif reply == QMessageBox.No:
-            file_path = f_ctrl.tmpScript(main_window)
+            file_path = f_ctrl.tmpScript(main_window, curr_tab)
 
     if file_path is None:
         main_window.appendToBoard("Nothing To Run. Please make changes to the default script or load your own script to run. ")

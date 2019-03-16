@@ -22,7 +22,8 @@ next:
     - api  
     - website  
         github  
-    -  
+    -  ablity to change ui from vertical to horizontal split
+    - add linter and text style
 
 in progress:  
     - tabbed script edit window
