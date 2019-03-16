@@ -1,16 +1,16 @@
 import sys
 
-from PyQt5.QtWidgets import QAction
+from PyQt5.QtWidgets import QAction, QMenuBar
 
 import file_ctrl as f_ctrl
 
-class phtm_menu_bar():
+class phtm_menu_bar(QMenuBar):
     def __init__(self, main_window):
+        super().__init__()
         self.mw = main_window
 
-        self.main_menu = self.mw.menuBar()
+        self.main_menu = self
         self.recentFilesList = None
-
 
     def init_menu_bar(self):
         self.fileMenu()
@@ -23,7 +23,7 @@ class phtm_menu_bar():
         openAction = QAction("Open File", self.mw)
         openAction.setShortcut("Ctrl+O")
         openAction.setStatusTip('Open a Script File')
-        openAction.triggered.connect(lambda: f_ctrl.getfile(self.mw))
+        openAction.triggered.connect(lambda: f_ctrl.getfile(self.mw, self.mw.editor_tabs.currentWidget()))
         fileMenu.addAction(openAction)
         
         openRMenu = fileMenu.addMenu("Open Recent")
@@ -41,7 +41,7 @@ class phtm_menu_bar():
         saveAction = QAction("Save File", self.mw)
         saveAction.setShortcut("Ctrl+S")
         saveAction.setStatusTip('Save Script File')
-        saveAction.triggered.connect(lambda: f_ctrl.saveScript(self.mw))
+        saveAction.triggered.connect(lambda: f_ctrl.saveScript(self.mw, self.mw.editor_tabs.currentWidget()))
 
         exittAction = QAction("Exit", self.mw)
         exittAction.setShortcut("Ctrl+Q")
@@ -56,23 +56,23 @@ class phtm_menu_bar():
     def editMenu(self):
         undoAction = QAction("Undo", self.mw)
         undoAction.setShortcut("Ctrl+Z")
-        undoAction.triggered.connect(self.mw.fileContents.undo)
+        undoAction.triggered.connect(self.mw.editor_tabs.currentWidget().undo)
 
         redoAction = QAction("Redo", self.mw)
         redoAction.setShortcut("Ctrl+Y")
-        redoAction.triggered.connect(self.mw.fileContents.redo)
+        redoAction.triggered.connect(self.mw.editor_tabs.currentWidget().redo)
 
         cutAction = QAction("Cut", self.mw)
         cutAction.setShortcut("Ctrl+X")
-        cutAction.triggered.connect(self.mw.fileContents.cut)
+        cutAction.triggered.connect(self.mw.editor_tabs.currentWidget().cut)
 
         copyAction = QAction("Copy", self.mw)
         copyAction.setShortcut("Ctrl+C")
-        copyAction.triggered.connect(self.mw.fileContents.copy)
+        copyAction.triggered.connect(self.mw.editor_tabs.currentWidget().copy)
 
         pasteAction = QAction("Paste", self.mw)
         pasteAction.setShortcut("Ctrl+V")
-        pasteAction.triggered.connect(self.mw.fileContents.paste)
+        pasteAction.triggered.connect(self.mw.editor_tabs.currentWidget().paste)
 
         findAction = QAction("FInd", self.mw)
         findAction.setShortcut("Ctrl+F")

@@ -4,16 +4,6 @@ add signal to edit ui to get rid of error:
     - Help:  
         https://stackoverflow.com/questions/46693355/pyqt5-typeerror-signal-has-0-arguments-but-1-provided  
 
-done:
-    - run scripts from program with out saving ✓  
-
-testing:
-    - menubar ✓  
-    - logging ✓  
-    - automated instruction scripts  
-        - link element ✓  
-    - seperate files (divide operations)  
-
 next:  
     - integrate mongodb authentication  
     - db authentication <- duplicate  
@@ -30,8 +20,24 @@ next:
         - good for record keeping  
         - is logged.  
     - api  
-    - themes  
     - website  
         github  
-    - tabbed script edit window  
-    - 
+    -  ablity to change ui from vertical to horizontal split
+    - add linter and text style
+
+in progress:  
+    - tabbed script edit window
+        - https://stackoverflow.com/questions/19975137/how-can-i-add-a-new-tab-button-next-to-the-tabs-of-a-qmdiarea-in-tabbed-view-m  
+        - https://stackoverflow.com/questions/22616446/add-plus-button-to-tabwidget-pyqt4  
+        - edit so tab text changes back after save and the rest of the code interactes with the tab widget  
+
+testing:  
+    - menubar ✓  
+    - logging ✓  
+    - automated instruction scripts  
+        - link element ✓  
+    - seperate files (divide operations)  
+    - themes   
+
+done:  
+    - run scripts from program with out saving ✓  
