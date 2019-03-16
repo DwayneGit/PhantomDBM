@@ -22,11 +22,11 @@ next:
     - api  
     - website  
         github  
-    -  ablity to change ui from vertical to horizontal split
-    - add linter and text style
+    - ablity to change ui from vertical to horizontal split  
+    - add linter and text style  
 
 in progress:  
-    - tabbed script edit window
+    - tabbed script edit window  
         - https://stackoverflow.com/questions/19975137/how-can-i-add-a-new-tab-button-next-to-the-tabs-of-a-qmdiarea-in-tabbed-view-m  
         - https://stackoverflow.com/questions/22616446/add-plus-button-to-tabwidget-pyqt4  
         - edit so tab text changes back after save and the rest of the code interactes with the tab widget  
