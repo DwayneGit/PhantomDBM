@@ -23,8 +23,6 @@ class phtm_tab_widget(QTabWidget):
         font = self.tabButton.font()
         font.setBold(True)
 
-        self.add_editor()
-
         self.tabButton.setFont(font)
         self.setCornerWidget(self.tabButton)
         self.tabButton.clicked.connect(self.add_editor)
@@ -65,9 +63,6 @@ class phtm_tab_widget(QTabWidget):
             }
         ''')
 
-        self.setMovable(True)
-        self.setTabsClosable(True)
-
         self.tabCloseRequested.connect(self.close_tab)
 
     def close_tab(self, index):
@@ -87,6 +82,7 @@ class phtm_tab_widget(QTabWidget):
             self.addTab(editor, editor.title)
 
             editor.textChanged.connect( lambda: self.isChanged(self.currentIndex()))
+            # self.editWindowTitle(self.currentIndex())
 
         else:
             default_tab = phtm_editor()
@@ -103,6 +99,7 @@ class phtm_tab_widget(QTabWidget):
             self.addTab(default_tab, default_tab.title)
 
             default_tab.textChanged.connect( lambda: self.isChanged(self.currentIndex()))
+            # self.editWindowTitle(self.currentIndex())
 
     def isChanged(self, index):
         if not self.widget(index).is_changed:
@@ -111,9 +108,10 @@ class phtm_tab_widget(QTabWidget):
 
     def editWindowTitle(self, index):
         # use regex to grab the name of the file from the path and added to title
-        newTitle = self.parent.progTitle
+        newTitle = self.parent.parent.getPermanentTitle()
+        # print(self.tabText(index))
         newTitle = self.tabText(index) + " - " + newTitle
-        self.parent.setWindowTitle(newTitle)
+        self.parent.set_window_title(newTitle)
         self.parent.currTitle = newTitle
         # print(newTitle)
 

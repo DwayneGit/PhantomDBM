@@ -486,7 +486,7 @@ class phtm_dialog(QDialog):
         self.setAttribute(Qt.WA_NoSystemBackground)
         self.setAttribute(Qt.WA_TranslucentBackground)
 
-        self.setWindowTitle(title)
+        self.set_window_title(title)
         self.setWindowModality(Qt.ApplicationModal)
 
         self.__central_dialog = central_dialog

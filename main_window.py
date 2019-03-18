@@ -55,7 +55,7 @@ class main_window(QMainWindow):
         self.isRunning = False
         self.isPaused = True
 
-        login = phtm_dialog("Login", QRect(10, 10, 260, 160))
+        login = phtm_dialog("Login", QRect(10, 10, 260, 160), self)
         login.set_central_dialog(loginScreen(login))
 
         if login.exec_():
@@ -70,10 +70,8 @@ class main_window(QMainWindow):
         '''
         initiates application UI
 		'''
-        self.progTitle = 'Phantom DBM'
-        self.currTitle = self.progTitle
+        self.currTitle = self.parent.window_title
 
-        self.setWindowTitle(self.progTitle)
         self.parent.setWindowIcon(QIcon('icons/phantom.png'))
 
         splitter1 = QSplitter(Qt.Horizontal)
@@ -94,6 +92,10 @@ class main_window(QMainWindow):
         # self.fileContents.textChanged.connect(self.isChanged)
 
         self.editor_tabs = phtm_tab_widget(self)
+        self.editor_tabs.add_editor()
+
+        self.editor_tabs.setMovable(True)
+        self.editor_tabs.setTabsClosable(True)
 
         self.changed = False
         # check if file is loaded and set flag to use to ask if save necessary before running or closing
@@ -122,20 +124,23 @@ class main_window(QMainWindow):
  
         self.show()
 
-    def setWindowTitle(self, text):
-        self.parent.setWindowTitle(text)
+    def set_window_title(self, text):
+        self.parent.set_window_title(text)
+    
+    def getWindowTitle(self):
+        return self.parent.getWindowTitle()
 
     def isChanged(self):
         if not self.changed:
             self.changed = True
-            self.setWindowTitle("* " + self.currTitle)
+            self.set_window_title("* " + self.currTitle)
 
     # def editWindowTitle(self):
     #     # use regex to grab the name of the file from the path and added to title
-    #     newTitle = self.progTitle
+    #     newTitle = self.window_title
     #     fileName = re.split('^(.+)\/([^\/]+)$', self.filePath)
     #     newTitle = newTitle +  " - " + fileName[2]
-    #     self.setWindowTitle(newTitle)
+    #     self.set_window_title(newTitle)
     #     self.currTitle = newTitle
 
     def setRunState(self, state):
@@ -184,7 +189,7 @@ class main_window(QMainWindow):
             self.log.logInfo("Program Ended")
 
     def showPref(self):
-        p = phtm_dialog("Preferences",QRect(10, 10, 350, 475))
+        p = phtm_dialog("Preferences",QRect(10, 10, 350, 475), self)
         p.set_central_dialog(preference_body(self.user, self.log, p))
         
         # print(self.prefs.prefDict)

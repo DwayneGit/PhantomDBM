@@ -7,7 +7,7 @@ from style.phtm_title_bar import phtm_title_bar
 from Center import center_window
 
 class phtm_dialog(QDialog):
-    def __init__(self, title, geometry, central_dialog=None, style="ghost"):
+    def __init__(self, title, geometry, parent, central_dialog=None, style="ghost"):
         super().__init__() # set screen size (left, top, width, height
 
         # if not isinstance(central_dialog, QDialog):
@@ -16,12 +16,15 @@ class phtm_dialog(QDialog):
         self.setAttribute(Qt.WA_NoSystemBackground)
         self.setAttribute(Qt.WA_TranslucentBackground)
 
-        self.setWindowTitle(title)
         self.setWindowModality(Qt.ApplicationModal)
 
         self.__central_dialog = central_dialog
+        
+        self.window_title = title
 
         self.style=style
+
+        self.parent = parent
 
         self.oldPos = self.pos()
 
@@ -40,7 +43,18 @@ class phtm_dialog(QDialog):
         self.setGeometry(geometry)
         self.move(center_window(self))
 
+        self.set_window_title(self.window_title)
         self.set_style()
+
+    def set_window_title(self, text):
+        self.title_bar.set_window_title(text)
+        self.setWindowTitle(text)
+    
+    def getWindowTitle(self):
+        return self.title_bar.window_title
+
+    def getPermanentTitle(self):
+        return self.window_title
 
     def set_style(self):
         if self.style == "ghost":

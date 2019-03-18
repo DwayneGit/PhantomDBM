@@ -15,6 +15,9 @@ class phtm_main_window(QMainWindow):
 
         self.setWindowFlags(Qt.FramelessWindowHint)
         
+        self.program_title = "Phantom DBM"
+        self.window_title = ''
+
         script_dir = os.path.dirname(os.path.realpath(__file__))
         self.setWindowIcon(QIcon(script_dir + os.path.sep + 'icons/phantom.png'))
 
@@ -26,15 +29,24 @@ class phtm_main_window(QMainWindow):
         self.title_bar = phtm_title_bar(self, True)
         self.title_bar.generate_title_bar()
 
+        self.set_window_title(self.program_title)
+
         self.addToolBar(Qt.TopToolBarArea, self.title_bar)
 
         self.setGeometry(geometry) # set screen size (left, top, width, height
         self.move(center_window(self))
         self.style=style
         self.set_style()
+    
+    def getPermanentTitle(self):
+        return self.program_title
 
-    def setWindowTitle(self, text):
+    def getWindowTitle(self):
+        return self.title_bar.window_title
+
+    def set_window_title(self, text):
         self.title_bar.set_window_title(text)
+        self.setWindowTitle(text)
 
     def set_style(self):
         if self.style == "ghost":

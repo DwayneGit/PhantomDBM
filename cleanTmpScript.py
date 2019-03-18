@@ -16,6 +16,10 @@ class cleanTmpScripts(QThread):
     def clean(self):
         num_deleted = 0
         self.log.logInfo(str(self.thread_id) + ": Cleaning temporary scripts...")
+
+        if not os.path.isdir('./tmp'):
+            os.mkdir("tmp") # create folder fo temporary scripts
+
         for file in os.listdir("tmp"):
             if file.endswith(".json"):
                 dtime = re.match(r"(script\_)(\w+)\.(\w+)", file) # get time created from file name

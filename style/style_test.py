@@ -146,7 +146,7 @@ class phtm_dialog(QDialog):
 
 app = QApplication(sys.argv) #ignore()
 window = phtm_main_window()
-window.setWindowTitle("Hello World")
+window.set_window_title("Hello World")
 window.show()
 
 # [Add widgets to the widget]

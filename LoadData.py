@@ -24,7 +24,7 @@ class FileDialogDemo(QDialog):
       self.contents = QTextEdit()
       layout.addWidget(self.contents)
       self.setLayout(layout)
-      self.setWindowTitle("File Dialog demo")
+      self.set_window_title("File Dialog demo")
 
       self.setGeometry(10,10,400, 550) 
       self.move(center_window(self))

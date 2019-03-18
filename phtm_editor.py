@@ -115,6 +115,6 @@ class phtm_editor(phtm_plain_text_edit):
     #     # use regex to grab the name of the file from the path and added to title
     #     newTitle = self.parent.progTitle
     #     newTitle = self.tabText(index) + " - " + newTitle
-    #     self.parent.setWindowTitle(newTitle)
+    #     self.parent.set_window_title(newTitle)
     #     self.parent.currTitle = newTitle
     #     print(newTitle)

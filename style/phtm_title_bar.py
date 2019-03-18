@@ -9,9 +9,11 @@ class phtm_title_bar(QToolBar):
         super().__init__()
         self.style=style
         self.window = window
+        self.window_title = ""
         self.is_max = False
         self.is_main_window = is_main_window
         self.set_style()
+        self.window_title = ""
 
     def generate_title_bar(self):
 
@@ -51,6 +53,10 @@ class phtm_title_bar(QToolBar):
         else:
             spacer = QWidget()
             spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+            
+            self.window_title = QLabel()
+            self.addWidget(self.window_title)
+
             self.addWidget(spacer)
 
             exit_bttn.defaultAction().triggered.connect(self.window.close)

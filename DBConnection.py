@@ -62,9 +62,12 @@ class DatabaseHandler():
 
     @staticmethod
     def getCollectionList(host, port, dbname):
+        if not dbname or dbname=="":
+            return 
         client = MongoClient(host=host, port=port, document_class=OrderedDict)
         db = client[dbname]
-
+        # print(db.list_collection_names())
+        # print()
         return db.list_collection_names()
 
     def __init__(self, dbData, log, authentication=None):

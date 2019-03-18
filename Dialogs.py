@@ -7,6 +7,8 @@ from Preferences import *
 from DBConnection import *
 
 from style.phtm_push_button import phtm_push_button
+from style.phtm_combo_box import phtm_combo_box
+from style.phtm_tab_widget import phtm_tab_widget
 
 class preference_body(QDialog):
     def __init__(self, user, log, parent):
@@ -15,6 +17,8 @@ class preference_body(QDialog):
         Initialize the window
         '''
         
+        self.prefDict = parent.parent.dbData
+        print(self.prefDict)
         self.user = user
         self.svd = False
         self.log = log
@@ -32,8 +36,19 @@ class preference_body(QDialog):
            
         self.colList = self.getListOfCollections()
 
+    def getWindowTitle(self):
+        return self.parent.getWindowTitle()
+
+    def set_window_title(self, text):
+        self.parent.set_window_title(text)
+
     def getListOfCollections(self):
+        
+        if not self.prefDict['mongodb']['dbname'] or self.prefDict['mongodb']['dbname']=="":
+            return []
+
         return DatabaseHandler.getCollectionList(self.prefDict['mongodb']['host'], self.prefDict['mongodb']['port'], self.prefDict['mongodb']['dbname'])
+
 
     def initUI(self):
         #Window initial size
@@ -42,7 +57,7 @@ class preference_body(QDialog):
 
         vBox = QVBoxLayout()
 
-        tabW = QTabWidget(self)
+        tabW = phtm_tab_widget(self)
         tabW.setTabPosition(QTabWidget.North)
 
         tabW.addTab(self.databaseTab(),"Database")
