@@ -5,6 +5,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 
 from phtm_editor import phtm_editor
+from style.phtm_main_window import phtm_main_window
 
 class phtm_tab_widget(QTabWidget):
     def __init__(self, parent=None):
@@ -16,16 +17,18 @@ class phtm_tab_widget(QTabWidget):
 
         self.tab_data = {}
 
-        self.tabButton = QToolButton(self)
-        self.tabButton.setText('+')
-        self.tabButton.setObjectName("tab_button")
+        if isinstance(parent, QMainWindow):
 
-        font = self.tabButton.font()
-        font.setBold(True)
+            self.tabButton = QToolButton(self)
+            self.tabButton.setText('+')
+            self.tabButton.setObjectName("tab_button")
 
-        self.tabButton.setFont(font)
-        self.setCornerWidget(self.tabButton)
-        self.tabButton.clicked.connect(self.add_editor)
+            font = self.tabButton.font()
+            font.setBold(True)
+            
+            self.tabButton.setFont(font)
+            self.setCornerWidget(self.tabButton)
+            self.tabButton.clicked.connect(self.add_editor)
 
         self.tabBar().currentChanged.connect(lambda index: self.editWindowTitle(index))
         self.set_style()
