@@ -3,11 +3,16 @@ import re
 import os
 import bson
 import requests
+
+
+
 from Center import center_window
 from Preferences import *
 from numbers import Number
+
 from pymongo import MongoClient
 from pymongo import errors as pyErrs
+
 from collections import OrderedDict
 
 class APIHandler():
@@ -57,18 +62,28 @@ class DatabaseHandler():
 
     @staticmethod
     def getDatabaseList(host, port):
-        c = MongoClient(host, port)
-        return c.database_names()
+        client = MongoClient(host, port)
+        try:
+            dbn = client.database_names()
+        except pyErrs.ServerSelectionTimeoutError as err:
+            print("Connection refused @ " + host + ":" + str(port))
+            dbn = []
+        return dbn
 
     @staticmethod
     def getCollectionList(host, port, dbname):
         if not dbname or dbname=="":
             return 
         client = MongoClient(host=host, port=port, document_class=OrderedDict)
-        db = client[dbname]
+        try:
+            db = client[dbname]
+            coln = db.list_collection_names()
+        except pyErrs.ServerSelectionTimeoutError as err:
+            print("Connection refused @ " + host + ":" + str(port) + " Database: " + dbname)
+            coln = []
         # print(db.list_collection_names())
         # print()
-        return db.list_collection_names()
+        return coln
 
     def __init__(self, dbData, log, authentication=None):
         self.log = log
