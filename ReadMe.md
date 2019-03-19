@@ -22,7 +22,9 @@ next:
         - implamentation:  
             - create file type that holds all the seperate json list (files) time stamped with user who uploaded  
             - ability to export individual json file with in cluster  
-            - have more secure remote option service
+            - have more secure remote option service  
+        - https://gamedevelopment.tutsplus.com/tutorials/create-custom-binary-file-formats-for-your-games-data--gamedev-206  
+        
     - api  
     - website  
         github  
