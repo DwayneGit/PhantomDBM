@@ -67,6 +67,7 @@ class DatabaseHandler():
             dbn = client.database_names()
         except pyErrs.ServerSelectionTimeoutError as err:
             print("Connection refused @ " + host + ":" + str(port))
+            #log err
             dbn = []
         return dbn
 
@@ -80,9 +81,8 @@ class DatabaseHandler():
             coln = db.list_collection_names()
         except pyErrs.ServerSelectionTimeoutError as err:
             print("Connection refused @ " + host + ":" + str(port) + " Database: " + dbname)
+            #log err
             coln = []
-        # print(db.list_collection_names())
-        # print()
         return coln
 
     def __init__(self, dbData, log, authentication=None):

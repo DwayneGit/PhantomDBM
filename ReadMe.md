@@ -14,16 +14,24 @@ next:
         - start off with xml then create own markup language  
         + validation element  
         +    
-    - script grouping  
+    - script grouping (clustering)  
         - grouping scripts into a folder for data compiled over time rather than updating  
           the same script everytime you need to add data  
         - good for record keeping  
         - is logged.  
+        - implamentation:  
+            - create file type that holds all the seperate json list (files) time stamped with user who uploaded  
+            - ability to export individual json file with in cluster  
+            - have more secure remote option service
     - api  
     - website  
         github  
     - ablity to change ui from vertical to horizontal split  
     - add linter and text style  
+    - add database setting combobox that has most recent setting and creates settings  
+        - implamentation:  
+            - add comboxbox  
+            - add setting button  (or have as option in combobox)  
 
 in progress:  
     - tabbed script edit window  
