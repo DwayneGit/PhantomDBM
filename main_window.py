@@ -22,6 +22,9 @@ from style.phtm_dialog import phtm_dialog
 from style.phtm_tab_widget import phtm_tab_widget
 from style.phtm_plain_text_edit import phtm_plain_text_edit
 
+from file.phm_file_handler import phm_file_handler
+from file.json_script import json_script
+
 from file_ctrl import tmpScriptCleaner
 from phtm_editor import phtm_editor
 import run_ctrl as r_ctrl
@@ -42,6 +45,8 @@ class main_window(QMainWindow):
 
         self.log = phtm_logger()
         self.log.logInfo("Program Started.")
+
+        self.__blank_cluster = phm_file_handler()
 
         self.prefs = Preferences('config', prefDict=DefaultGeneralConfig.prefDict, log=self.log) # name of preference file minus json
         self.prefs.loadConfig()
@@ -189,7 +194,7 @@ class main_window(QMainWindow):
             self.log.logInfo("Program Ended")
 
     def showPref(self):
-        p = phtm_dialog("Preferences",QRect(10, 10, 350, 475), self)
+        p = phtm_dialog("Preferences", QRect(10, 10, 350, 475), self)
         p.set_central_dialog(preference_body(self.user, self.log, p))
         
         # print(self.prefs.prefDict)

@@ -18,14 +18,14 @@ class phm_file_handler():
     def load(file_name):
         return pickle.load( open( file_name + ".phm", "rb" ) )
 
-    def __init__(self, dbData, creator=None, group=None, access_level=None):
+    def __init__(self, db_handler, creator=None, group=None, access_level=None):
         
         current_date_time = datetime.now()
 
         self.__date_time_created = current_date_time
         self.__date_time_modified = current_date_time
 
-        self.__dbData=dbData
+        self.__db_handler=db_handler
 
         self.__creator = creator
         self.__group = group
@@ -39,14 +39,17 @@ class phm_file_handler():
         self.__scripts = OrderedDict()
 
 #------------------------- script methods --------------------------
-    def add_script(self, script, name, creator=None):
+    def add_script(self, script, name=None, creator=None):
         if hash(name) in self.__scripts:
             print("Error: script name already exist in this ____(cluster)")
-            return
+            return False
 
-        new_script = script(script, name, creator)
+        new_script = json_script(script, creator)
+
         self.__scripts[hash(name)]["modified_by"] = [creator]
         self.__scripts[hash(name)]["script"] = new_script
+
+        return new_script
 
     def get_script(self, name):
         if hash(name) in self.__scripts:
@@ -62,8 +65,11 @@ class phm_file_handler():
         json.dump(self.__scripts[hash(name)]["script"], dest)
 
 #---------------------------- Database Methods ------------------------------
-    def get_database_data(self, user=None):
-        return self.__dbData
+    def get_db_handler(self, user=None):
+        return self.__db_handler
+
+    def set_db_handler(self, handler, user=None):
+        self.__db_handler = handler
             
 #---------------------------- Access Functions ------------------------------
 

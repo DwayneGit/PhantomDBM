@@ -6,6 +6,7 @@ import sys
 import re
 
 from style.phtm_plain_text_edit import phtm_plain_text_edit
+from file.json_script import json_script
 
 import text_style as text_style
 
@@ -25,13 +26,15 @@ class LineNumberArea(QWidget):
 
 
 class phtm_editor(phtm_plain_text_edit):
-    def __init__(self):
+    def __init__(self, script=None):
         super(phtm_editor, self).__init__()
         self.lineNumberArea = LineNumberArea(self)
 
         self.title = None
         self.file_path = None
         self.is_changed = False
+
+        self.__curr_script = script
 
         self.blockCountChanged.connect(self.updateLineNumberAreaWidth)
         self.updateRequest.connect(self.updateLineNumberArea)
@@ -40,6 +43,12 @@ class phtm_editor(phtm_plain_text_edit):
         self.updateLineNumberAreaWidth(0)
 
         self.lineNumberAreaWidth = (3 + self.fontMetrics().width('9') * 4) + 5
+    
+    def set_curr_script(self, script):
+        self.__curr_script = script
+
+    def get_curr_script(self)
+        return self.__curr_script
 
     def updateLineNumberAreaWidth(self, _):
         self.setViewportMargins((3 + self.fontMetrics().width('9') * 4) + 5, 0, 0, 0)

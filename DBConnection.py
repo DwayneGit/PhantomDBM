@@ -4,8 +4,6 @@ import os
 import bson
 import requests
 
-
-
 from Center import center_window
 from Preferences import *
 from numbers import Number
@@ -23,7 +21,7 @@ class APIHandler():
         self.apiURI = apiData['uri']
         self.fLimit = apiData['tableSize']
         self.model = None
-        #for docs from all collections in db#self.mDbDocs = [[0 for x in range(0)] for y in range (len(self.mDbCollections))] # creates a matrix of with len(self.mDbCollections) number of empty lists
+        #for docs from all collections in db#self.mDbDocs = [[0 for x in range(0)] for y in range (len(self.__db_collections))] # creates a matrix of with len(self.__db_collections) number of empty lists
 
         # self.mDbDocs = []
         #print(self.mDbDocs)
@@ -64,7 +62,7 @@ class DatabaseHandler():
     def getDatabaseList(host, port):
         client = MongoClient(host, port)
         try:
-            dbn = client.database_names()
+            dbn = client.__db_names()
         except pyErrs.ServerSelectionTimeoutError as err:
             print("Connection refused @ " + host + ":" + str(port))
             #log err
@@ -85,27 +83,45 @@ class DatabaseHandler():
             coln = []
         return coln
 
-    def __init__(self, dbData, log, authentication=None):
+    def __init__(self, db_data, log, authentication=None):
         self.log = log
 
-        self.mDbName = dbData['dbname']
-        self.mDbPortNum = dbData['port']
-        self.mDbCollection = dbData['collection']
-        self.mDbHost = dbData['host']
-        self.fLimit = dbData['tableSize']
+        self.__db_name = db_data['dbname']
+        self.__db_port_number = db_data['port']
+        self.__db_collection = db_data['collection']
+        self.__db_host = db_data['host']
+        #self.fLimit = db_data['tableSize']
 
         self.client = None
         self.auth = authentication
 
-        self.dbConfig = dbData
+        self.dbConfig = db_data
         
         self.model = None
         # self.fSkip = findSkip
-        #for docs from all collections in db#self.mDbDocs = [[0 for x in range(0)] for y in range (len(self.mDbCollections))] # creates a matrix of with len(self.mDbCollections) number of empty lists
+        #for docs from all collections in db#self.mDbDocs = [[0 for x in range(0)] for y in range (len(self.__db_collections))] # creates a matrix of with len(self.__db_collections) number of empty lists
 
         self.mDbDocs = []
         #print(self.mDbDocs)
         self.connectToDatabase()
+
+    def get_db_name(self):
+        return self.__db_name
+    def get_db_port_number(self):
+        return self.__db_port_number
+    def get_db_collection(self):
+        return self.__db_collection
+    def get_db_host(self):
+        return self.__db_host
+
+    def set_db_name(self, name):
+        self.__db_name = name
+    def set_db_port_number(self, port_number):
+        self.__db_port_number = port_number
+    def set_db_collection(self, collection):
+        self.__db_collection = collection
+    def set_db_host(self, host):
+        self.__db_host = host
 
     def serverStatus(self):
         max_sev_sel_delay = 2
@@ -114,7 +130,7 @@ class DatabaseHandler():
 
         elif self.auth and (self.auth.username and self.auth.password):
             try:
-                self.client = MongoClient(host=self.mDbHost, port=self.mDbPortNum,
+                self.client = MongoClient(host=self.__db_host, port=self.__db_port_number,
                                           document_class=OrderedDict, serverSelectionTimeoutMS=max_sev_sel_delay,
                                           username=self.auth.username, password=self.auth.password,
                                           authSource=self.auth.source, authMechanism=self.auth.mechanism)
@@ -127,7 +143,7 @@ class DatabaseHandler():
 
         else:
             try:
-                self.client = MongoClient(host=self.mDbHost, port=self.mDbPortNum,
+                self.client = MongoClient(host=self.__db_host, port=self.__db_port_number,
                                           document_class=OrderedDict, serverSelectionTimeoutMS=max_sev_sel_delay)
 
                 # The ismaster command is cheap and does not require auth.
@@ -145,13 +161,13 @@ class DatabaseHandler():
 
         self.collects = []
 
-        self.db = self.client[self.mDbName]
+        self.db = self.client[self.__db_name]
         #print(self.db.list_collection_names())
         for col in self.db.list_collections():
             self.collects.append(col["name"])
 
-        # if not self.mDbCollection == None:
-        #     docs = self.db[self.mDbCollection]
+        # if not self.__db_collection == None:
+        #     docs = self.db[self.__db_collection]
         #     #print(docs)
         #     for doc in docs.find({"_id":"__Model__"}):
         #         self.model = doc
@@ -184,91 +200,30 @@ class DatabaseHandler():
         #             self.errMsgs(0)
         #             return False
         try:
-            self.db[self.mDbCollection].insert_one(document)
+            self.db[self.__db_collection].insert_one(document)
         except:
             self.errMsgs(-1)
             return False
 
         return True
 
-    # def isRightType(self, obj, tpe):
-    #     #print(obj)
-    #     if re.search(r"\[.*\]",tpe) and isinstance(obj,list):
-    #         #elements = re.split(r",|\s,|;|\s;", obj)
-    #         for ele in obj:
-    #             if isinstance(ele, str):
-    #                 if not re.search(r"Str",tpe):
-    #                     return False
-    #             elif isinstance(ele, bool): #bool is subclass of int so print first so bool wont be mistaken for ints
-    #                 if not re.search(r"Bool",tpe):
-    #                     return False
-    #             elif isinstance(ele, (int, float)):
-    #                 if not re.search(r"Num",tpe):
-    #                     return False
-
-    #         return True
-
-    #     elif not re.search(r"\[.*\]",tpe) and isinstance(obj,list):
-    #         return False
-
-    #     else:
-    #         if obj == None:
-    #             return True
-    #         elif isinstance(obj, str):
-    #             if re.search(r"Str",tpe):
-    #                 return True
-    #         elif isinstance(obj, bool):
-    #             if re.search(r"Bool",tpe):
-    #                 return True
-    #         elif isinstance(obj, (int, float)):
-    #             if re.search(r"Num",tpe):
-    #                 return True
-
-    #     return False
-                
-    # def updateDoc(self, filt, update):
-    #     if self.model:
-
-    #         #print(next(iter(update.values())))
-    #         #print(self.model[next(iter(update.keys()))])
-    #         if not self.isRightType(next(iter(update.values())), self.model[next(iter(update.keys()))]) and not( next(iter(update.keys())) == "_id"):
-    #             self.errMsgs(0)
-    #             return False
-
-    #     try:
-    #         self.db[self.mDbCollection].update_one(filt,{'$set':update})
-            
-    #     except:
-    #         self.errMsgs(-1)
-    #         return False
-
-    #     return True
-
     def findDoc(self, **search_data):
         # self.log.logInfo("Info to find " + search_data['criteria'])
-        if search_data['db_name']:
-            db = self.client[search_data['db_name']]
+        if search_data['__db_name']:
+            db = self.client[search_data['__db_name']]
         else:
             db = self.db
 
         if search_data['collection_name']:
             docs = db[search_data['collection_name']]
         else:
-            docs = db[self.mDbCollection]
+            docs = db[self.__db_collection]
 
         results = []
-
-        # if self.model:
-        #     self.mDbDocs.append(OrderedDict(self.model))
 
         for doc in docs.find(search_data['criteria']):
             results.append(OrderedDict(doc))
 
-        
-        # if (self.model and len(self.mDbDocs) < 2) or (not self.model and len(self.mDbDocs) < 0):
-        #     self.errMsgs(3)
-        #     return False
-        
         if len(results) > 1:
             return results
         elif len(results) == 1:
@@ -279,10 +234,10 @@ class DatabaseHandler():
 
     # def removeDoc(self, document_id):
     #     docIdQuery = dict(OrderedDict(document_id))
-    #     self.db[self.mDbCollection].delete_one(docIdQuery)
+    #     self.db[self.__db_collection].delete_one(docIdQuery)
 
     # def reload(self):
-    #     docs = self.db[self.mDbCollection]
+    #     docs = self.db[self.__db_collection]
     #     self.mDbDocs = []
         
     #     if self.model:
@@ -298,21 +253,3 @@ class DatabaseHandler():
 
     # def dropCollection(self, collectionName):
     #     self.db.drop_collection(collectionName)
-
-    def errMsgs(self, code):
-        msg = None
-        if code == -1:
-            self.log.logError('Error inserting document')
-            return
-
-        elif code == 0: msg = "One or more fields have an invalid type.\nPlease check that you have followed the model."
-        elif code == 2: msg = "Entry cannot be completely empty."
-        elif code == 3: msg = "No results found."
-            
-        errMsg = QMessageBox()
-        errMsg.setText(msg)
-        errMsg.setStandardButtons(QMessageBox.Ok)
-        errMsg.buttonClicked.connect(errMsg.close)
-        errMsg.exec_()
-        return
-
