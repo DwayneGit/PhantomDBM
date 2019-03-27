@@ -22,7 +22,7 @@ from style.phtm_dialog import phtm_dialog
 from style.phtm_tab_widget import phtm_tab_widget
 from style.phtm_plain_text_edit import phtm_plain_text_edit
 
-from file.phtm_file_handler import phtm_file_handler
+from file.phm_file_handler import phm_file_handler
 from phtm_editor import phtm_editor
 from phtm_editor_widget import phtm_editor_widget
 from file.json_script import json_script
@@ -47,7 +47,7 @@ class main_window(QMainWindow):
         self.log = phtm_logger()
         self.log.logInfo("Program Started.")
 
-        self.__blank_cluster = phtm_file_handler()
+        self.__blank_cluster = phm_file_handler()
 
         self.prefs = Preferences('config', prefDict=DefaultGeneralConfig.prefDict, log=self.log) # name of preference file minus json
         self.prefs.loadConfig()

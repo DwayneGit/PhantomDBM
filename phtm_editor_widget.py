@@ -3,6 +3,8 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 
 from datetime import datetime
+from file.phm_file_handler import phm_file_handler
+from file.json_script import json_script
 
 from phtm_editor import phtm_editor
 from style.phtm_tab_widget import phtm_tab_widget
@@ -12,6 +14,7 @@ class phtm_editor_widget(QWidget):
         super().__init__()
 
         self.parent = parent
+        self.cluster = phm_file_handler()
 
         self.__layout = QHBoxLayout()
         self.__layout.setContentsMargins(0,0,0,0)
@@ -61,7 +64,14 @@ class phtm_editor_widget(QWidget):
         self.add_script_child(self.__tree_root, "Hello", "world")
 
     def __open_script(self, tree_item):
+        #self.cluster.get_phm_scripts()[hash(tree_item.text(0))] # load double clicked script int self.__editor_tabs
         print("Opening Json Script...")
+
+    def load_cluster(self, file_path):
+        self.cluster.load(file_path)
+
+        for key, value in self.cluster.get_phm_scripts():
+            self.add_script_child(self.__tree_root, value["script"].get_script_name(), str(value["script"].get_time_modified()))
 
     def add_script_root(self, name="New Cluster", description=str(datetime.now())):
         tree_item = QTreeWidgetItem(self.__script_tree)
