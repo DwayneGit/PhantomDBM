@@ -5,9 +5,9 @@ import json
 from datetime import datetime
 from collections import OrderedDict
 
-from json_script import json_script
+from .json_script import json_script
 
-class phm_file_handler():
+class phtm_file_handler():
 
     @staticmethod
     def save(cluster, file_name, user=None):
@@ -18,7 +18,7 @@ class phm_file_handler():
     def load(file_name):
         return pickle.load( open( file_name + ".phm", "rb" ) )
 
-    def __init__(self, db_handler, creator=None, group=None, access_level=None):
+    def __init__(self, db_handler=None, creator=None, group=None, access_level=None):
         
         current_date_time = datetime.now()
 

@@ -62,7 +62,7 @@ class DatabaseHandler():
     def getDatabaseList(host, port):
         client = MongoClient(host, port)
         try:
-            dbn = client.__db_names()
+            dbn = client.database_names()
         except pyErrs.ServerSelectionTimeoutError as err:
             print("Connection refused @ " + host + ":" + str(port))
             #log err

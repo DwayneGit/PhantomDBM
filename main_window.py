@@ -22,11 +22,12 @@ from style.phtm_dialog import phtm_dialog
 from style.phtm_tab_widget import phtm_tab_widget
 from style.phtm_plain_text_edit import phtm_plain_text_edit
 
-from file.phm_file_handler import phm_file_handler
+from file.phtm_file_handler import phtm_file_handler
+from phtm_editor import phtm_editor
+from phtm_editor_widget import phtm_editor_widget
 from file.json_script import json_script
 
 from file_ctrl import tmpScriptCleaner
-from phtm_editor import phtm_editor
 import run_ctrl as r_ctrl
 import file_ctrl as f_ctrl
 from phtm_logger import phtm_logger
@@ -46,7 +47,7 @@ class main_window(QMainWindow):
         self.log = phtm_logger()
         self.log.logInfo("Program Started.")
 
-        self.__blank_cluster = phm_file_handler()
+        self.__blank_cluster = phtm_file_handler()
 
         self.prefs = Preferences('config', prefDict=DefaultGeneralConfig.prefDict, log=self.log) # name of preference file minus json
         self.prefs.loadConfig()
@@ -96,16 +97,18 @@ class main_window(QMainWindow):
         # self.fileContents.setPlainText("[\n    {\n        \"\": \"\"\n    }\n]")
         # self.fileContents.textChanged.connect(self.isChanged)
 
-        self.editor_tabs = phtm_tab_widget(self)
-        self.editor_tabs.add_editor()
+        # self.editor_tabs = phtm_tab_widget(self)
+        # self.editor_tabs.add_editor()
 
-        self.editor_tabs.setMovable(True)
-        self.editor_tabs.setTabsClosable(True)
+        # self.editor_tabs.setMovable(True)
+        # self.editor_tabs.setTabsClosable(True)
+
+        self.__editor_widget = phtm_editor_widget(self)
 
         self.changed = False
         # check if file is loaded and set flag to use to ask if save necessary before running or closing
         splitter1.addWidget(self.brd)
-        splitter1.addWidget(self.editor_tabs)
+        splitter1.addWidget(self.__editor_widget)
 
         self.setCentralWidget(splitter1)
 
@@ -164,7 +167,7 @@ class main_window(QMainWindow):
             self.main_tool_bar.tbrun.setIconText("run")
             if main_window.__runs > 0:
                 self.main_tool_bar.tbrun.triggered.disconnect()
-            self.main_tool_bar.tbrun.triggered.connect(lambda: r_ctrl.runScript(self, self.editor_tabs.currentWidget(), main_window.__runs, main_window.__completedRuns))
+            self.main_tool_bar.tbrun.triggered.connect(lambda: r_ctrl.runScript(self, self.__editor_widget.get_editor_tabs().currentWidget(), main_window.__runs, main_window.__completedRuns))
 
         elif state == True: 
             self.setRunBtnIcon(QIcon("icons/pause.png"))
@@ -213,6 +216,9 @@ class main_window(QMainWindow):
         self.main_tool_bar.dbnameMenu.addItems(DatabaseHandler.getDatabaseList(self.dbData['host'], self.dbData['port']))
         index = self.main_tool_bar.dbnameMenu.findText(self.prefs.prefDict['mongodb']['dbname'])
         self.main_tool_bar.dbnameMenu.setCurrentIndex(index)
+
+    def get_editor_widget(self):
+        return self.__editor_widget
 
     # def mousePressEvent(self, evt):
     #     self.__oldPos = evt.globalPos()

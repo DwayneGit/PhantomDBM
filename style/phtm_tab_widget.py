@@ -111,11 +111,11 @@ class phtm_tab_widget(QTabWidget):
 
     def editWindowTitle(self, index):
         # use regex to grab the name of the file from the path and added to title
-        newTitle = self.parent.parent.getPermanentTitle()
+        newTitle = self.parent.getPermanentTitle()
         # print(self.tabText(index))
         newTitle = self.tabText(index) + " - " + newTitle
-        self.parent.set_window_title(newTitle)
-        self.parent.currTitle = newTitle
+        self.parent.parent.set_window_title(newTitle)
+        self.parent.parent.currTitle = newTitle
         # print(newTitle)
 
     def get_index(self, editor):

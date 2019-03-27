@@ -47,7 +47,7 @@ class phtm_editor(phtm_plain_text_edit):
     def set_curr_script(self, script):
         self.__curr_script = script
 
-    def get_curr_script(self)
+    def get_curr_script(self):
         return self.__curr_script
 
     def updateLineNumberAreaWidth(self, _):

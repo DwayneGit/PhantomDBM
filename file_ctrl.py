@@ -31,7 +31,7 @@ def getfile(main_window, curr_tab):
         new_editor=text_style.translate_text(filenames[0],new_editor)
         new_editor.set_file_path(file_path)
 
-        main_window.editor_tabs.add_editor(new_editor)
+        main_window.get_editor_widget().editor_tabs.add_editor(new_editor)
 
 def saveScript(main_window, curr_tab):
         
@@ -45,7 +45,7 @@ def saveScript(main_window, curr_tab):
         outfile.write(eval(json.dumps(curr_tab.toPlainText(), indent=4)))
     
     if curr_tab.file_path:
-        main_window.editor_tabs.editTabTitle(curr_tab.title)
+        main_window.get_editor_widget().editor_tabs.editTabTitle(curr_tab.title)
     # else:
     #     main_window.editor_tabs.setTabTitle(main_window.currTitle)
 
