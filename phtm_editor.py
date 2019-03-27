@@ -28,13 +28,19 @@ class LineNumberArea(QWidget):
 class phtm_editor(phtm_plain_text_edit):
     def __init__(self, script=None):
         super(phtm_editor, self).__init__()
+        
         self.lineNumberArea = LineNumberArea(self)
 
-        self.title = None
         self.file_path = None
         self.is_changed = False
+        
+        if script:
+            self.__curr_script = script
+        else:
+            self.__curr_script = json_script()
 
-        self.__curr_script = script
+        self.title = self.__curr_script.get_title()
+        self.setPlainText(self.__curr_script.get_script())
 
         self.blockCountChanged.connect(self.updateLineNumberAreaWidth)
         self.updateRequest.connect(self.updateLineNumberArea)

@@ -52,7 +52,7 @@ class json_script():
     def set_title(self, title):
         self.__title = title
 
-    def get_title(self, title):
+    def get_title(self):
         return self.__title
 
     def save_script(self, script):

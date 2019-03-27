@@ -20,12 +20,18 @@ class phtm_menu_bar(QMenuBar):
     def fileMenu(self):
         fileMenu = self.main_menu.addMenu('File')
 
-        openAction = QAction("Open File", self.mw)
-        openAction.setShortcut("Ctrl+O")
-        openAction.setStatusTip('Open a Script File')
-        openAction.triggered.connect(lambda: f_ctrl.getfile(self.mw, self.mw.get_editor_widget().get_editor_tabs().currentWidget()))
-        fileMenu.addAction(openAction)
-        
+        openJsonAction = QAction("Open JSON", self.mw)
+        openJsonAction.setShortcut("Ctrl+O")
+        openJsonAction.setStatusTip('Open a Script File')
+        openJsonAction.triggered.connect(lambda: f_ctrl.getfile(self.mw, self.mw.get_editor_widget().get_editor_tabs().currentWidget()))
+        fileMenu.addAction(openJsonAction)
+
+        openPhmAction = QAction("Open PHM", self.mw)
+        openPhmAction.setShortcut("Ctrl+P")
+        openPhmAction.setStatusTip('Load a Cluster File')
+        openPhmAction.triggered.connect(lambda: f_ctrl.load_phm(self.mw))
+        fileMenu.addAction(openPhmAction)
+
         openRMenu = fileMenu.addMenu("Open Recent")
         # openRMenu.setLayoutDirection(Qt.LeftToRight)
         # openRMenu.setStatusTip('Open a Recent Script File')
@@ -38,17 +44,36 @@ class phtm_menu_bar(QMenuBar):
         # openRAction.triggered.connect(self.mw.getfile)
         fileMenu.addSeparator()
 
-        saveAction = QAction("Save File", self.mw)
-        saveAction.setShortcut("Ctrl+S")
-        saveAction.setStatusTip('Save Script File')
-        saveAction.triggered.connect(lambda: f_ctrl.saveScript(self.mw, self.mw.get_editor_widget().get_editor_tabs().currentWidget()))
+        savePAction = QAction("Save PHM", self.mw)
+        savePAction.setShortcut("Ctrl+S")
+        savePAction.setStatusTip('Save Script File')
+        savePAction.triggered.connect(lambda: f_ctrl.saveScript(self.mw, self.mw.get_editor_widget().get_editor_tabs().currentWidget()))
+        fileMenu.addAction(savePAction)
+
+        savePAsAction = QAction("Save PHM As...", self.mw)
+        savePAsAction.setShortcut("Ctrl+S")
+        savePAsAction.setStatusTip('Save Script File')
+        savePAsAction.triggered.connect(lambda: f_ctrl.saveScript(self.mw, self.mw.get_editor_widget().get_editor_tabs().currentWidget()))
+        fileMenu.addAction(savePAsAction)
+        fileMenu.addSeparator()
+
+        importAction = QAction("Import JSON File", self.mw)
+        importAction.setShortcut("Ctrl+S")
+        importAction.setStatusTip('Save Script File')
+        # importAction.triggered.connect(lambda: f_ctrl.saveScript(self.mw, self.mw.get_editor_widget().get_editor_tabs().currentWidget()))
+        fileMenu.addAction(importAction)
+
+        exportAction = QAction("Export JSON File", self.mw)
+        exportAction.setShortcut("Ctrl+S")
+        exportAction.setStatusTip('Save Script File')
+        # exportAction.triggered.connect(lambda: f_ctrl.saveScript(self.mw, self.mw.get_editor_widget().get_editor_tabs().currentWidget()))
+        fileMenu.addAction(exportAction)
 
         exittAction = QAction("Exit", self.mw)
         exittAction.setShortcut("Ctrl+Q")
         exittAction.setStatusTip('Leave The App')
         exittAction.triggered.connect(sys.exit)
 
-        fileMenu.addAction(saveAction)
         fileMenu.addSeparator()
 
         fileMenu.addAction(exittAction)

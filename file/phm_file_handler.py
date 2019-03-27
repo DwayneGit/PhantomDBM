@@ -15,14 +15,15 @@ class phm_file_handler():
         self.__class__ = phm_file_handler
         self.__class__.__name__ = "phm_file_handler"
 
-        print(type(self))
+        # print(type(self))
+        self.__file_path = None
 
         if phm:
             self.__phm = phm
         else:
             self.__phm = phm_file()
 
-        print(type(self.__phm))
+        # print(type(self.__phm))
 
         # current_date_time = datetime.now()
 
@@ -45,12 +46,13 @@ class phm_file_handler():
     # def __len__(self):
     #     return len(self.__scripts)
 
-    def save(self, file_name, user=None):
+    def save(self, file_name=None, user=None):
         self.__phm.modified_by(user)
         pickle.dump( self.__phm, open( file_name + ".phm", "wb" ) )
 
-    def load(self, file_name):
-        self.__phm = pickle.load( open( file_name + ".phm", "rb" ) )
+    def load(self, file_path):
+        self.__file_path = file_path
+        self.__phm = pickle.load( open( file_path, "rb" ) )
 
 #------------------------- script methods --------------------------
     def add_script(self, script, title=None, creator=None):
@@ -69,6 +71,9 @@ class phm_file_handler():
         if hash(title) in self.get_phm_scripts():
             return self.get_phm_scripts()[hash(title)]
         return None
+
+    def get_phm(self):
+        return self.__phm
 
     def update_script(self, title, user=None):
         if not self.get_phm_scripts()[hash(title)].save_script():

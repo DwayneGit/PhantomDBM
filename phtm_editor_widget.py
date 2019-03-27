@@ -1,3 +1,5 @@
+import os
+
 from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
@@ -19,9 +21,17 @@ class phtm_editor_widget(QWidget):
         self.__layout = QHBoxLayout()
         self.__layout.setContentsMargins(0,0,0,0)
 
+        self.__splitter = QSplitter()
+
+        self.__init_editor()
         self.__init_script_tree()
 
-        self.__splitter = QSplitter()
+        # self.__layout.addWidget(self.__script_tree_widget)
+        self.__layout.addWidget(self.__splitter)
+
+        self.setLayout(self.__layout)
+
+    def __init_editor(self):
 
         self.__editor_tabs = phtm_tab_widget(self)
         self.__editor_tabs.add_editor()
@@ -29,13 +39,32 @@ class phtm_editor_widget(QWidget):
         self.__editor_tabs.setMovable(True)
         self.__editor_tabs.setTabsClosable(True)
 
-        # self.__layout.addWidget(self.__script_tree_widget)
-
         self.__splitter.addWidget(self.__editor_tabs)
-        self.__splitter.addWidget( self.__script_tree_widget)
-        self.__layout.addWidget(self.__splitter)
 
-        self.setLayout(self.__layout)
+    def __open_script(self, tree_item):
+        #self.cluster.get_phm_scripts()[hash(tree_item.text(0))] # load double clicked script int self.__editor_tabs
+        print(self.cluster.get_phm_scripts().keys())
+        print(hash(tree_item.text(0)))
+        self.__editor_tabs.add_editor(self.cluster.get_phm_scripts()[hash(tree_item.text(0))])
+        print("Opening Json Script...")
+
+    def load_cluster(self, file_path):
+        self.cluster.load(file_path)
+        self.__script_tree.clear()
+
+        filename_w_ext = os.path.basename(file_path)
+        filename, file_extension = os.path.splitext(filename_w_ext)
+        #filename = foobar
+        #file_extension = .txt
+
+        self.__tree_root = self.add_script_root(filename, str(self.cluster.get_phm().get_time_created()))
+        self.__script_tree.expandItem(self.__tree_root)
+        
+        # print(self.cluster.get_phm_scripts())
+
+        for key, value in self.cluster.get_phm_scripts().items():
+            # print(value.get_title())
+            self.add_script_child(self.__tree_root, value.get_title(), str(value.get_date_time_created()))
 
     def __init_script_tree(self):
 
@@ -63,15 +92,10 @@ class phtm_editor_widget(QWidget):
 
         self.add_script_child(self.__tree_root, "Hello", "world")
 
-    def __open_script(self, tree_item):
-        #self.cluster.get_phm_scripts()[hash(tree_item.text(0))] # load double clicked script int self.__editor_tabs
-        print("Opening Json Script...")
+        self.__splitter.addWidget( self.__script_tree_widget)
 
-    def load_cluster(self, file_path):
-        self.cluster.load(file_path)
-
-        for key, value in self.cluster.get_phm_scripts():
-            self.add_script_child(self.__tree_root, value["script"].get_script_name(), str(value["script"].get_time_modified()))
+    def rename_script_root(self, name):
+        self.__tree_root.setText(0, name)
 
     def add_script_root(self, name="New Cluster", description=str(datetime.now())):
         tree_item = QTreeWidgetItem(self.__script_tree)

@@ -50,7 +50,7 @@ class phm():
 
     def get_last_modified_by(self, script_title=None):
         if script_title:
-            return self.__scripts[hash(script_title)]["last_modified_by"][-1]
+            return self.__scripts[hash(script_title)].get_modified_by()
         return self.__last_modified_by
 
     def get_access(self, user):
@@ -67,3 +67,12 @@ class phm():
     def is_public(self, public):
         self.__public = public
         return self.__public
+
+    def get_time_created(self):
+        return self.__date_time_created
+
+    def get_time_modified(self):
+        return self.__date_time_modified
+
+    def set_time_modified(self):
+        self.__date_time_modified = datetime.now()

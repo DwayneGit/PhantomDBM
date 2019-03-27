@@ -6,34 +6,21 @@ from PyQt5.QtWidgets import *
 
 from phtm_editor import phtm_editor
 from style.phtm_main_window import phtm_main_window
+from file.json_script import json_script
 
 class phtm_tab_widget(QTabWidget):
     def __init__(self, parent=None):
         super().__init__()
 
         self.default_tab_count = 1
-
         self.parent = parent
 
         self.tab_data = {}
 
-        if isinstance(parent, QMainWindow):
-
-            self.tabButton = QToolButton(self)
-            self.tabButton.setText('+')
-            self.tabButton.setObjectName("tab_button")
-
-            font = self.tabButton.font()
-            font.setBold(True)
-            
-            self.tabButton.setFont(font)
-            self.setCornerWidget(self.tabButton)
-            self.tabButton.clicked.connect(self.add_editor)
-
-        self.tabBar().currentChanged.connect(lambda index: self.editWindowTitle(index))
         self.set_style()
 
     def set_style(self):
+
         self.setStyleSheet('''
             QTabWidget::pane {
                 background-color: rgb(46, 51, 58);
@@ -77,21 +64,20 @@ class phtm_tab_widget(QTabWidget):
         else:
             self.removeTab(index)
 
-    def add_editor(self, editor=None):
+    def add_editor(self, script=None):
 
-        if editor:
+        if script:
+            editor = phtm_editor(script)
             # print(editor.file_path)
-            file_name = re.split('^(.+)\/([^\/]+)$', editor.file_path)
+            
+            file_name = script.get_title()
             self.addTab(editor, editor.title)
 
             editor.textChanged.connect( lambda: self.isChanged(self.currentIndex()))
             # self.editWindowTitle(self.currentIndex())
 
         else:
-            default_tab = phtm_editor()
-            default_tab.setPlainText("[\n    {\n        \"\": \"\"\n    }\n]")
-            
-            default_tab.title = "JSON Template"
+            default_tab = phtm_editor(json_script("[\n    {\n        \"\": \"\"\n    }\n]", "JSON Template"))
 
             for index in range(self.count()):
                 if default_tab.title == self.tabText(index):
@@ -108,15 +94,6 @@ class phtm_tab_widget(QTabWidget):
         if not self.widget(index).is_changed:
             self.widget(index).is_changed = True
             self.setTabText(index, "* " + self.tabText(index))
-
-    def editWindowTitle(self, index):
-        # use regex to grab the name of the file from the path and added to title
-        newTitle = self.parent.getPermanentTitle()
-        # print(self.tabText(index))
-        newTitle = self.tabText(index) + " - " + newTitle
-        self.parent.parent.set_window_title(newTitle)
-        self.parent.parent.currTitle = newTitle
-        # print(newTitle)
 
     def get_index(self, editor):
         return self.indexOf(editor)

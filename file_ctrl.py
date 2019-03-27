@@ -31,7 +31,22 @@ def getfile(main_window, curr_tab):
         new_editor=text_style.translate_text(filenames[0],new_editor)
         new_editor.set_file_path(file_path)
 
-        main_window.get_editor_widget().editor_tabs.add_editor(new_editor)
+        main_window.get_editor_widget().get_editor_tabs().add_editor(new_editor)
+
+def load_phm(main_window):
+    dlg = QFileDialog()
+    dlg.setFileMode(QFileDialog.AnyFile)
+    dlg.setNameFilter("Cluster files (*.phm)")
+    filenames = []
+    
+    if dlg.exec_():
+        filenames = dlg.selectedFiles()
+        file_path = filenames[0] # save file path
+        # print(main_window.file_path)
+        # main_window.editWindowTitle()
+        main_window.get_editor_widget().load_cluster(file_path)
+
+        print(file_path)
 
 def saveScript(main_window, curr_tab):
         
@@ -45,7 +60,7 @@ def saveScript(main_window, curr_tab):
         outfile.write(eval(json.dumps(curr_tab.toPlainText(), indent=4)))
     
     if curr_tab.file_path:
-        main_window.get_editor_widget().editor_tabs.editTabTitle(curr_tab.title)
+        main_window.get_editor_widget().get_editor_tabs().editTabTitle(curr_tab.title)
     # else:
     #     main_window.editor_tabs.setTabTitle(main_window.currTitle)
 
