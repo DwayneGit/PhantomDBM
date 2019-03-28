@@ -86,6 +86,9 @@ class phm_file_handler():
     def get_phm_scripts(self):
         return self.__phm.get_scripts()
 
+    def get_file_path(self):
+        return self.__file_path
+
 #---------------------------- Database Methods ------------------------------
     def get_db_handler(self, user=None):
         return self.__db_handler

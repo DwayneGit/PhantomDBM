@@ -26,13 +26,16 @@ class json_script():
         to_str += "\n    },"
         to_str += "\n    Title : " + "\"" + self.__title + "\"" + ","
         to_str += "\n    Script : " + "\"" + self.__script + "\""
-        to_str += "\n}\n"
+        to_str += "\n}"
 
         return to_str
         
 
     def get_script(self):
         return self.__script
+
+    def set_script(self, script):
+        self.__script = script
 
     def get_creator(self):
         return self.__creator
@@ -54,10 +57,6 @@ class json_script():
 
     def get_title(self):
         return self.__title
-
-    def save_script(self, script):
-        self.__script = script
-        return True
 
     def update_date_time_modified(self):
         self.__date_time_modified = datetime.now()

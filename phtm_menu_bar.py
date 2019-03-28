@@ -23,7 +23,7 @@ class phtm_menu_bar(QMenuBar):
         openJsonAction = QAction("Open JSON", self.mw)
         openJsonAction.setShortcut("Ctrl+O")
         openJsonAction.setStatusTip('Open a Script File')
-        openJsonAction.triggered.connect(lambda: f_ctrl.getfile(self.mw, self.mw.get_editor_widget().get_editor_tabs().currentWidget()))
+        openJsonAction.triggered.connect(lambda: f_ctrl.load_script(self.mw))
         fileMenu.addAction(openJsonAction)
 
         openPhmAction = QAction("Open PHM", self.mw)
@@ -47,13 +47,13 @@ class phtm_menu_bar(QMenuBar):
         savePAction = QAction("Save PHM", self.mw)
         savePAction.setShortcut("Ctrl+S")
         savePAction.setStatusTip('Save Script File')
-        savePAction.triggered.connect(lambda: f_ctrl.saveScript(self.mw, self.mw.get_editor_widget().get_editor_tabs().currentWidget()))
+        savePAction.triggered.connect(lambda: f_ctrl.save_phm(self.mw))
         fileMenu.addAction(savePAction)
 
         savePAsAction = QAction("Save PHM As...", self.mw)
         savePAsAction.setShortcut("Ctrl+S")
         savePAsAction.setStatusTip('Save Script File')
-        savePAsAction.triggered.connect(lambda: f_ctrl.saveScript(self.mw, self.mw.get_editor_widget().get_editor_tabs().currentWidget()))
+        savePAsAction.triggered.connect(lambda: f_ctrl.export_phm(self.mw))
         fileMenu.addAction(savePAsAction)
         fileMenu.addSeparator()
 

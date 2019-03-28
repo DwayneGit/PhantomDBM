@@ -52,9 +52,13 @@ class phtm_editor(phtm_plain_text_edit):
     
     def set_curr_script(self, script):
         self.__curr_script = script
+        self.setHtml(self.__curr_script.get_script())
 
     def get_curr_script(self):
         return self.__curr_script
+
+    def save_script(self):
+        self.__curr_script.set_script(self.toPlainText())
 
     def updateLineNumberAreaWidth(self, _):
         self.setViewportMargins((3 + self.fontMetrics().width('9') * 4) + 5, 0, 0, 0)

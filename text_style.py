@@ -18,6 +18,17 @@ def translate_text(xfile, text_edit=None):
             # print(line)
         # print(text)
     return text_edit
+
+def read_text(xfile):
+        
+    with fileinput.input(files=(xfile)) as f:
+        script = ""
+        for line in f:
+            script += line
+
+            # print(line)
+        # print(text)
+    return script
     
 def add_style_to_text_col(matchobj):
     # print(matchobj.group(0) + "2")

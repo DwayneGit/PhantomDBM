@@ -9,7 +9,7 @@ from file.phm_file_handler import phm_file_handler
 from file.json_script import json_script
 
 from phtm_editor import phtm_editor
-from style.phtm_tab_widget import phtm_tab_widget
+from tab_widget import tab_widget
 
 class phtm_editor_widget(QWidget):
     def __init__(self, parent=None):
@@ -33,7 +33,7 @@ class phtm_editor_widget(QWidget):
 
     def __init_editor(self):
 
-        self.__editor_tabs = phtm_tab_widget(self)
+        self.__editor_tabs = tab_widget(self)
         self.__editor_tabs.add_editor()
 
         self.__editor_tabs.setMovable(True)
@@ -43,8 +43,8 @@ class phtm_editor_widget(QWidget):
 
     def __open_script(self, tree_item):
         #self.cluster.get_phm_scripts()[hash(tree_item.text(0))] # load double clicked script int self.__editor_tabs
-        print(self.cluster.get_phm_scripts().keys())
-        print(hash(tree_item.text(0)))
+        # print(self.cluster.get_phm_scripts().keys())
+        # print(hash(tree_item.text(0)))
         self.__editor_tabs.add_editor(self.cluster.get_phm_scripts()[hash(tree_item.text(0))])
         print("Opening Json Script...")
 
@@ -57,14 +57,19 @@ class phtm_editor_widget(QWidget):
         #filename = foobar
         #file_extension = .txt
 
-        self.__tree_root = self.add_script_root(filename, str(self.cluster.get_phm().get_time_created()))
+        self.__tree_root = self.add_script_root(filename, str(self.cluster.get_phm().get_time_modified()), str(self.cluster.get_phm().get_time_created()))
         self.__script_tree.expandItem(self.__tree_root)
         
         # print(self.cluster.get_phm_scripts())
 
         for key, value in self.cluster.get_phm_scripts().items():
             # print(value.get_title())
-            self.add_script_child(self.__tree_root, value.get_title(), str(value.get_date_time_created()))
+            self.add_script_child(self.__tree_root, value.get_title(), str(value.get_date_time_modified()), str(value.get_date_time_created()))
+
+    def add_script(self, script, title, creator):
+        new_script = self.cluster.add_script(script,title,creator)
+        self.add_script_child(self.__tree_root, title, str(new_script.get_date_time_modified()), str(new_script.get_date_time_created()))
+        return new_script
 
     def __init_script_tree(self):
 
@@ -87,26 +92,28 @@ class phtm_editor_widget(QWidget):
 
         self.__tree_root = self.add_script_root()
 
-        self.__script_tree.setHeaderLabels(["Title", "Date Created"])
+        self.__script_tree.setHeaderLabels(["Title", "Date Modified", "Date Created"])
         self.__script_tree.expandItem(self.__tree_root)
 
-        self.add_script_child(self.__tree_root, "Hello", "world")
+        self.add_script_child(self.__tree_root, "Hello", "cruel", "world")
 
         self.__splitter.addWidget( self.__script_tree_widget)
 
     def rename_script_root(self, name):
         self.__tree_root.setText(0, name)
 
-    def add_script_root(self, name="New Cluster", description=str(datetime.now())):
+    def add_script_root(self, name="New Cluster", date_modified=str(datetime.now()), date_created=str(datetime.now())):
         tree_item = QTreeWidgetItem(self.__script_tree)
         tree_item.setText(0, name)
-        tree_item.setText(1, description)
+        tree_item.setText(1, date_modified)
+        tree_item.setText(2, date_created)
         return tree_item
 
-    def add_script_child(self, root, name, description):
+    def add_script_child(self, root, name, date_modified, date_created):
         tree_item = QTreeWidgetItem()
         tree_item.setText(0, name)
-        tree_item.setText(1, description)
+        tree_item.setText(1, date_modified)
+        tree_item.setText(2, date_created)
 
         root.addChild(tree_item)
 
@@ -115,6 +122,9 @@ class phtm_editor_widget(QWidget):
 
     def get_editor_tabs(self):
         return self.__editor_tabs
+
+    def get_cluster(self):
+        return self.cluster
 
     def getPermanentTitle(self):
         return self.parent.parent.getPermanentTitle()
