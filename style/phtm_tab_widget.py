@@ -76,19 +76,19 @@ class phtm_tab_widget(QTabWidget):
             editor.textChanged.connect( lambda: self.isChanged(self.currentIndex()))
             # self.editWindowTitle(self.currentIndex())
 
-        else:
-            default_tab = phtm_editor(json_script("[\n    {\n        \"\": \"\"\n    }\n]", "JSON Template"))
+        # else:
+        #     default_tab = phtm_editor(json_script("[\n    {\n        \"\": \"\"\n    }\n]", "JSON Template"))
 
-            for index in range(self.count()):
-                if default_tab.title == self.tabText(index):
-                    default_tab.title += " " + str(self.default_tab_count)
+        #     for index in range(self.count()):
+        #         if default_tab.title == self.tabText(index):
+        #             default_tab.title += " " + str(self.default_tab_count)
 
-            self.default_tab_count += 1
+        #     self.default_tab_count += 1
 
-            self.addTab(default_tab, default_tab.title)
+        #     self.addTab(default_tab, default_tab.title)
 
-            default_tab.textChanged.connect( lambda: self.isChanged(self.currentIndex()))
-            # self.editWindowTitle(self.currentIndex())
+        #     default_tab.textChanged.connect( lambda: self.isChanged(self.currentIndex()))
+        #     # self.editWindowTitle(self.currentIndex())
 
     def isChanged(self, index):
         if not self.widget(index).is_changed:

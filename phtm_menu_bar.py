@@ -3,6 +3,7 @@ import sys
 from PyQt5.QtWidgets import QAction, QMenuBar
 
 import file_ctrl as f_ctrl
+import run_ctrl as r_ctrl
 
 class phtm_menu_bar(QMenuBar):
     def __init__(self, main_window):
@@ -15,6 +16,7 @@ class phtm_menu_bar(QMenuBar):
     def init_menu_bar(self):
         self.fileMenu()
         self.editMenu()
+        self.runMenu()
         self.helpMenu()
 
     def fileMenu(self):
@@ -119,6 +121,29 @@ class phtm_menu_bar(QMenuBar):
 
         editMenu.addAction(findAction)
         editMenu.addAction(replaceAction)
+
+    def runMenu(self):
+        runMenu = self.main_menu.addMenu("Run")
+
+        runAction = QAction("Run", self.mw)
+        runAction.triggered.connect(lambda x: r_ctrl.runScript(self.mw)) 
+
+        runAllAction = QAction("Run All", self.mw)
+        runAllAction.triggered.connect(lambda x: print(x))
+
+        stopAction = QAction("Stop", self.mw)
+        pauseAction = QAction("Pause", self.mw)
+
+        runMenu.addAction(runAction)
+        runMenu.addAction(runAllAction)
+        runMenu.addAction(stopAction)
+        runMenu.addAction(pauseAction)
+
+        runMenu.addSeparator()
+
+        validateAction = QAction("Validate", self.mw)
+        runMenu.addAction(validateAction)
+
 
     def helpMenu(self):
 

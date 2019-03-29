@@ -29,6 +29,16 @@ def read_text(xfile):
             # print(line)
         # print(text)
     return script
+
+def read_string(xString):
+    
+    script = ""
+    for line in xString.splitlines():
+        script += line
+
+        # print(line)
+    # print(text)
+    return script
     
 def add_style_to_text_col(matchobj):
     # print(matchobj.group(0) + "2")

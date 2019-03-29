@@ -253,3 +253,20 @@ class DatabaseHandler():
 
     # def dropCollection(self, collectionName):
     #     self.db.drop_collection(collectionName)
+
+    def errMsgs(self, code):
+        msg = None
+        if code == 0: msg ="One or more fields have an invalid type.\nPlease check that you have followed the model."
+        elif code == 2: msg = "Entry cannot be completely empty."
+        elif code == 3: msg = "No results found."
+            
+        errMsg = QMessageBox()
+        errMsg.setText(msg)
+        errMsg.setStandardButtons(QMessageBox.Ok)
+        errMsg.buttonClicked.connect(errMsg.close)
+        errMsg.exec_()
+        return
+        
+        if code == -1:
+            print('Error inserting document')
+            return

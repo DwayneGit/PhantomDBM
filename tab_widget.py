@@ -30,7 +30,7 @@ class tab_widget(phtm_tab_widget):
             
             self.tabButton.setFont(font)
             self.setCornerWidget(self.tabButton)
-            self.tabButton.clicked.connect(self.add_editor)
+            self.tabButton.clicked.connect(self.parent.add_defualt_script)
 
         self.tabBar().currentChanged.connect(lambda index: self.editWindowTitle(index))
 

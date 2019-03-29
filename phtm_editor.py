@@ -121,8 +121,9 @@ class phtm_editor(phtm_plain_text_edit):
 
     def setHtml(self, htmlText):
         self.clear()
-        self.appendHtml(htmlText)
-        text_style.translate_text(htmlText, self)
+        script = ""
+        for line in htmlText.splitlines():
+            self.appendHtml(line)
 
     def set_file_path(self, path):
         self.file_path = path
