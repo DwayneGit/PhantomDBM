@@ -41,13 +41,28 @@ class phtm_editor_widget(QWidget):
         self.__editor_tabs.setMovable(True)
         self.__editor_tabs.setTabsClosable(True)
 
+        self.__editor_tabs.tabCloseRequested.connect(self.__tabs_closed)
+
         self.__splitter.addWidget(self.__editor_tabs)
+
+    def __tabs_closed(self):
+        print("tab being closed..")
+        if self.__editor_tabs.count() < 1:
+            self.__editor_tabs.hide()
+
+    def clear_tabs(self):
+        self.__editor_tabs.clear()
 
     def __open_script(self, tree_item):
         #self.cluster.get_phm_scripts()[hash(tree_item.text(0))] # load double clicked script int self.__editor_tabs
         # print(self.cluster.get_phm_scripts().keys())
         # print(hash(tree_item.text(0)))
-        self.__editor_tabs.currentWidget().setPlainText(self.cluster.get_phm_scripts()[hash(tree_item.text(0))].get_script())
+        if self.__editor_tabs.isHidden():
+            self.__editor_tabs.show()
+            self.__editor_tabs.add_editor()
+
+        self.__editor_tabs.currentWidget().set_curr_script(self.cluster.get_phm_scripts()[hash(tree_item.text(0))])
+        self.__editor_tabs.setTabText(self.__editor_tabs.currentIndex(), tree_item.text(0))
         print("Opening Json Script...")
 
     def __open_script_in_tab(self, tree_item):

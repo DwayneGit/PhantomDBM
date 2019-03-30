@@ -37,7 +37,7 @@ class phtm_editor(phtm_plain_text_edit):
         if script:
             self.__curr_script = script
         else:
-            self.__curr_script = json_script()
+            self.__curr_script = json_script("")
 
         self.title = self.__curr_script.get_title()
         self.setPlainText(self.__curr_script.get_script())
@@ -52,7 +52,8 @@ class phtm_editor(phtm_plain_text_edit):
     
     def set_curr_script(self, script):
         self.__curr_script = script
-        self.setHtml(self.__curr_script.get_script())
+        self.title = self.__curr_script.get_title()
+        self.setPlainText(self.__curr_script.get_script())
 
     def get_curr_script(self):
         return self.__curr_script

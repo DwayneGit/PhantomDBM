@@ -76,7 +76,7 @@ class phm_file_handler():
         return self.__phm
 
     def update_script(self, title, user=None):
-        if not self.get_phm_scripts()[hash(title)].save_script():
+        if not self.get_phm_scripts()[hash(title)].set_script():
             return
         self.get_phm_scripts()[hash(title)].get_modified_by = [user]
 

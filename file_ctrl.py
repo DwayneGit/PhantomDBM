@@ -48,6 +48,7 @@ def load_phm(main_window):
         file_path = filenames[0] # save file path
         # print(main_window.file_path)
         # main_window.editWindowTitle()
+        main_window.get_editor_widget().clear_tabs()
         main_window.get_editor_widget().load_cluster(file_path)
 
         print(file_path)
@@ -68,10 +69,10 @@ def save_script(main_window):
     # with open(curr_tab.file_path, 'w') as outfile:
     #     outfile.write(eval(json.dumps(curr_tab.toPlainText(), indent=4)))
     
-    main_window.get_editor_widget().get_editor_tabs().currentWidget().get_curr_script().save_script()
+    main_window.get_editor_widget().get_editor_tabs().currentWidget().save_script()
 
-    if file_path:
-        main_window.tabs.editTabTitle(curr_tab.title)
+    # if file_path:
+    #     main_window.get_editor_widget().get_editor_tabs()(curr_tab.title)
     # else:
     #     main_window.editor_tabs.setTabTitle(main_window.currTitle)
 

@@ -129,7 +129,7 @@ class phtm_menu_bar(QMenuBar):
         runAction.triggered.connect(lambda x: r_ctrl.runScript(self.mw)) 
 
         runAllAction = QAction("Run All", self.mw)
-        runAllAction.triggered.connect(lambda x: print(x))
+        runAllAction.triggered.connect(lambda x: r_ctrl.run_all_scripts(self.mw))
 
         stopAction = QAction("Stop", self.mw)
         pauseAction = QAction("Pause", self.mw)

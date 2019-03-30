@@ -9,6 +9,7 @@ from style.phtm_main_window import phtm_main_window
 from file.json_script import json_script
 
 class phtm_tab_widget(QTabWidget):
+    clearTabsRequested = pyqtSignal(bool)
     def __init__(self, parent=None):
         super().__init__()
 
@@ -18,6 +19,8 @@ class phtm_tab_widget(QTabWidget):
         self.tab_data = {}
 
         self.set_style()
+
+        self.script_set = {}
 
     def set_style(self):
 
@@ -56,13 +59,11 @@ class phtm_tab_widget(QTabWidget):
         self.tabCloseRequested.connect(self.close_tab)
 
     def close_tab(self, index):
-        # print(self.count())
-        if self.count() <= 1:
-            self.add_editor()
-            self.removeTab(index)
+        self.removeTab(index)
 
-        else:
-            self.removeTab(index)
+    def clear(self):
+        for index in range(self.count()):
+            self.tabCloseRequested.emit(0)
 
     def add_editor(self, script=None):
 
@@ -75,6 +76,12 @@ class phtm_tab_widget(QTabWidget):
 
             editor.textChanged.connect( lambda: self.isChanged(self.currentIndex()))
             # self.editWindowTitle(self.currentIndex())
+
+        else:
+            editor = phtm_editor()
+            self.addTab(editor, "")
+            editor.textChanged.connect( lambda: self.isChanged(self.currentIndex()))
+
 
         # else:
         #     default_tab = phtm_editor(json_script("[\n    {\n        \"\": \"\"\n    }\n]", "JSON Template"))
