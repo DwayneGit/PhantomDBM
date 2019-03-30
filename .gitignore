@@ -12,7 +12,6 @@ test.py
 file_test.py
 instructions/test.xml
 breezess
-*.phm
 
 # vscode settings folder
 .vscode
