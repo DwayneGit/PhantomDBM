@@ -30,15 +30,14 @@ class json_script():
 
         return to_str
         
+    def get_creator(self):
+        return self.__creator
 
     def get_script(self):
         return self.__script
 
     def set_script(self, script):
         self.__script = script
-
-    def get_creator(self):
-        return self.__creator
     
     def get_date_time_created(self):
         return self.__date_time_created
@@ -49,8 +48,8 @@ class json_script():
     def set_modified_by(self, modifier):
         self.__modified_by = modifier
 
-    def get_modified_by(self, modifier):
-        self.__modified_by = modifier
+    def get_modified_by(self):
+        return self.__modified_by
 
     def set_title(self, title):
         self.__title = title

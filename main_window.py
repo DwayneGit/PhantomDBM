@@ -167,7 +167,7 @@ class main_window(QMainWindow):
             self.main_tool_bar.tbrun.setIconText("run")
             if main_window.__runs > 0:
                 self.main_tool_bar.tbrun.triggered.disconnect()
-            self.main_tool_bar.tbrun.triggered.connect(lambda: r_ctrl.runScript(self, main_window.__runs, main_window.__completedRuns))
+            self.main_tool_bar.tbrun.triggered.connect(lambda: r_ctrl.run_script(self, main_window.__runs, main_window.__completedRuns))
 
         elif state == True: 
             self.setRunBtnIcon(QIcon("icons/pause.png"))

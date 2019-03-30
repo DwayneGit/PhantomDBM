@@ -11,6 +11,8 @@ from file.json_script import json_script
 from phtm_editor import phtm_editor
 from tab_widget import tab_widget
 
+import run_ctrl as r_ctrl
+
 class phtm_editor_widget(QWidget):
     def __init__(self, parent=None):
         super().__init__()
@@ -28,6 +30,8 @@ class phtm_editor_widget(QWidget):
         
         self.__default_count = 0
         self.add_defualt_script()
+
+        self.file_path = ""
 
         # self.__layout.addWidget(self.__script_tree_widget)
         self.__layout.addWidget(self.__splitter)
@@ -76,19 +80,21 @@ class phtm_editor_widget(QWidget):
         self.cluster.load(file_path)
         self.__script_tree.clear()
 
+        self.file_path = file_path
+
         filename_w_ext = os.path.basename(file_path)
         filename, file_extension = os.path.splitext(filename_w_ext)
         #filename = foobar
         #file_extension = .txt
 
-        self.__tree_root = self.add_script_root(filename, str(self.cluster.get_phm().get_time_modified()), str(self.cluster.get_phm().get_time_created()))
+        self.__tree_root = self.add_script_root(filename)
         self.__script_tree.expandItem(self.__tree_root)
         
         # print(self.cluster.get_phm_scripts())
 
         for key, value in self.cluster.get_phm_scripts().items():
             # print(value.get_title())
-            self.add_script_child(self.__tree_root, value.get_title(), str(value.get_date_time_modified()), str(value.get_date_time_created()))
+            self.add_script_child(self.__tree_root, value.get_title())
 
     def add_defualt_script(self):
         title = "JSON Template"
@@ -101,7 +107,7 @@ class phtm_editor_widget(QWidget):
 
     def add_script(self, script, title, creator):
         new_script = self.cluster.add_script(script,title,creator)
-        self.add_script_child(self.__tree_root, title, str(new_script.get_date_time_modified()), str(new_script.get_date_time_created()))
+        self.add_script_child(self.__tree_root, title)
 
         return new_script
 
@@ -110,23 +116,28 @@ class phtm_editor_widget(QWidget):
         self.__tree_root = None
 
         self.__script_tree = QTreeWidget()
-        self.__script_tree.setColumnCount(2)
+        self.__script_tree.setColumnCount(1)
         # self.__script_tree.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Expanding)
         # self.__script_tree.setFixedWidth(200)
         self.__script_tree.setContentsMargins(0,50,0,0)
 
+        self.__script_tree_details_box = QPlainTextEdit()
+        self.__script_tree_details_box.setReadOnly(True)
+
         self.__script_tree_layout = QVBoxLayout()
         self.__script_tree_layout.addWidget(self.__script_tree)
+        self.__script_tree_layout.addWidget(self.__script_tree_details_box)
 
         self.__script_tree_widget = QWidget()
         self.__script_tree_widget.setLayout(self.__script_tree_layout)
         self.__script_tree_layout.setContentsMargins(0,26,0,0)
 
         self.__script_tree.itemDoubleClicked.connect(self.__open_script)
+        self.__script_tree.itemClicked.connect(self.__show_details)
 
         self.__tree_root = self.add_script_root()
 
-        self.__script_tree.setHeaderLabels(["Title", "Date Modified", "Date Created"])
+        self.__script_tree.setHeaderLabels(["Title"])
         self.__script_tree.expandItem(self.__tree_root)
 
         self.__script_tree.setContextMenuPolicy(Qt.CustomContextMenu)
@@ -136,20 +147,66 @@ class phtm_editor_widget(QWidget):
 
         self.__splitter.addWidget( self.__script_tree_widget)
 
+    def __show_details(self, tree_item):
+        if not tree_item:
+            return
+            
+        if tree_item.childCount() <= 0:
+            curr_scirpt = self.cluster.get_phm_scripts()[hash(tree_item.text(0))]
+
+            details = "Title: " + curr_scirpt.get_title()
+            details += "\nDate Created: " +  str(curr_scirpt.get_date_time_created())
+            details += "\nDate Modified: " + str(curr_scirpt.get_date_time_modified())
+            details += "\nCreated By: " + curr_scirpt.get_creator()
+            details += "\nLast Modified By: " + curr_scirpt.get_modified_by()
+
+        else:
+
+            details = "Title: " + tree_item.text(0)
+            details += "\nFile Path: " + self.file_path
+
+        self.__script_tree_details_box.setPlainText(details)
+            # details += "\nDate Created: " + curr_scirpt.
+
     def on_treeWidget_customContextMenuRequested(self, pos):
+        item = self.__script_tree.itemAt(pos)
+        self.__script_tree.itemClicked.emit(item, 0)
+        # print(str(self.__script_tree.indexOfTopLevelItem(item)))
+        if item:
+            menu=QMenu(self)
+            if self.__script_tree.indexOfTopLevelItem(item) == -1:
 
-        menu=QMenu(self)
+                index = item.parent().indexOfChild(item)
+                # print(index)
 
-        openAction = QAction("Open", self)
-        openAction.triggered.connect(lambda x: self.__open_script(self.__script_tree.selectedItems()[0]))
+                openAction = QAction("Open", self)
+                openAction.triggered.connect(lambda x: self.__open_script(self.__script_tree.selectedItems()[0]))
 
-        openTabAction = QAction("Open In New Tab", self)
-        openTabAction.triggered.connect(lambda x: self.__open_script_in_tab(self.__script_tree.selectedItems()[0]))
+                openTabAction = QAction("Open In New Tab", self)
+                openTabAction.triggered.connect(lambda x: self.__open_script_in_tab(self.__script_tree.selectedItems()[0]))
 
-        menu.addAction(openAction)
-        menu.addAction(openTabAction)
+                menu.addAction(openAction)
+                menu.addAction(openTabAction)
 
-        menu.popup(self.__script_tree.viewport().mapToGlobal(pos))
+                menu.addSeparator()
+
+                runAction = QAction("Run", self)
+                runAction.triggered.connect(lambda x: r_ctrl.run_script(self.parent))
+
+                runBelow = QAction("Run + Scripts Below", self)
+                runBelow.triggered.connect(lambda x: r_ctrl.run_plus_below(self.parent, index))
+
+                menu.addAction(runAction)
+                menu.addAction(runBelow)
+            
+            else:
+
+                runAllAction = QAction("Run All", self)
+                runAllAction.triggered.connect(lambda x: r_ctrl.run_all_scripts(self.parent))
+                menu.addAction(runAllAction)
+
+            menu.popup(self.__script_tree.viewport().mapToGlobal(pos))
+
 
     def on_copy(self):
         print("Hello")
@@ -157,18 +214,14 @@ class phtm_editor_widget(QWidget):
     def rename_script_root(self, name):
         self.__tree_root.setText(0, name)
 
-    def add_script_root(self, name="New Cluster", date_modified=str(datetime.now()), date_created=str(datetime.now())):
+    def add_script_root(self, name="New Cluster"):
         tree_item = QTreeWidgetItem(self.__script_tree)
         tree_item.setText(0, name)
-        tree_item.setText(1, date_modified)
-        tree_item.setText(2, date_created)
         return tree_item
 
-    def add_script_child(self, root, name, date_modified, date_created):
-        tree_item = QTreeWidgetItem()
+    def add_script_child(self, root, name):
+        tree_item = QTreeWidgetItem(root)
         tree_item.setText(0, name)
-        tree_item.setText(1, date_modified)
-        tree_item.setText(2, date_created)
 
         root.addChild(tree_item)
 

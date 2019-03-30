@@ -126,7 +126,7 @@ class phtm_menu_bar(QMenuBar):
         runMenu = self.main_menu.addMenu("Run")
 
         runAction = QAction("Run", self.mw)
-        runAction.triggered.connect(lambda x: r_ctrl.runScript(self.mw)) 
+        runAction.triggered.connect(lambda x: r_ctrl.run_script(self.mw)) 
 
         runAllAction = QAction("Run All", self.mw)
         runAllAction.triggered.connect(lambda x: r_ctrl.run_all_scripts(self.mw))
