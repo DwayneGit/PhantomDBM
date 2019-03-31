@@ -4,8 +4,9 @@ from PyQt5.QtWidgets import *
 
 import sys
 import re
+from datetime import datetime
 
-from style.phtm_plain_text_edit import phtm_plain_text_edit
+from phtm_widgets.phtm_plain_text_edit import phtm_plain_text_edit
 from file.json_script import json_script
 
 import text_style as text_style
@@ -58,8 +59,10 @@ class phtm_editor(phtm_plain_text_edit):
     def get_curr_script(self):
         return self.__curr_script
 
-    def save_script(self):
+    def save_script(self, user="Daru"):
         self.__curr_script.set_script(self.toPlainText())
+        self.__curr_script.set_modified_by(user)
+        self.__curr_script.update_date_time_modified()
 
     def updateLineNumberAreaWidth(self, _):
         self.setViewportMargins((3 + self.fontMetrics().width('9') * 4) + 5, 0, 0, 0)

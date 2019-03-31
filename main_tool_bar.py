@@ -6,8 +6,8 @@ from PyQt5.QtWidgets import QToolBar, QAction, QWidget, QSizePolicy, QComboBox
 
 from DBConnection import DatabaseHandler
 
-from style.phtm_tool_bar import phtm_tool_bar
-from style.phtm_combo_box import phtm_combo_box
+from phtm_widgets.phtm_tool_bar import phtm_tool_bar
+from phtm_widgets.phtm_combo_box import phtm_combo_box
 
 import run_ctrl as r_ctrl
 import file_ctrl as f_ctrl

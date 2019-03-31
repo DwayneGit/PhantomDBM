@@ -5,8 +5,8 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 
 from phtm_editor import phtm_editor
-from style.phtm_main_window import phtm_main_window
-from style.phtm_tab_widget import phtm_tab_widget
+from phtm_widgets.phtm_main_window import phtm_main_window
+from phtm_widgets.phtm_tab_widget import phtm_tab_widget
 from file.json_script import json_script
 
 class tab_widget(phtm_tab_widget):
@@ -19,18 +19,18 @@ class tab_widget(phtm_tab_widget):
 
         self.tab_data = {}
 
-        if not isinstance(parent, QDialog):
+        # if not isinstance(parent, QDialog):
 
-            self.tabButton = QToolButton(self)
-            self.tabButton.setText('+')
-            self.tabButton.setObjectName("tab_button")
+        #     self.tabButton = QToolButton(self)
+        #     self.tabButton.setText('+')
+        #     self.tabButton.setObjectName("tab_button")
 
-            font = self.tabButton.font()
-            font.setBold(True)
+        #     font = self.tabButton.font()
+        #     font.setBold(True)
             
-            self.tabButton.setFont(font)
-            self.setCornerWidget(self.tabButton)
-            self.tabButton.clicked.connect(self.parent.add_defualt_script)
+        #     self.tabButton.setFont(font)
+        #     self.setCornerWidget(self.tabButton)
+        #     self.tabButton.clicked.connect(self.parent.add_defualt_script)
 
         self.tabBar().currentChanged.connect(lambda index: self.editWindowTitle(index))
 

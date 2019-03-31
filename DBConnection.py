@@ -13,49 +13,6 @@ from pymongo import errors as pyErrs
 
 from collections import OrderedDict
 
-class APIHandler():
-    def __init__(self, apiData, log):
-        self.apiConfig = apiData
-        self.apiName = apiData['apiname']
-        self.apiRequestType = apiData['request']
-        self.apiURI = apiData['uri']
-        self.fLimit = apiData['tableSize']
-        self.model = None
-        #for docs from all collections in db#self.mDbDocs = [[0 for x in range(0)] for y in range (len(self.__db_collections))] # creates a matrix of with len(self.__db_collections) number of empty lists
-
-        # self.mDbDocs = []
-        #print(self.mDbDocs)
-        self.serverStatus()
-
-    def serverStatus(self):
-        # req = requests.get(self.apiURI['base'])
-
-        response = os.system("ping -c 1 " + self.apiURI['base'])
-
-        #and then check the response...
-        if response == 0:
-            print( self.apiURI['base'], 'is up!')
-            return True
-        else:
-            print( self.apiURI['base'], 'is down!' ) 
-            return False
-
-    def putData(self, uri, data):
-        response = requests.put(uri, data)
-        return response
-
-    def postData(self, uri, data):
-        response = requests.post(uri, data)
-        return response
-
-    def getData(self, uri, params=None):
-        response = requests.get(uri, params)
-        return response
-
-    def deleteData(self, uri):
-        response = requests.delete(uri)
-        return response
-
 class DatabaseHandler():
 
     @staticmethod

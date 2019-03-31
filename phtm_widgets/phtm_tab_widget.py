@@ -5,7 +5,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 
 from phtm_editor import phtm_editor
-from style.phtm_main_window import phtm_main_window
+from phtm_widgets.phtm_main_window import phtm_main_window
 from file.json_script import json_script
 
 class phtm_tab_widget(QTabWidget):
@@ -57,6 +57,14 @@ class phtm_tab_widget(QTabWidget):
         ''')
 
         self.tabCloseRequested.connect(self.close_tab)
+
+    def tab_by_text(self, text):
+        tabIndexFound = -1
+        for i in range( self.count()):
+            if text == self.tabText(i):
+                tabIndexFound = self.widget(i)
+                break
+        return tabIndexFound
 
     def close_tab(self, index):
         self.removeTab(index)

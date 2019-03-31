@@ -17,10 +17,10 @@ from DBConnection import *
 from main_tool_bar import main_tool_bar, reloadCollectionNames
 from Center import center_window
 
-from style.phtm_icons import phtm_icons
-from style.phtm_dialog import phtm_dialog
-from style.phtm_tab_widget import phtm_tab_widget
-from style.phtm_plain_text_edit import phtm_plain_text_edit
+from phtm_widgets.phtm_icons import phtm_icons
+from phtm_widgets.phtm_dialog import phtm_dialog
+from phtm_widgets.phtm_tab_widget import phtm_tab_widget
+from phtm_widgets.phtm_plain_text_edit import phtm_plain_text_edit
 
 from file.phm_file_handler import phm_file_handler
 from phtm_editor import phtm_editor
@@ -112,7 +112,7 @@ class main_window(QMainWindow):
 
         self.setCentralWidget(splitter1)
 
-        splitter1.setSizes([300,212])
+        splitter1.setSizes([300, 325])
         # self.setStatusBar(StatusBar())
         self.statusBar().showMessage('Ready')
         self.statusBar().setFixedHeight(20)

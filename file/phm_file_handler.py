@@ -30,7 +30,7 @@ class phm_file_handler():
         # self.__date_time_created = current_date_time
         # self.__date_time_modified = current_date_time
 
-        self.__db_handler=db_handler
+        self.__db_handler = db_handler
 
         # self.__creator = creator
         # self.__group = group
@@ -48,11 +48,11 @@ class phm_file_handler():
 
     def save(self, file_name=None, user=None):
         self.__phm.modified_by(user)
-        pickle.dump( self.__phm, open( file_name + ".phm", "wb" ) )
+        pickle.dump(self.__phm, open(file_name + ".phm", "wb"))
 
     def load(self, file_path):
         self.__file_path = file_path
-        self.__phm = pickle.load( open( file_path, "rb" ) )
+        self.__phm = pickle.load(open(file_path, "rb" ))
 
 #------------------------- script methods --------------------------
     def add_script(self, script, title=None, creator=None):
@@ -75,11 +75,6 @@ class phm_file_handler():
     def get_phm(self):
         return self.__phm
 
-    def update_script(self, title, user=None):
-        if not self.get_phm_scripts()[hash(title)].set_script():
-            return
-        self.get_phm_scripts()[hash(title)].get_modified_by = [user]
-
     def export_script(self, title, dest, user=None):
         json.dump(self.get_phm_scripts()[hash(title)], dest)
 
@@ -88,6 +83,9 @@ class phm_file_handler():
 
     def get_file_path(self):
         return self.__file_path
+
+    def set_file_path(self, file_path):
+        self.__file_path = file_path
 
 #---------------------------- Database Methods ------------------------------
     def get_db_handler(self, user=None):

@@ -6,9 +6,9 @@ from Center import center_window
 from Preferences import *
 from DBConnection import *
 
-from style.phtm_push_button import phtm_push_button
-from style.phtm_combo_box import phtm_combo_box
-from style.phtm_tab_widget import phtm_tab_widget
+from phtm_widgets.phtm_push_button import phtm_push_button
+from phtm_widgets.phtm_combo_box import phtm_combo_box
+from phtm_widgets.phtm_tab_widget import phtm_tab_widget
 
 class preference_body(QDialog):
     def __init__(self, user, log, parent):

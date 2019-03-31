@@ -8,6 +8,9 @@ from datetime import datetime
 from file.phm_file_handler import phm_file_handler
 from file.json_script import json_script
 
+from phtm_widgets.phtm_tree_widget import phtm_tree_widget
+from phtm_widgets.phtm_plain_text_edit import phtm_plain_text_edit
+
 from phtm_editor import phtm_editor
 from tab_widget import tab_widget
 
@@ -21,7 +24,7 @@ class phtm_editor_widget(QWidget):
         self.cluster = phm_file_handler()
 
         self.__layout = QHBoxLayout()
-        self.__layout.setContentsMargins(0,0,0,0)
+        self.__layout.setContentsMargins(0, 0, 0, 0)
 
         self.__splitter = QSplitter()
 
@@ -33,7 +36,10 @@ class phtm_editor_widget(QWidget):
 
         self.file_path = ""
 
+        self.name_temp = None
+
         # self.__layout.addWidget(self.__script_tree_widget)
+        self.__splitter.setSizes([200, 150])
         self.__layout.addWidget(self.__splitter)
 
         self.setLayout(self.__layout)
@@ -50,33 +56,37 @@ class phtm_editor_widget(QWidget):
         self.__splitter.addWidget(self.__editor_tabs)
 
     def __tabs_closed(self):
-        print("tab being closed..")
+        # print("tab being closed..")
         if self.__editor_tabs.count() < 1:
             self.__editor_tabs.hide()
 
     def clear_tabs(self):
         self.__editor_tabs.clear()
 
-    def __open_script(self, tree_item):
+    def __open_script(self, item):
         #self.cluster.get_phm_scripts()[hash(tree_item.text(0))] # load double clicked script int self.__editor_tabs
         # print(self.cluster.get_phm_scripts().keys())
         # print(hash(tree_item.text(0)))
+        if item == self.__tree_root or (self.__editor_tabs.tab_by_text(item.text(0)) != -1):
+            return
+
         if self.__editor_tabs.isHidden():
             self.__editor_tabs.show()
             self.__editor_tabs.add_editor()
 
-        self.__editor_tabs.currentWidget().set_curr_script(self.cluster.get_phm_scripts()[hash(tree_item.text(0))])
-        self.__editor_tabs.setTabText(self.__editor_tabs.currentIndex(), tree_item.text(0))
-        print("Opening Json Script...")
+        self.__editor_tabs.currentWidget().set_curr_script(self.cluster.get_phm_scripts()[hash(item.text(0))])
+        self.__editor_tabs.setTabText(self.__editor_tabs.currentIndex(), item.text(0))
+        # print("Opening Json Script...")
 
     def __open_script_in_tab(self, tree_item):
         #self.cluster.get_phm_scripts()[hash(tree_item.text(0))] # load double clicked script int self.__editor_tabs
         # print(self.cluster.get_phm_scripts().keys())
         # print(hash(tree_item.text(0)))
         self.__editor_tabs.add_editor(self.cluster.get_phm_scripts()[hash(tree_item.text(0))])
-        print("Opening Json Script...")
+        # print("Opening Json Script...")
 
     def load_cluster(self, file_path):
+        self.__script_tree.itemChanged.disconnect()
         self.cluster.load(file_path)
         self.__script_tree.clear()
 
@@ -96,18 +106,26 @@ class phtm_editor_widget(QWidget):
             # print(value.get_title())
             self.add_script_child(self.__tree_root, value.get_title())
 
+        self.__script_tree.itemChanged.connect(self.item_changed)
+
     def add_defualt_script(self):
         title = "JSON Template"
         if self.__default_count >= 1:
             title += " " + str(self.__default_count)
 
-        self.add_script("[\n    {\n        \"\": \"\"\n    }\n]", title , "Default")
+        default = self.add_script("[\n    {\n        \"\": \"\"\n    }\n]", title, "Default")
+    
+        if self.__editor_tabs.isHidden():
+            self.__editor_tabs.show()
+
         self.__editor_tabs.add_editor(self.cluster.get_phm_scripts()[hash(title)])
         self.__default_count += 1
 
     def add_script(self, script, title, creator):
-        new_script = self.cluster.add_script(script,title,creator)
+        new_script = self.cluster.add_script(script, title, creator)
+        self.__script_tree.itemChanged.disconnect()
         self.add_script_child(self.__tree_root, title)
+        self.__script_tree.itemChanged.connect(self.item_changed)
 
         return new_script
 
@@ -115,13 +133,15 @@ class phtm_editor_widget(QWidget):
 
         self.__tree_root = None
 
-        self.__script_tree = QTreeWidget()
+        self.__script_tree = phtm_tree_widget()
+        self.__script_tree.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.__script_tree.setColumnCount(1)
         # self.__script_tree.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Expanding)
         # self.__script_tree.setFixedWidth(200)
         self.__script_tree.setContentsMargins(0,50,0,0)
+        # self.__script_tree.setHeaderHidden(True)
 
-        self.__script_tree_details_box = QPlainTextEdit()
+        self.__script_tree_details_box = phtm_plain_text_edit()
         self.__script_tree_details_box.setReadOnly(True)
 
         self.__script_tree_layout = QVBoxLayout()
@@ -137,22 +157,23 @@ class phtm_editor_widget(QWidget):
 
         self.__tree_root = self.add_script_root()
 
-        self.__script_tree.setHeaderLabels(["Title"])
+        self.__script_tree.setHeaderLabels(["Script Cluster"])
         self.__script_tree.expandItem(self.__tree_root)
 
         self.__script_tree.setContextMenuPolicy(Qt.CustomContextMenu)
         self.__script_tree.customContextMenuRequested.connect(self.on_treeWidget_customContextMenuRequested)
 
+        self.__script_tree.itemChanged.connect(self.item_changed)
         # self.add_script_child(self.__tree_root, "Hello", "cruel", "world")
 
         self.__splitter.addWidget( self.__script_tree_widget)
 
-    def __show_details(self, tree_item):
-        if not tree_item:
+    def __show_details(self, item):
+        if not item:
             return
             
-        if tree_item.childCount() <= 0:
-            curr_scirpt = self.cluster.get_phm_scripts()[hash(tree_item.text(0))]
+        if item != self.__tree_root:
+            curr_scirpt = self.cluster.get_phm_scripts()[hash(item.text(0))]
 
             details = "Title: " + curr_scirpt.get_title()
             details += "\nDate Created: " +  str(curr_scirpt.get_date_time_created())
@@ -162,11 +183,32 @@ class phtm_editor_widget(QWidget):
 
         else:
 
-            details = "Title: " + tree_item.text(0)
+            details = "Title: " + item.text(0)
             details += "\nFile Path: " + self.file_path
 
         self.__script_tree_details_box.setPlainText(details)
             # details += "\nDate Created: " + curr_scirpt.
+
+    def delete_script(self, index):
+        item = self.__tree_root.child(index)
+        del self.cluster.get_phm_scripts()[hash(item.text(0))]
+        self.__tree_root.removeChild(item)
+
+    def rename_script(self, index):
+        item = self.__tree_root.child(index)
+        self.__script_tree.editItem(item)
+        self.name_temp = item.text(0)
+    
+    def item_changed(self, item, col):
+        # print(item.text(0))
+        # print(col)
+        if col != 0:
+            return
+
+        self.cluster.get_phm_scripts()[hash(item.text(0))] = self.cluster.get_phm_scripts()[hash(self.name_temp)]
+        self.cluster.get_phm_scripts()[hash(item.text(0))].set_title(item.text(0))
+        del self.cluster.get_phm_scripts()[hash(self.name_temp)]
+        self.name_temp = None
 
     def on_treeWidget_customContextMenuRequested(self, pos):
         item = self.__script_tree.itemAt(pos)
@@ -177,7 +219,16 @@ class phtm_editor_widget(QWidget):
             if self.__script_tree.indexOfTopLevelItem(item) == -1:
 
                 index = item.parent().indexOfChild(item)
-                # print(index)
+                renameAction = QAction("Rename", self)
+                renameAction.triggered.connect(lambda x: self.rename_script(index))
+
+                deleteAction = QAction("Delete", self)
+                deleteAction.triggered.connect(lambda x: self.delete_script(index))
+
+                menu.addAction(renameAction)
+                menu.addAction(deleteAction)
+
+                menu.addSeparator()
 
                 openAction = QAction("Open", self)
                 openAction.triggered.connect(lambda x: self.__open_script(self.__script_tree.selectedItems()[0]))
@@ -200,16 +251,18 @@ class phtm_editor_widget(QWidget):
                 menu.addAction(runBelow)
             
             else:
+                # print(index)
+                newAction = QAction("New Script", self)
+                newAction.triggered.connect(lambda x: self.add_defualt_script())
+                menu.addAction(newAction)
+
+                menu.addSeparator()
 
                 runAllAction = QAction("Run All", self)
                 runAllAction.triggered.connect(lambda x: r_ctrl.run_all_scripts(self.parent))
                 menu.addAction(runAllAction)
 
             menu.popup(self.__script_tree.viewport().mapToGlobal(pos))
-
-
-    def on_copy(self):
-        print("Hello")
 
     def rename_script_root(self, name):
         self.__tree_root.setText(0, name)
@@ -222,6 +275,7 @@ class phtm_editor_widget(QWidget):
     def add_script_child(self, root, name):
         tree_item = QTreeWidgetItem(root)
         tree_item.setText(0, name)
+        tree_item.setFlags(tree_item.flags() | Qt.ItemIsEditable)
 
         root.addChild(tree_item)
 

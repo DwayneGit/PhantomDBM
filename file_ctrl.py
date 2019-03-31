@@ -1,5 +1,6 @@
 import json
 import re
+import os
 
 from PyQt5.QtWidgets import QFileDialog
 
@@ -24,11 +25,13 @@ def load_script(main_window):
     
     if dlg.exec_():
         filenames = dlg.selectedFiles()
-        file_path = filenames[0] # save file path
+
+        filename_w_ext = os.path.basename(filenames[0])
+        filename, file_extension = os.path.splitext(filename_w_ext)
         # print(main_window.file_path)
         # main_window.editWindowTitle()
 
-        new_script = main_window.get_editor_widget().add_script(text_style.read_text(file_path), filenames[0], "Dwayne W")
+        new_script = main_window.get_editor_widget().add_script(text_style.read_text(filenames[0]), filename, "Dwayne W")
 
         # new_editor= phtm_editor()
         # new_editor.clear()
@@ -61,7 +64,7 @@ def save_script(main_window):
 
     if not file_path:
         print("Cluster file not saved. would you liket to save?")
-        export_phm(main_window)
+        main_window.get_editor_widget().get_cluster().set_file_path(export_phm(main_window))
         return
 
     main_window.statusBar().showMessage("Saving File ...")
@@ -97,6 +100,7 @@ def export_phm(main_window):
     if fileName:
         file_path = fileName
         main_window.get_editor_widget().get_cluster().save(fileName)
+        return fileName
 
 def save_phm(main_window):
     
