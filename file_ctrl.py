@@ -116,9 +116,9 @@ def save_phm(main_window):
 
     main_window.statusBar().showMessage("Saving PHM ...")
     for i in range(main_window.get_editor_widget().get_editor_tabs().count()):
-        print(i)
+        # print(i)
         if main_window.get_editor_widget().get_editor_tabs().widget(i).is_changed:
-            print(main_window.get_editor_widget().get_editor_tabs().widget(i).get_curr_script().get_title())
+        #     print(main_window.get_editor_widget().get_editor_tabs().widget(i).get_curr_script().get_title())
             main_window.get_editor_widget().get_editor_tabs().widget(i).save_script()  
     phm_handler.save()
 

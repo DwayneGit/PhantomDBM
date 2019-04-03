@@ -69,6 +69,19 @@ class phtm_tab_widget(QTabWidget):
         return tabIndexFound
 
     def close_tab(self, index):
+        if self.widget(index).is_changed:
+            save_msg = "The current script is not saved. Are you Sure you want to close?"
+            reply = QMessageBox.question(self, 'Message', 
+                            save_msg, QMessageBox.Yes | QMessageBox.Save | QMessageBox.Cancel, QMessageBox.Cancel)
+
+            if reply == QMessageBox.Cancel:
+                return
+            elif reply == QMessageBox.Save:
+                self.widget(index).save_script()
+            elif reply == QMessageBox.Yes:
+                self.is_saved(self.tabText(index)[2:], index)
+                
+
         self.removeTab(index)
 
     def clear(self):
