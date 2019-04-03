@@ -8,13 +8,13 @@ next:
     - integrate mongodb authentication  
     - db authentication <- duplicate  
     - automated instruction scripts  
+
        - scripts that will help with handling other operations when sending data  
           such as updateding other data entries if the one being inserted requires that  
           (standard alterations occur naturally) in xml format  
         - start off with xml then create own markup language  
-        + validation element  
-        +     
-        
+        + validation element    
+
     - api  
     - website  
         github  
@@ -26,18 +26,6 @@ next:
             - add setting button  (or have as option in combobox)  
 
 in progress:  
-    - script grouping (clustering)  
-        - branch: "Add_file_grouping"  
-        - grouping scripts into a folder for data compiled over time rather than updating  
-          the same script everytime you need to add data  
-        - good for record keeping  
-        - is logged.  
-        - implamentation:  
-            - create file type that holds all the seperate json list (files) time stamped with user who uploaded  
-            - ability to export individual json file with in cluster  
-            - have more secure remote option service  
-            - pickle  
-
     - tabbed script edit window  
         - https://stackoverflow.com/questions/19975137/how-can-i-add-a-new-tab-button-next-to-the-tabs-of-a-qmdiarea-in-tabbed-view-m  
         - https://stackoverflow.com/questions/22616446/add-plus-button-to-tabwidget-pyqt4  
@@ -50,6 +38,19 @@ testing:
         - link element ✓  
     - seperate files (divide operations)  
     - themes   
+
+    - script grouping (clustering)  
+        - branch: "Add_file_grouping"  
+        - grouping scripts into a folder for data compiled over time rather than updating  
+          the same script everytime you need to add data  
+        - good for record keeping 
+        - is logged. 
+        - implamentation:  
+            - create file type that holds all the seperate json list (files) time stamped with user who uploaded  
+            - ability to export individual json file with in cluster  
+            - have more secure remote option service  
+            - pickle  
+ 
 
 done:  
     - run scripts from program with out saving ✓  
