@@ -56,27 +56,29 @@ class phtm_menu_bar(QMenuBar):
         # openRAction.triggered.connect(self.mw.getfile)
         fileMenu.addSeparator()
 
-        savePAction = QAction("Save PHM", self.mw)
+        savePAction = QAction("Save Script", self.mw)
         savePAction.setShortcut("Ctrl+S")
         savePAction.setStatusTip('Save Script File')
+        savePAction.triggered.connect(lambda: f_ctrl.save_script(self.mw, self.mw.get_editor_widget().get_editor_tabs().currentWidget()))
+        fileMenu.addAction(savePAction)
+
+        savePAction = QAction("Save PHM", self.mw)
+        savePAction.setStatusTip('Save Cluster File')
         savePAction.triggered.connect(lambda: f_ctrl.save_phm(self.mw))
         fileMenu.addAction(savePAction)
 
         savePAsAction = QAction("Save PHM As...", self.mw)
-        savePAsAction.setShortcut("Ctrl+S")
         savePAsAction.setStatusTip('Save Script File')
         savePAsAction.triggered.connect(lambda: f_ctrl.export_phm(self.mw))
         fileMenu.addAction(savePAsAction)
         fileMenu.addSeparator()
 
         importAction = QAction("Import JSON File", self.mw)
-        importAction.setShortcut("Ctrl+S")
         importAction.setStatusTip('Save Script File')
         importAction.triggered.connect(lambda: f_ctrl.load_script(self.mw))
         fileMenu.addAction(importAction)
 
         exportAction = QAction("Export JSON File", self.mw)
-        exportAction.setShortcut("Ctrl+S")
         exportAction.setStatusTip('Save Script File')
         exportAction.triggered.connect(lambda: f_ctrl.export_script(self.mw))
         fileMenu.addAction(exportAction)
