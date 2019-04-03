@@ -28,7 +28,7 @@ class main_tool_bar():
         topTBar.addAction(tbfile)
         
         tbsave = QAction(QIcon(self.icon_set.save),"save",self.mw)
-        tbsave.triggered.connect(lambda: f_ctrl.save_script(self.mw))
+        tbsave.triggered.connect(lambda: f_ctrl.save_script(self.mw, self.mw.get_editor_widget().get_editor_tabs().currentWidget()))
         topTBar.addAction(tbsave)
             
         tbfiles = QAction(QIcon(self.icon_set.export_file),"export",self.mw)

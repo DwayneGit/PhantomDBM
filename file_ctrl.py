@@ -48,15 +48,17 @@ def load_phm(main_window):
     
     if dlg.exec_():
         filenames = dlg.selectedFiles()
-        file_path = filenames[0] # save file path
+
+        filename_w_ext = os.path.basename(filenames[0])
+        filename, file_extension = os.path.splitext(filename_w_ext)
         # print(main_window.file_path)
-        # main_window.editWindowTitle()
+        main_window.updateWindowTitle(filename)
         main_window.get_editor_widget().clear_tabs()
-        main_window.get_editor_widget().load_cluster(file_path)
+        main_window.get_editor_widget().load_cluster(filename_w_ext)
 
-        print(file_path)
+        print(filename_w_ext)
 
-def save_script(main_window):
+def save_script(main_window, editor):
     
     file_path = main_window.get_editor_widget().get_cluster().get_file_path()
     tabs = main_window.get_editor_widget().get_editor_tabs()
@@ -72,14 +74,14 @@ def save_script(main_window):
     # with open(curr_tab.file_path, 'w') as outfile:
     #     outfile.write(eval(json.dumps(curr_tab.toPlainText(), indent=4)))
     
-    main_window.get_editor_widget().get_editor_tabs().currentWidget().save_script()
+    editor.save_script()
 
     # if file_path:
     #     main_window.get_editor_widget().get_editor_tabs()(curr_tab.title)
     # else:
     #     main_window.editor_tabs.setTabTitle(main_window.currTitle)
 
-    main_window.get_editor_widget().get_editor_tabs().currentWidget().is_changed = False 
+    editor.is_changed = False 
 
 def export_script(main_window):
     file_path = main_window.get_editor_widget().get_cluster().get_file_path()
@@ -89,7 +91,7 @@ def export_script(main_window):
     fileName, _ = QFileDialog.getSaveFileName(main_window, "Save File", "", "JSON files (*.json)")
     if fileName:
         file_path = fileName
-        save_script(main_window)
+        save_script(main_window, main_window.get_editor_widget().get_editor_tabs().currentWidget())
 
 def export_phm(main_window):
     file_path = main_window.get_editor_widget().get_cluster().get_file_path()
@@ -113,6 +115,11 @@ def save_phm(main_window):
         return
 
     main_window.statusBar().showMessage("Saving PHM ...")
+    for i in range(main_window.get_editor_widget().get_editor_tabs().count()):
+        print(i)
+        if main_window.get_editor_widget().get_editor_tabs().widget(i).is_changed:
+            print(main_window.get_editor_widget().get_editor_tabs().widget(i).get_curr_script().get_title())
+            main_window.get_editor_widget().get_editor_tabs().widget(i).save_script()  
     phm_handler.save()
 
 def tmpScript(main_window, curr_tab, temp = None):

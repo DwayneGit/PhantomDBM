@@ -138,18 +138,13 @@ class main_window(QMainWindow):
     def getWindowTitle(self):
         return self.parent.getWindowTitle()
 
-    def isChanged(self):
-        if not self.changed:
-            self.changed = True
-            self.set_window_title("* " + self.currTitle)
+    # def isChanged(self):
+    #     if not self.changed:
+    #         self.changed = True
+    #         self.set_window_title("* " + self.currTitle)
 
-    # def editWindowTitle(self):
-    #     # use regex to grab the name of the file from the path and added to title
-    #     newTitle = self.window_title
-    #     fileName = re.split('^(.+)\/([^\/]+)$', self.filePath)
-    #     newTitle = newTitle +  " - " + fileName[2]
-    #     self.set_window_title(newTitle)
-    #     self.currTitle = newTitle
+    def updateWindowTitle(self, newTitle):
+        self.set_window_title(newTitle + " - " + self.parent.getPermanentTitle())
 
     def setRunState(self, state):
         self.setIsRunning(state)

@@ -74,15 +74,26 @@ class phtm_editor_widget(QWidget):
             self.__editor_tabs.show()
             self.__editor_tabs.add_editor()
 
+        if self.__editor_tabs.currentWidget().is_changed:
+            # print(self.__editor_tabs.currentWidget().is_changed)
+            self.__open_script_in_tab(item)
+            return
+
+        self.__editor_tabs.currentWidget().textChanged.disconnect()
         self.__editor_tabs.currentWidget().set_curr_script(self.cluster.get_phm_scripts()[hash(item.text(0))])
+        self.__editor_tabs.currentWidget().set_tree_item(item)
+
         self.__editor_tabs.setTabText(self.__editor_tabs.currentIndex(), item.text(0))
+        self.__editor_tabs.currentWidget().is_changed = False
+        self.__editor_tabs.currentWidget().textChanged.connect(lambda: self.__editor_tabs.isChanged(self.__editor_tabs.currentIndex()))
         # print("Opening Json Script...")
 
     def __open_script_in_tab(self, tree_item):
         #self.cluster.get_phm_scripts()[hash(tree_item.text(0))] # load double clicked script int self.__editor_tabs
         # print(self.cluster.get_phm_scripts().keys())
         # print(hash(tree_item.text(0)))
-        self.__editor_tabs.add_editor(self.cluster.get_phm_scripts()[hash(tree_item.text(0))])
+        index = self.__editor_tabs.add_editor(self.cluster.get_phm_scripts()[hash(tree_item.text(0))])
+        self.__editor_tabs.widget(index).set_tree_item(tree_item)
         # print("Opening Json Script...")
 
     def load_cluster(self, file_path):
@@ -118,14 +129,16 @@ class phtm_editor_widget(QWidget):
         if self.__editor_tabs.isHidden():
             self.__editor_tabs.show()
 
-        self.__editor_tabs.add_editor(self.cluster.get_phm_scripts()[hash(title)])
         self.__default_count += 1
 
     def add_script(self, script, title, creator):
         new_script = self.cluster.add_script(script, title, creator)
         self.__script_tree.itemChanged.disconnect()
-        self.add_script_child(self.__tree_root, title)
+        item = self.add_script_child(self.__tree_root, title)
         self.__script_tree.itemChanged.connect(self.item_changed)
+        
+        index = self.__editor_tabs.add_editor(self.cluster.get_phm_scripts()[hash(title)])
+        self.__editor_tabs.widget(index).set_tree_item(item)
 
         return new_script
 
@@ -139,7 +152,7 @@ class phtm_editor_widget(QWidget):
         # self.__script_tree.setSizePolicy(QSizePolicy.Fixed, QSizePolicy.Expanding)
         # self.__script_tree.setFixedWidth(200)
         self.__script_tree.setContentsMargins(0,50,0,0)
-        # self.__script_tree.setHeaderHidden(True)
+        self.__script_tree.setHeaderHidden(True)
 
         self.__script_tree_details_box = phtm_plain_text_edit()
         self.__script_tree_details_box.setReadOnly(True)
@@ -173,7 +186,11 @@ class phtm_editor_widget(QWidget):
             return
             
         if item != self.__tree_root:
-            curr_scirpt = self.cluster.get_phm_scripts()[hash(item.text(0))]
+            txt = item.text(0)
+            if item.text(0)[0:2] == "* ":
+                txt = item.text(0)[2:]
+            
+            curr_scirpt = self.cluster.get_phm_scripts()[hash(txt)]
 
             details = "Title: " + curr_scirpt.get_title()
             details += "\nDate Created: " +  str(curr_scirpt.get_date_time_created())
@@ -278,6 +295,7 @@ class phtm_editor_widget(QWidget):
         tree_item.setFlags(tree_item.flags() | Qt.ItemIsEditable)
 
         root.addChild(tree_item)
+        return tree_item
 
     def get_script_tree(self):
         return self.__script_tree
@@ -288,5 +306,5 @@ class phtm_editor_widget(QWidget):
     def get_cluster(self):
         return self.cluster
 
-    def getPermanentTitle(self):
-        return self.parent.parent.getPermanentTitle()
+    # def getPermanentTitle(self):
+    #     return self.parent.parent.getPermanentTitle()

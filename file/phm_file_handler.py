@@ -48,7 +48,10 @@ class phm_file_handler():
 
     def save(self, file_name=None, user=None):
         self.__phm.modified_by(user)
-        pickle.dump(self.__phm, open(file_name + ".phm", "wb"))
+        if file_name:
+            pickle.dump(self.__phm, open(file_name + ".phm", "wb"))
+        else:
+            pickle.dump(self.__phm, open(self.__file_path, "wb"))
 
     def load(self, file_path):
         self.__file_path = file_path

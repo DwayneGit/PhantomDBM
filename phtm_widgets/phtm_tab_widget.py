@@ -63,7 +63,9 @@ class phtm_tab_widget(QTabWidget):
         for i in range( self.count()):
             if text == self.tabText(i):
                 tabIndexFound = self.widget(i)
+                self.setCurrentIndex(i)
                 break
+        # print(tabIndexFound)
         return tabIndexFound
 
     def close_tab(self, index):
@@ -80,15 +82,20 @@ class phtm_tab_widget(QTabWidget):
             # print(editor.file_path)
             
             file_name = script.get_title()
-            self.addTab(editor, editor.title)
+            index = self.addTab(editor, editor.title)
 
             editor.textChanged.connect( lambda: self.isChanged(self.currentIndex()))
+            editor.saved.connect( lambda title: self.is_saved(title, self.currentIndex()))
             # self.editWindowTitle(self.currentIndex())
 
         else:
             editor = phtm_editor()
-            self.addTab(editor, "")
+            index = self.addTab(editor, "")
             editor.textChanged.connect( lambda: self.isChanged(self.currentIndex()))
+            editor.saved.connect( lambda title: self.is_saved(title, self.currentIndex()))
+
+        self.setCurrentIndex(index)
+        return index
 
 
         # else:
@@ -104,11 +111,24 @@ class phtm_tab_widget(QTabWidget):
 
         #     default_tab.textChanged.connect( lambda: self.isChanged(self.currentIndex()))
         #     # self.editWindowTitle(self.currentIndex())
+    def is_saved(self, title, index):
+        # print(title + " " + str(index))
+        self.widget(index).is_changed = False
+        self.setTabText(index, title)
 
+        self.parent.get_script_tree().itemChanged.disconnect()
+        self.widget(index).get_tree_item().setText(0,title)
+        self.parent.get_script_tree().itemChanged.connect(self.parent.item_changed)
+        
     def isChanged(self, index):
-        if not self.widget(index).is_changed:
+        if not self.widget(index).is_changed and self.tabText(index):
             self.widget(index).is_changed = True
             self.setTabText(index, "* " + self.tabText(index))
+
+            self.parent.get_script_tree().itemChanged.disconnect()
+            self.widget(index).get_tree_item().setText(0, self.tabText(index))
+            self.parent.get_script_tree().itemChanged.connect(self.parent.item_changed)
+            # print(self.tabText(index))
 
     def get_index(self, editor):
         return self.indexOf(editor)
@@ -119,7 +139,3 @@ class phtm_tab_widget(QTabWidget):
             # print(text[2:])
             return self.tabText(index)[2:]
         else: return self.tabText(index)
-
-    def editTabTitle(self, title):
-        self.setTabText(self.currentIndex(), title)
-        # print(self.tabText(self.currentIndex()))

@@ -27,6 +27,9 @@ class LineNumberArea(QWidget):
 
 
 class phtm_editor(phtm_plain_text_edit):
+
+    saved = pyqtSignal(str)
+
     def __init__(self, script=None):
         super(phtm_editor, self).__init__()
         
@@ -34,6 +37,7 @@ class phtm_editor(phtm_plain_text_edit):
 
         self.file_path = None
         self.is_changed = False
+        self.tree_item = None
         
         if script:
             self.__curr_script = script
@@ -55,6 +59,7 @@ class phtm_editor(phtm_plain_text_edit):
         self.__curr_script = script
         self.title = self.__curr_script.get_title()
         self.setPlainText(self.__curr_script.get_script())
+        self.is_changed = False
 
     def get_curr_script(self):
         return self.__curr_script
@@ -63,6 +68,13 @@ class phtm_editor(phtm_plain_text_edit):
         self.__curr_script.set_script(self.toPlainText())
         self.__curr_script.set_modified_by(user)
         self.__curr_script.update_date_time_modified()
+        self.saved.emit(self.__curr_script.get_title())
+
+    def get_tree_item(self):
+        return self.tree_item
+
+    def set_tree_item(self, item):
+        self.tree_item = item
 
     def updateLineNumberAreaWidth(self, _):
         self.setViewportMargins((3 + self.fontMetrics().width('9') * 4) + 5, 0, 0, 0)

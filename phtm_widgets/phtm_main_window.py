@@ -15,7 +15,7 @@ class phtm_main_window(QMainWindow):
 
         self.setWindowFlags(Qt.FramelessWindowHint)
         
-        self.program_title = "Phantom DBM"
+        self.__program_title = "Phantom DBM"
         self.window_title = ''
 
         script_dir = os.path.dirname(os.path.realpath(__file__))
@@ -29,7 +29,7 @@ class phtm_main_window(QMainWindow):
         self.title_bar = phtm_title_bar(self, True)
         self.title_bar.generate_title_bar()
 
-        self.set_window_title(self.program_title)
+        self.set_window_title(self.__program_title)
 
         self.addToolBar(Qt.TopToolBarArea, self.title_bar)
 
@@ -39,7 +39,7 @@ class phtm_main_window(QMainWindow):
         self.set_style()
     
     def getPermanentTitle(self):
-        return self.program_title
+        return self.__program_title
 
     def getWindowTitle(self):
         return self.title_bar.window_title

@@ -1,6 +1,7 @@
 import sys
 
 from PyQt5.QtWidgets import QAction, QMenuBar
+from PyQt5.QtCore import Qt
 
 import file_ctrl as f_ctrl
 import run_ctrl as r_ctrl
@@ -12,6 +13,8 @@ class phtm_menu_bar(QMenuBar):
 
         self.main_menu = self
         self.recentFilesList = None
+
+        self.setContextMenuPolicy(Qt.PreventContextMenu); 
 
     def init_menu_bar(self):
         self.fileMenu()

@@ -15,6 +15,9 @@ class phtm_title_bar(QToolBar):
         self.set_style()
         self.window_title = ""
 
+        self.setContextMenuPolicy(Qt.PreventContextMenu); 
+        # self.setContextMenuPolicy(Qt.); 
+
     def generate_title_bar(self):
 
         self.setMovable( False )

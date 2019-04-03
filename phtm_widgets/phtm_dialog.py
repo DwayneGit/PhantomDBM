@@ -53,8 +53,8 @@ class phtm_dialog(QDialog):
     def getWindowTitle(self):
         return self.title_bar.window_title
 
-    def getPermanentTitle(self):
-        return self.window_title
+    # def getPermanentTitle(self):
+    #     return self.window_title
 
     def set_style(self):
         if self.style == "ghost":

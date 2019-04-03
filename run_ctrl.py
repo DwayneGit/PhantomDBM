@@ -25,7 +25,7 @@ def run_script(main_window, run_counter=0, completed_run_counter=0):
                         save_msg, QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel, QMessageBox.Cancel)
 
         if reply == QMessageBox.Yes:
-            f_ctrl.save_script(main_window)
+            f_ctrl.save_script(main_window, main_window.get_editor_widget().get_editor_tabs().currentWidget())
         elif reply == QMessageBox.Cancel:
             return   
         elif reply == QMessageBox.No:
