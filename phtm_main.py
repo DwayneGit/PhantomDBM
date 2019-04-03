@@ -5,8 +5,7 @@ import sys
 from PyQt5.QtWidgets import QApplication
 
 from main_window import main_window
-from style.phtm_main_window import phtm_main_window
-
+from phtm_widgets.phtm_main_window import phtm_main_window
 
 if __name__ == '__main__':
     

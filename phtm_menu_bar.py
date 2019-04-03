@@ -1,8 +1,10 @@
 import sys
 
 from PyQt5.QtWidgets import QAction, QMenuBar
+from PyQt5.QtCore import Qt
 
 import file_ctrl as f_ctrl
+import run_ctrl as r_ctrl
 
 class phtm_menu_bar(QMenuBar):
     def __init__(self, main_window):
@@ -12,20 +14,36 @@ class phtm_menu_bar(QMenuBar):
         self.main_menu = self
         self.recentFilesList = None
 
+        self.setContextMenuPolicy(Qt.PreventContextMenu); 
+
     def init_menu_bar(self):
         self.fileMenu()
         self.editMenu()
+        self.runMenu()
         self.helpMenu()
 
     def fileMenu(self):
         fileMenu = self.main_menu.addMenu('File')
 
-        openAction = QAction("Open File", self.mw)
-        openAction.setShortcut("Ctrl+O")
-        openAction.setStatusTip('Open a Script File')
-        openAction.triggered.connect(lambda: f_ctrl.getfile(self.mw, self.mw.editor_tabs.currentWidget()))
-        fileMenu.addAction(openAction)
+        newJsonAction = QAction("New JSON", self.mw)
+        newJsonAction.setShortcut("Ctrl+N")
+        newJsonAction.triggered.connect(self.mw.get_editor_widget().add_defualt_script)
+        fileMenu.addAction(newJsonAction)
         
+        fileMenu.addSeparator()
+
+        openJsonAction = QAction("Open JSON", self.mw)
+        openJsonAction.setShortcut("Ctrl+O")
+        openJsonAction.setStatusTip('Open a Script File')
+        openJsonAction.triggered.connect(lambda: f_ctrl.load_script(self.mw))
+        fileMenu.addAction(openJsonAction)
+
+        openPhmAction = QAction("Open PHM", self.mw)
+        openPhmAction.setShortcut("Ctrl+P")
+        openPhmAction.setStatusTip('Load a Cluster File')
+        openPhmAction.triggered.connect(lambda: f_ctrl.load_phm(self.mw))
+        fileMenu.addAction(openPhmAction)
+
         openRMenu = fileMenu.addMenu("Open Recent")
         # openRMenu.setLayoutDirection(Qt.LeftToRight)
         # openRMenu.setStatusTip('Open a Recent Script File')
@@ -38,17 +56,38 @@ class phtm_menu_bar(QMenuBar):
         # openRAction.triggered.connect(self.mw.getfile)
         fileMenu.addSeparator()
 
-        saveAction = QAction("Save File", self.mw)
-        saveAction.setShortcut("Ctrl+S")
-        saveAction.setStatusTip('Save Script File')
-        saveAction.triggered.connect(lambda: f_ctrl.saveScript(self.mw, self.mw.editor_tabs.currentWidget()))
+        savePAction = QAction("Save Script", self.mw)
+        savePAction.setShortcut("Ctrl+S")
+        savePAction.setStatusTip('Save Script File')
+        savePAction.triggered.connect(lambda: f_ctrl.save_script(self.mw, self.mw.get_editor_widget().get_editor_tabs().currentWidget()))
+        fileMenu.addAction(savePAction)
+
+        savePAction = QAction("Save PHM", self.mw)
+        savePAction.setStatusTip('Save Cluster File')
+        savePAction.triggered.connect(lambda: f_ctrl.save_phm(self.mw))
+        fileMenu.addAction(savePAction)
+
+        savePAsAction = QAction("Save PHM As...", self.mw)
+        savePAsAction.setStatusTip('Save Script File')
+        savePAsAction.triggered.connect(lambda: f_ctrl.export_phm(self.mw))
+        fileMenu.addAction(savePAsAction)
+        fileMenu.addSeparator()
+
+        importAction = QAction("Import JSON File", self.mw)
+        importAction.setStatusTip('Save Script File')
+        importAction.triggered.connect(lambda: f_ctrl.load_script(self.mw))
+        fileMenu.addAction(importAction)
+
+        exportAction = QAction("Export JSON File", self.mw)
+        exportAction.setStatusTip('Save Script File')
+        exportAction.triggered.connect(lambda: f_ctrl.export_script(self.mw))
+        fileMenu.addAction(exportAction)
 
         exittAction = QAction("Exit", self.mw)
         exittAction.setShortcut("Ctrl+Q")
         exittAction.setStatusTip('Leave The App')
         exittAction.triggered.connect(sys.exit)
 
-        fileMenu.addAction(saveAction)
         fileMenu.addSeparator()
 
         fileMenu.addAction(exittAction)
@@ -56,23 +95,23 @@ class phtm_menu_bar(QMenuBar):
     def editMenu(self):
         undoAction = QAction("Undo", self.mw)
         undoAction.setShortcut("Ctrl+Z")
-        undoAction.triggered.connect(self.mw.editor_tabs.currentWidget().undo)
+        undoAction.triggered.connect(self.mw.get_editor_widget().get_editor_tabs().currentWidget().undo)
 
         redoAction = QAction("Redo", self.mw)
         redoAction.setShortcut("Ctrl+Y")
-        redoAction.triggered.connect(self.mw.editor_tabs.currentWidget().redo)
+        redoAction.triggered.connect(self.mw.get_editor_widget().get_editor_tabs().currentWidget().redo)
 
         cutAction = QAction("Cut", self.mw)
         cutAction.setShortcut("Ctrl+X")
-        cutAction.triggered.connect(self.mw.editor_tabs.currentWidget().cut)
+        cutAction.triggered.connect(self.mw.get_editor_widget().get_editor_tabs().currentWidget().cut)
 
         copyAction = QAction("Copy", self.mw)
         copyAction.setShortcut("Ctrl+C")
-        copyAction.triggered.connect(self.mw.editor_tabs.currentWidget().copy)
+        copyAction.triggered.connect(self.mw.get_editor_widget().get_editor_tabs().currentWidget().copy)
 
         pasteAction = QAction("Paste", self.mw)
         pasteAction.setShortcut("Ctrl+V")
-        pasteAction.triggered.connect(self.mw.editor_tabs.currentWidget().paste)
+        pasteAction.triggered.connect(self.mw.get_editor_widget().get_editor_tabs().currentWidget().paste)
 
         findAction = QAction("FInd", self.mw)
         findAction.setShortcut("Ctrl+F")
@@ -94,6 +133,29 @@ class phtm_menu_bar(QMenuBar):
 
         editMenu.addAction(findAction)
         editMenu.addAction(replaceAction)
+
+    def runMenu(self):
+        runMenu = self.main_menu.addMenu("Run")
+
+        runAction = QAction("Run", self.mw)
+        runAction.triggered.connect(lambda x: r_ctrl.run_script(self.mw)) 
+
+        runAllAction = QAction("Run All", self.mw)
+        runAllAction.triggered.connect(lambda x: r_ctrl.run_all_scripts(self.mw))
+
+        stopAction = QAction("Stop", self.mw)
+        pauseAction = QAction("Pause", self.mw)
+
+        runMenu.addAction(runAction)
+        runMenu.addAction(runAllAction)
+        runMenu.addAction(stopAction)
+        runMenu.addAction(pauseAction)
+
+        runMenu.addSeparator()
+
+        validateAction = QAction("Validate", self.mw)
+        runMenu.addAction(validateAction)
+
 
     def helpMenu(self):
 

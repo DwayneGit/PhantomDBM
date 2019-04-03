@@ -1,6 +1,8 @@
 import json
 import time
 
+from collections import OrderedDict
+
 from PyQt5.QtCore import pyqtSlot, pyqtSignal, QObject, QThread
 
 class upload_thread(QObject):
@@ -8,9 +10,9 @@ class upload_thread(QObject):
     update = pyqtSignal(str) # signal data ready to be appended to th board
     done = pyqtSignal(str) # done signal
 
-    def __init__(self, filePath, dbHandler, log):
+    def __init__(self, script_s, dbHandler, log):
         QObject.__init__(self)
-        self.filePath = filePath
+        self.script_s = script_s
         self.dbHandler = dbHandler
         self.pauseFlag = False
         self.stopFlag = False
@@ -30,10 +32,19 @@ class upload_thread(QObject):
         #     self.stop()
         #     self.done.emit(thread_id)
         #     return
+        if isinstance(self.script_s, str):
+            self.__run_script(self.script_s)
 
-        with open(self.filePath) as infile:
+        elif isinstance( self.script_s, OrderedDict):
+            for key, value in self.script_s.items():
+                self.__run_script(value.get_script())
 
-            data = json.load(infile)
+        # self.update.emit("Finished")
+        self.done.emit(str(self.thread_id) + ": Run Complete.")
+        time.sleep(1)
+
+    def __run_script(self, script):
+            data = json.loads(script)
             i = 0
             while i < len(data):
                 if self.stopFlag:
@@ -46,10 +57,6 @@ class upload_thread(QObject):
                     # print(1)
                 else:
                     continue
-
-        # self.update.emit("Finished")
-        self.done.emit(str(self.thread_id) + ": Run Complete.")
-        time.sleep(1)
 
     # def updateSignal(self, msg):
     #     self.update.emit(msg)

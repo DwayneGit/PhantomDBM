@@ -7,6 +7,7 @@ class phtm_tool_bar(QToolBar):
         super().__init__()
         self.style=style
         self.set_style()
+        self.setContextMenuPolicy(Qt.PreventContextMenu); 
 
     def set_style(self):
         if self.style == "ghost":

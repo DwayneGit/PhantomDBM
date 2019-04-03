@@ -17,13 +17,17 @@ from DBConnection import *
 from main_tool_bar import main_tool_bar, reloadCollectionNames
 from Center import center_window
 
-from style.phtm_icons import phtm_icons
-from style.phtm_dialog import phtm_dialog
-from style.phtm_tab_widget import phtm_tab_widget
-from style.phtm_plain_text_edit import phtm_plain_text_edit
+from phtm_widgets.phtm_icons import phtm_icons
+from phtm_widgets.phtm_dialog import phtm_dialog
+from phtm_widgets.phtm_tab_widget import phtm_tab_widget
+from phtm_widgets.phtm_plain_text_edit import phtm_plain_text_edit
+
+from file.phm_file_handler import phm_file_handler
+from phtm_editor import phtm_editor
+from phtm_editor_widget import phtm_editor_widget
+from file.json_script import json_script
 
 from file_ctrl import tmpScriptCleaner
-from phtm_editor import phtm_editor
 import run_ctrl as r_ctrl
 import file_ctrl as f_ctrl
 from phtm_logger import phtm_logger
@@ -42,6 +46,8 @@ class main_window(QMainWindow):
 
         self.log = phtm_logger()
         self.log.logInfo("Program Started.")
+
+        self.__blank_cluster = phm_file_handler()
 
         self.prefs = Preferences('config', prefDict=DefaultGeneralConfig.prefDict, log=self.log) # name of preference file minus json
         self.prefs.loadConfig()
@@ -91,20 +97,22 @@ class main_window(QMainWindow):
         # self.fileContents.setPlainText("[\n    {\n        \"\": \"\"\n    }\n]")
         # self.fileContents.textChanged.connect(self.isChanged)
 
-        self.editor_tabs = phtm_tab_widget(self)
-        self.editor_tabs.add_editor()
+        # self.editor_tabs = phtm_tab_widget(self)
+        # self.editor_tabs.add_editor()
 
-        self.editor_tabs.setMovable(True)
-        self.editor_tabs.setTabsClosable(True)
+        # self.editor_tabs.setMovable(True)
+        # self.editor_tabs.setTabsClosable(True)
+
+        self.__editor_widget = phtm_editor_widget(self)
 
         self.changed = False
         # check if file is loaded and set flag to use to ask if save necessary before running or closing
         splitter1.addWidget(self.brd)
-        splitter1.addWidget(self.editor_tabs)
+        splitter1.addWidget(self.__editor_widget)
 
         self.setCentralWidget(splitter1)
 
-        splitter1.setSizes([300,212])
+        splitter1.setSizes([300, 325])
         # self.setStatusBar(StatusBar())
         self.statusBar().showMessage('Ready')
         self.statusBar().setFixedHeight(20)
@@ -130,18 +138,13 @@ class main_window(QMainWindow):
     def getWindowTitle(self):
         return self.parent.getWindowTitle()
 
-    def isChanged(self):
-        if not self.changed:
-            self.changed = True
-            self.set_window_title("* " + self.currTitle)
+    # def isChanged(self):
+    #     if not self.changed:
+    #         self.changed = True
+    #         self.set_window_title("* " + self.currTitle)
 
-    # def editWindowTitle(self):
-    #     # use regex to grab the name of the file from the path and added to title
-    #     newTitle = self.window_title
-    #     fileName = re.split('^(.+)\/([^\/]+)$', self.filePath)
-    #     newTitle = newTitle +  " - " + fileName[2]
-    #     self.set_window_title(newTitle)
-    #     self.currTitle = newTitle
+    def updateWindowTitle(self, newTitle):
+        self.set_window_title(newTitle + " - " + self.parent.getPermanentTitle())
 
     def setRunState(self, state):
         self.setIsRunning(state)
@@ -159,7 +162,7 @@ class main_window(QMainWindow):
             self.main_tool_bar.tbrun.setIconText("run")
             if main_window.__runs > 0:
                 self.main_tool_bar.tbrun.triggered.disconnect()
-            self.main_tool_bar.tbrun.triggered.connect(lambda: r_ctrl.runScript(self, self.editor_tabs.currentWidget(), main_window.__runs, main_window.__completedRuns))
+            self.main_tool_bar.tbrun.triggered.connect(lambda: r_ctrl.run_script(self, main_window.__runs, main_window.__completedRuns))
 
         elif state == True: 
             self.setRunBtnIcon(QIcon("icons/pause.png"))
@@ -189,7 +192,7 @@ class main_window(QMainWindow):
             self.log.logInfo("Program Ended")
 
     def showPref(self):
-        p = phtm_dialog("Preferences",QRect(10, 10, 350, 475), self)
+        p = phtm_dialog("Preferences", QRect(10, 10, 350, 475), self)
         p.set_central_dialog(preference_body(self.user, self.log, p))
         
         # print(self.prefs.prefDict)
@@ -208,6 +211,9 @@ class main_window(QMainWindow):
         self.main_tool_bar.dbnameMenu.addItems(DatabaseHandler.getDatabaseList(self.dbData['host'], self.dbData['port']))
         index = self.main_tool_bar.dbnameMenu.findText(self.prefs.prefDict['mongodb']['dbname'])
         self.main_tool_bar.dbnameMenu.setCurrentIndex(index)
+
+    def get_editor_widget(self):
+        return self.__editor_widget
 
     # def mousePressEvent(self, evt):
     #     self.__oldPos = evt.globalPos()

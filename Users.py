@@ -5,7 +5,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import * 
 from Center import center_window
 
-from style.phtm_push_button import phtm_push_button
+from phtm_widgets.phtm_push_button import phtm_push_button
 
 class User:
     __usrFile = "users.json"

@@ -2,7 +2,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 
-from style.phtm_title_bar import phtm_title_bar
+from phtm_widgets.phtm_title_bar import phtm_title_bar
 
 from Center import center_window
 
@@ -53,8 +53,8 @@ class phtm_dialog(QDialog):
     def getWindowTitle(self):
         return self.title_bar.window_title
 
-    def getPermanentTitle(self):
-        return self.window_title
+    # def getPermanentTitle(self):
+    #     return self.window_title
 
     def set_style(self):
         if self.style == "ghost":

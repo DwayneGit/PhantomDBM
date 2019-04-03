@@ -4,8 +4,10 @@ from PyQt5.QtWidgets import *
 
 import sys
 import re
+from datetime import datetime
 
-from style.phtm_plain_text_edit import phtm_plain_text_edit
+from phtm_widgets.phtm_plain_text_edit import phtm_plain_text_edit
+from file.json_script import json_script
 
 import text_style as text_style
 
@@ -25,13 +27,25 @@ class LineNumberArea(QWidget):
 
 
 class phtm_editor(phtm_plain_text_edit):
-    def __init__(self):
+
+    saved = pyqtSignal(str)
+
+    def __init__(self, script=None):
         super(phtm_editor, self).__init__()
+        
         self.lineNumberArea = LineNumberArea(self)
 
-        self.title = None
         self.file_path = None
         self.is_changed = False
+        self.tree_item = None
+        
+        if script:
+            self.__curr_script = script
+        else:
+            self.__curr_script = json_script("")
+
+        self.title = self.__curr_script.get_title()
+        self.setPlainText(self.__curr_script.get_script())
 
         self.blockCountChanged.connect(self.updateLineNumberAreaWidth)
         self.updateRequest.connect(self.updateLineNumberArea)
@@ -40,6 +54,27 @@ class phtm_editor(phtm_plain_text_edit):
         self.updateLineNumberAreaWidth(0)
 
         self.lineNumberAreaWidth = (3 + self.fontMetrics().width('9') * 4) + 5
+    
+    def set_curr_script(self, script):
+        self.__curr_script = script
+        self.title = self.__curr_script.get_title()
+        self.setPlainText(self.__curr_script.get_script())
+        self.is_changed = False
+
+    def get_curr_script(self):
+        return self.__curr_script
+
+    def save_script(self, user="Daru"):
+        self.__curr_script.set_script(self.toPlainText())
+        self.__curr_script.set_modified_by(user)
+        self.__curr_script.update_date_time_modified()
+        self.saved.emit(self.__curr_script.get_title())
+
+    def get_tree_item(self):
+        return self.tree_item
+
+    def set_tree_item(self, item):
+        self.tree_item = item
 
     def updateLineNumberAreaWidth(self, _):
         self.setViewportMargins((3 + self.fontMetrics().width('9') * 4) + 5, 0, 0, 0)
@@ -102,8 +137,9 @@ class phtm_editor(phtm_plain_text_edit):
 
     def setHtml(self, htmlText):
         self.clear()
-        self.appendHtml(htmlText)
-        text_style.translate_text(htmlText, self)
+        script = ""
+        for line in htmlText.splitlines():
+            self.appendHtml(line)
 
     def set_file_path(self, path):
         self.file_path = path
