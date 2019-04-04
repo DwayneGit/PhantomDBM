@@ -4,7 +4,7 @@ from PyQt5.QtGui import *
 
 from Center import center_window
 from Preferences import *
-from DBConnection import *
+from database.DBConnection import *
 
 from phtm_widgets.phtm_push_button import phtm_push_button
 from phtm_widgets.phtm_combo_box import phtm_combo_box
@@ -47,7 +47,7 @@ class preference_body(QDialog):
         if not self.prefDict['mongodb']['dbname'] or self.prefDict['mongodb']['dbname']=="":
             return []
 
-        return DatabaseHandler.getCollectionList(self.prefDict['mongodb']['host'], self.prefDict['mongodb']['port'], self.prefDict['mongodb']['dbname'])
+        return database_handler.getCollectionList(self.prefDict['mongodb']['host'], self.prefDict['mongodb']['port'], self.prefDict['mongodb']['dbname'])
 
 
     def initUI(self):
@@ -218,7 +218,7 @@ class preference_body(QDialog):
        
         dbNameLabel = QLabel("Database Name: ")
         dbNameBox = phtm_combo_box()
-        dbNameBox.addItems(DatabaseHandler.getDatabaseList(self.prefs.prefDict['mongodb']['host'],self.prefs.prefDict['mongodb']['port']))
+        dbNameBox.addItems(database_handler.getDatabaseList(self.prefs.prefDict['mongodb']['host'],self.prefs.prefDict['mongodb']['port']))
         
         index = dbNameBox.findText(self.prefDict['mongodb']['dbname'])
         dbNameBox.setCurrentIndex(index)

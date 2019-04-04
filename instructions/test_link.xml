@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- example 1 -->
+<root>
+    <link method="search" store="reference" format="auto">
+        <from_db>test</from_db>
+        <from_collection>test</from_collection>
+        <search add_key="new_key" criteria="single">
+            <look_up method="pattern" pattern="">
+                <from_key>A</from_key>
+                <in_key>I</in_key>
+            </look_up>
+        </search>
+    </link>
+</root>

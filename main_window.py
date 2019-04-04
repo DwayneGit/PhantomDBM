@@ -13,7 +13,7 @@ from Users import *
 from Dialogs import *
 from phtm_menu_bar import phtm_menu_bar
 from Preferences import *
-from DBConnection import *
+from database.DBConnection import *
 from main_tool_bar import main_tool_bar, reloadCollectionNames
 from Center import center_window
 
@@ -208,7 +208,7 @@ class main_window(QMainWindow):
 
     def reloadDbNames(self):
         self.main_tool_bar.dbnameMenu.clear()
-        self.main_tool_bar.dbnameMenu.addItems(DatabaseHandler.getDatabaseList(self.dbData['host'], self.dbData['port']))
+        self.main_tool_bar.dbnameMenu.addItems(database_handler.getDatabaseList(self.dbData['host'], self.dbData['port']))
         index = self.main_tool_bar.dbnameMenu.findText(self.prefs.prefDict['mongodb']['dbname'])
         self.main_tool_bar.dbnameMenu.setCurrentIndex(index)
 

@@ -16,6 +16,20 @@ from time import gmtime, strftime
 def putfile(main_window, curr_tab):
     fname = QFileDialog.getOpenFileName(main_window, 'Open file', 
         'c:\\',"Image files (*.jpg *.gif *.png)")
+
+def load_instructions():
+    dlg = QFileDialog()
+    dlg.setFileMode(QFileDialog.AnyFile)
+    dlg.setNameFilter("XML files (*.xml)")
+    filenames = []
+    
+    if dlg.exec_():
+        filenames = dlg.selectedFiles()
+
+        filename_w_ext = os.path.basename(filenames[0])
+        # print(filenames)
+        filename, file_ext = os.path.splitext(filename_w_ext)
+        return filename, filenames[0]
     
 def load_script(main_window):
     dlg = QFileDialog()

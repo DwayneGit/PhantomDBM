@@ -7,7 +7,7 @@ from upload_thread import upload_thread
 from collections import OrderedDict
 from itertools import islice
 
-from DBConnection import DatabaseHandler
+from database.DBConnection import database_handler
 import file_ctrl as f_ctrl
 
 '''
@@ -40,7 +40,7 @@ def run_script(main_window, run_counter=0, completed_run_counter=0):
 
     main_window.log.logInfo("Checking Database Connection...")
 
-    db_handler = DatabaseHandler(main_window.dbData, main_window.log)
+    db_handler = database_handler(main_window.dbData, main_window.log)
     if db_handler.serverStatus():
 
         main_window.log.logInfo("Connected to Database. " + main_window.dbData['dbname'] + " collection " + main_window.dbData['collection'])
@@ -92,7 +92,7 @@ def run_all_scripts(main_window):
 
     main_window.log.logInfo("Checking Database Connection...")
 
-    db_handler = DatabaseHandler(main_window.dbData, main_window.log)
+    db_handler = database_handler(main_window.dbData, main_window.log)
 
     if db_handler.serverStatus():
 
@@ -145,7 +145,7 @@ def run_plus_below(main_window, index):
 
     main_window.log.logInfo("Checking Database Connection...")
 
-    db_handler = DatabaseHandler(main_window.dbData, main_window.log)
+    db_handler = database_handler(main_window.dbData, main_window.log)
 
     if db_handler.serverStatus():
 

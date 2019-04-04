@@ -4,13 +4,15 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtWidgets import QToolBar, QAction, QWidget, QSizePolicy, QComboBox
 
-from DBConnection import DatabaseHandler
+from database.DBConnection import database_handler
 
 from phtm_widgets.phtm_tool_bar import phtm_tool_bar
 from phtm_widgets.phtm_combo_box import phtm_combo_box
+from phtm_widgets.phtm_plain_text_edit import phtm_plain_text_edit
 
 import run_ctrl as r_ctrl
 import file_ctrl as f_ctrl
+from instructions.dmi_handler import dmi_handler
 
 class main_tool_bar():
     """ application toolbars class """
@@ -43,6 +45,21 @@ class main_tool_bar():
         tbstop.triggered.connect(lambda: r_ctrl.stopRun(self.mw))
         topTBar.addAction(tbstop)
 
+        spacer = QWidget()
+        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        # toolBar is a pointer to an existing toolbar
+        topTBar.addWidget(spacer)
+
+        self.select_dmi = QAction(QIcon(self.icon_set.load_file),"import pre-uplaod instructions", self.mw)
+        self.select_dmi.triggered.connect(lambda: self.set_instructions())
+        topTBar.addAction(self.select_dmi)
+        
+        self.curr_dmi = phtm_plain_text_edit()
+        self.curr_dmi.setFixedSize(QSize(175,31))
+        self.curr_dmi.setReadOnly(True)
+        # self.currDMI.setFixedSize()
+        topTBar.addWidget(self.curr_dmi)
+
         # ----------------- Side Toolbar ---------------------------
         sideTBar = phtm_tool_bar()
         tbload = QAction(QIcon(self.icon_set.load_file),"open",self.mw)
@@ -74,7 +91,7 @@ class main_tool_bar():
         
         self.dbnameMenu = phtm_combo_box()
         self.dbnameMenu.setFixedSize(dropdownSize)
-        self.dbnameMenu.addItems(DatabaseHandler.getDatabaseList(self.mw.dbData['host'], self.mw.dbData['port']))
+        self.dbnameMenu.addItems(database_handler.getDatabaseList(self.mw.dbData['host'], self.mw.dbData['port']))
 
         index = self.dbnameMenu.findText(self.mw.prefs.prefDict['mongodb']['dbname'])
         self.dbnameMenu.setCurrentIndex(index)
@@ -84,7 +101,7 @@ class main_tool_bar():
         
         self.collnameMenu = phtm_combo_box()
         self.collnameMenu.setFixedSize(dropdownSize)
-        self.collnameMenu.addItems(DatabaseHandler.getCollectionList(self.mw.dbData['host'], self.mw.dbData['port'], self.mw.dbData['dbname']))
+        self.collnameMenu.addItems(database_handler.getCollectionList(self.mw.dbData['host'], self.mw.dbData['port'], self.mw.dbData['dbname']))
         
         index = self.collnameMenu.findText(self.mw.prefs.prefDict['mongodb']['collection'])
         self.collnameMenu.setCurrentIndex(index)
@@ -92,7 +109,13 @@ class main_tool_bar():
         sideTBar.addWidget(self.collnameMenu)
 
         self.mw.addToolBar(Qt.TopToolBarArea, topTBar)
+        self.mw.addToolBarBreak(Qt.TopToolBarArea)
         self.mw.addToolBar(Qt.TopToolBarArea, sideTBar)
+
+    def set_instructions(self):
+        self.instr_filename, self.instr_file_ext = f_ctrl.load_instructions()
+        print(self.instr_file_ext)
+        self.curr_dmi.setPlainText(self.instr_filename)
 
 def collectionNameChanged(ptoolbar, main_window):
     main_window.dbData['collection'] = ptoolbar.collnameMenu.currentText()
@@ -103,6 +126,6 @@ def databaseNameChanged(ptoolbar, main_window):
 
 def reloadCollectionNames(ptoolbar, main_window):
     ptoolbar.collnameMenu.clear()
-    ptoolbar.collnameMenu.addItems(DatabaseHandler.getCollectionList(main_window.dbData['host'], main_window.dbData['port'], ptoolbar.dbnameMenu.currentText()))
+    ptoolbar.collnameMenu.addItems(database_handler.getCollectionList(main_window.dbData['host'], main_window.dbData['port'], ptoolbar.dbnameMenu.currentText()))
     index = ptoolbar.collnameMenu.findText(main_window.prefs.prefDict['mongodb']['collection'])
     ptoolbar.collnameMenu.setCurrentIndex(index)
