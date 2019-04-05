@@ -6,9 +6,13 @@ from Center import center_window
 from Preferences import *
 from database.DBConnection import *
 
+import file_ctrl as f_ctrl
+import text_style as text_style
+
 from phtm_widgets.phtm_push_button import phtm_push_button
 from phtm_widgets.phtm_combo_box import phtm_combo_box
 from phtm_widgets.phtm_tab_widget import phtm_tab_widget
+from phtm_widgets.phtm_plain_text_edit import phtm_plain_text_edit
 
 class preference_body(QDialog):
     def __init__(self, user, log, parent):
@@ -18,7 +22,7 @@ class preference_body(QDialog):
         '''
         
         self.prefDict = parent.parent.dbData
-        print(self.prefDict)
+        # print(self.prefDict)
         self.user = user
         self.svd = False
         self.log = log
@@ -61,7 +65,7 @@ class preference_body(QDialog):
         tabW.setTabPosition(QTabWidget.North)
 
         tabW.addTab(self.databaseTab(),"Database")
-        tabW.addTab(self.apiTab(),"API")
+        tabW.addTab(self.dmiTab(),"DMI")
         tabW.addTab(self.userTab(),"User")
         tabW.addTab(self.themeTab(),"Theme")
 
@@ -100,26 +104,27 @@ class preference_body(QDialog):
         # print(self.dbBtnGroup.checkedButton().text().lower())
         if self.prefDict['db'] == "mongodb":
             self.prefDict['mongodb']['dbname'] = self.dbForm.itemAt(3).widget().currentText()
-            print(self.prefDict['mongodb']['dbname'])
+            # print(self.prefDict['mongodb']['dbname'])
 
             self.prefDict['mongodb']['collection'] = self.dbForm.itemAt(11).widget().currentText()
-            print(self.prefDict['mongodb']['collection'])
+            # print(self.prefDict['mongodb']['collection'])
 
             self.prefDict['mongodb']['host'] = self.dbForm.itemAt(5).widget().text()
-            print(self.prefDict['mongodb']['host'])
+            # print(self.prefDict['mongodb']['host'])
 
             self.prefDict['mongodb']['port'] = int(self.dbForm.itemAt(7).widget().text())
-            print(self.prefDict['mongodb']['port'])
+            # print(self.prefDict['mongodb']['port'])
 
             self.prefDict['mongodb']['tableSize'] = int(self.dbForm.itemAt(9).widget().text())
-            print(self.prefDict['mongodb']['tableSize'])
-
-
+            # print(self.prefDict['mongodb']['tableSize'])
 
         elif self.prefDict['db'] == "sql":
             pass
 
+        # print(self.prefDict["dmi"]["filepath"])
+
         self.prefs.saveConfig()
+        self.parent.prefs = self.prefs
         
         # items = (self.dbForm.itemAt(i) for i in range(self.dbForm.count())) 
         # for w in range(3, 12, 2):
@@ -279,10 +284,61 @@ class preference_body(QDialog):
     def editCollections(self):
         print("Open Edit Collections Window")
 
-    def apiTab(self):
-        apiPrefWidget = QWidget()
+    def dmiTab(self):
 
-        return apiPrefWidget
+        def __load_dmi_instr(dmi, file_path, editor):
+            name, path = f_ctrl.load_instructions()
+            dmi.setPlainText(name)
+            file_path = path
+            if file_path:
+                editor.setPlainText(text_style.read_text(file_path))
+                self.prefDict["dmi"]["filepath"] = path
+                self.prefDict["dmi"]["filename"] = name
+            print(self.prefDict["dmi"]["filepath"])
+
+        dmiPrefWidget = QWidget()
+        dmiVBox = QVBoxLayout()
+
+        load_widget = QWidget()
+        spTop = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        spTop.setVerticalStretch(1)
+        load_widget.setSizePolicy(spTop)
+        load_widget_layout = QHBoxLayout()
+        # load_widget_layout.setSpacing(2)
+
+        load_dmi_btn = phtm_push_button("Open Instruction Doc")
+
+        self.curr_dmi = phtm_plain_text_edit()
+        self.curr_dmi.setFixedSize(QSize(175,31))
+        self.curr_dmi.setReadOnly(True)
+        
+        load_widget_layout.addWidget(load_dmi_btn)
+        load_widget_layout.addWidget(self.curr_dmi)
+        load_widget_layout.setContentsMargins(0, 0, 0, 0)
+
+        load_widget.setLayout(load_widget_layout)
+
+        dmi_editor = phtm_plain_text_edit()
+        spBottm = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        spBottm.setVerticalStretch(10)
+        dmi_editor.setSizePolicy(spBottm)
+        
+        load_dmi_btn.clicked.connect(lambda: __load_dmi_instr(self.curr_dmi, self.prefDict["dmi"]["filepath"], dmi_editor))
+
+        if self.prefDict["dmi"]["filepath"] and self.prefDict["dmi"]["filepath"] != "":
+            contents = text_style.read_text(self.prefDict["dmi"]["filepath"])
+            if contents:
+                dmi_editor.setPlainText(contents)
+                self.curr_dmi.setPlainText(self.prefDict["dmi"]["filename"])
+            
+
+        dmiVBox.addWidget(load_widget)
+        dmiVBox.addWidget(dmi_editor)
+        dmiVBox.setContentsMargins(0, 0, 0, 0)
+
+        dmiPrefWidget.setLayout(dmiVBox)
+            
+        return dmiPrefWidget
 
     def userTab(self):
         usrPrefWidget = QWidget()

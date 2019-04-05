@@ -30,7 +30,8 @@ def load_instructions():
         # print(filenames)
         filename, file_ext = os.path.splitext(filename_w_ext)
         return filename, filenames[0]
-    
+    return "", None
+
 def load_script(main_window):
     dlg = QFileDialog()
     dlg.setFileMode(QFileDialog.AnyFile)
@@ -81,7 +82,6 @@ def save_script(main_window, editor):
     if not file_path:
         print("Cluster file not saved. would you liket to save?")
         main_window.get_editor_widget().get_cluster().set_file_path(export_phm(main_window))
-        return
 
     main_window.statusBar().showMessage("Saving File ...")
     # pprint.pprint(re.sub('\'|\n', '', main_window.fileContents.toPlainText()))
@@ -89,7 +89,7 @@ def save_script(main_window, editor):
     #     outfile.write(eval(json.dumps(curr_tab.toPlainText(), indent=4)))
     
     editor.save_script()
-
+    save_phm(main_window)
     # if file_path:
     #     main_window.get_editor_widget().get_editor_tabs()(curr_tab.title)
     # else:

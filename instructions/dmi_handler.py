@@ -12,6 +12,7 @@ import untangle
 class dmi_handler():
     def __init__(self, db_handler, xml_file, log):
         self.log = log
+        print(xml_file)
         try:
             self.xml_object = untangle.parse(xml_file)
         except:

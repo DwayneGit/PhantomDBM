@@ -18,6 +18,8 @@ def run_script(main_window, run_counter=0, completed_run_counter=0):
     # make sure file is not deleted before saving
     curr_tab = main_window.get_editor_widget().get_editor_tabs().currentWidget()
     # file_path = curr_tab.file_path
+    if not curr_tab:
+        return
 
     if curr_tab.is_changed:
         save_msg = "Are you Sure you want to run this script?"
@@ -45,7 +47,7 @@ def run_script(main_window, run_counter=0, completed_run_counter=0):
 
         main_window.log.logInfo("Connected to Database. " + main_window.dbData['dbname'] + " collection " + main_window.dbData['collection'])
         print(main_window.dbData)
-        main_window.upld_thrd = upload_thread(curr_tab.get_curr_script().get_script(), db_handler, main_window.log) # instanciate the Q object
+        main_window.upld_thrd = upload_thread(curr_tab.get_curr_script().get_script(), db_handler, main_window.log, main_window.prefs.prefDict["dmi"]["filepath"]) # instanciate the Q object
         thread = QThread(main_window) # create a thread
 
         try:

@@ -4,19 +4,26 @@ import time
 from collections import OrderedDict
 
 from PyQt5.QtCore import pyqtSlot, pyqtSignal, QObject, QThread
+from instructions.dmi_handler import dmi_handler
 
 class upload_thread(QObject):
 
     update = pyqtSignal(str) # signal data ready to be appended to th board
     done = pyqtSignal(str) # done signal
 
-    def __init__(self, script_s, dbHandler, log):
+    def __init__(self, script_s, dbHandler, log, dmi_instr=None):
         QObject.__init__(self)
         self.script_s = script_s
         self.dbHandler = dbHandler
         self.pauseFlag = False
         self.stopFlag = False
         self.log = log
+        
+        if dmi_instr and dmi_instr != "":
+            self.dmi = dmi_handler(self.dbHandler, dmi_instr, log)
+        else:
+            self.dmi = None
+        
 
     @pyqtSlot()
     def addToDatabase(self):
@@ -46,15 +53,19 @@ class upload_thread(QObject):
     def __run_script(self, script):
             data = json.loads(script)
             i = 0
+
             while i < len(data):
                 if self.stopFlag:
                     return
                 elif not self.pauseFlag:
-                    self.dbHandler.insertDoc(data[i])
+                    send_data = data[i]
+                    if self.dmi:
+                        send_data = self.dmi.manipulate(data[i])
+                    self.dbHandler.insertDoc(send_data)
                     self.update.emit(str(self.thread_id) + ": Sending Objects to Database... %d/%d" %(i+1, len(data)))
                     time.sleep(1)
                     i += 1
-                    # print(1)
+                    print(send_data)
                 else:
                     continue
 

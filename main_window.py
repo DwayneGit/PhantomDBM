@@ -14,7 +14,7 @@ from Dialogs import *
 from phtm_menu_bar import phtm_menu_bar
 from Preferences import *
 from database.DBConnection import *
-from main_tool_bar import main_tool_bar, reloadCollectionNames
+from main_tool_bar import main_tool_bar, reloadCollectionNames, databaseNameChanged
 from Center import center_window
 
 from phtm_widgets.phtm_icons import phtm_icons
@@ -197,18 +197,22 @@ class main_window(QMainWindow):
         
         # print(self.prefs.prefDict)
         if p.exec_():
-            self.prefs.loadConfig()
+            self.prefs = p.prefs
             self.dbData = self.prefs.prefDict['mongodb']
-            
+            self.main_tool_bar.curr_dmi.setPlainText(self.prefs.prefDict["dmi"]["filename"])
             self.reloadDbNames()
-            reloadCollectionNames(self.main_tool_bar, self)
+            # reloadCollectionNames(self.main_tool_bar, self)
 
         else:
             pass
 
     def reloadDbNames(self):
+        self.main_tool_bar.dbnameMenu.currentTextChanged.disconnect()
         self.main_tool_bar.dbnameMenu.clear()
+        
         self.main_tool_bar.dbnameMenu.addItems(database_handler.getDatabaseList(self.dbData['host'], self.dbData['port']))
+        self.main_tool_bar.dbnameMenu.currentTextChanged.connect(lambda: databaseNameChanged(self.main_tool_bar, self))
+        
         index = self.main_tool_bar.dbnameMenu.findText(self.prefs.prefDict['mongodb']['dbname'])
         self.main_tool_bar.dbnameMenu.setCurrentIndex(index)
 

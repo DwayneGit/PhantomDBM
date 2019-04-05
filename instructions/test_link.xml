@@ -7,8 +7,8 @@
         <from_collection>test</from_collection>
         <search add_key="new_key" criteria="single">
             <look_up method="pattern" pattern="">
-                <from_key>A</from_key>
-                <in_key>I</in_key>
+                <from_key>h</from_key>
+                <in_key>g</in_key>
             </look_up>
         </search>
     </link>
