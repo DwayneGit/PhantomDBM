@@ -5,6 +5,7 @@ from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtWidgets import QToolBar, QAction, QWidget, QSizePolicy, QComboBox, QCheckBox
 
 from database.DBConnection import database_handler
+from Preferences import *
 
 from phtm_widgets.phtm_tool_bar import phtm_tool_bar
 from phtm_widgets.phtm_combo_box import phtm_combo_box
@@ -61,7 +62,7 @@ class main_tool_bar():
         # self.dmi_selected.setDisabled(True)
         # topTBar.addWidget(self.dmi_selected)
         
-        self.curr_dmi = phtm_plain_text_edit(self.mw.prefs.prefDict["dmi"]["filename"])
+        self.curr_dmi = phtm_plain_text_edit(self.mw.prefs["dmi"]["filename"])
         self.curr_dmi.setFixedSize(QSize(175,31))
         self.curr_dmi.setReadOnly(True)
         self.curr_dmi.mouseDoubleClickEvent = self.__open_dmi_prefs
@@ -99,9 +100,13 @@ class main_tool_bar():
         
         self.dbnameMenu = phtm_combo_box()
         self.dbnameMenu.setFixedSize(dropdownSize)
-        self.dbnameMenu.addItems(database_handler.getDatabaseList(self.mw.dbData['host'], self.mw.dbData['port']))
 
-        index = self.dbnameMenu.findText(self.mw.prefs.prefDict['mongodb']['dbname'])
+        try:
+            self.dbnameMenu.addItems(database_handler.getDatabaseList(self.mw.dbData['host'], self.mw.dbData['port']))
+        except TypeError:
+            print("No databases found")
+
+        index = self.dbnameMenu.findText(self.mw.prefs['mongodb']['dbname'])
         self.dbnameMenu.setCurrentIndex(index)
         self.dbnameMenu.currentTextChanged.connect(lambda: databaseNameChanged(self, self.mw))
 
@@ -109,9 +114,12 @@ class main_tool_bar():
         
         self.collnameMenu = phtm_combo_box()
         self.collnameMenu.setFixedSize(dropdownSize)
-        self.collnameMenu.addItems(database_handler.getCollectionList(self.mw.dbData['host'], self.mw.dbData['port'], self.mw.dbData['dbname']))
-        
-        index = self.collnameMenu.findText(self.mw.prefs.prefDict['mongodb']['collection'])
+        try:
+            self.collnameMenu.addItems(database_handler.getCollectionList(self.mw.dbData['host'], self.mw.dbData['port'], self.mw.dbData['dbname']))
+        except TypeError:
+            print("No collections found")
+
+        index = self.collnameMenu.findText(self.mw.prefs['mongodb']['collection'])
         self.collnameMenu.setCurrentIndex(index)
         self.collnameMenu.currentTextChanged.connect(lambda: collectionNameChanged(self, self.mw))
         sideTBar.addWidget(self.collnameMenu)
@@ -129,8 +137,8 @@ class main_tool_bar():
     def get_instr_filepath(self):
         return self.instr_filepath
 
-    def __open_dmi_prefs(self, e):
-        print("clicked")
+    def __open_dmi_prefs(self, e): 
+        self.mw.showPref(1)
 
 def collectionNameChanged(ptoolbar, main_window):
     main_window.dbData['collection'] = ptoolbar.collnameMenu.currentText()
@@ -146,8 +154,8 @@ def reloadCollectionNames(ptoolbar, main_window):
     ptoolbar.collnameMenu.addItems(database_handler.getCollectionList(main_window.dbData['host'], main_window.dbData['port'], ptoolbar.dbnameMenu.currentText()))
     ptoolbar.collnameMenu.currentTextChanged.connect(lambda: collectionNameChanged(ptoolbar, main_window))
 
-    index = ptoolbar.collnameMenu.findText(main_window.prefs.prefDict['mongodb']['collection'])
+    index = ptoolbar.collnameMenu.findText(main_window.prefs['mongodb']['collection'])
     ptoolbar.collnameMenu.setCurrentIndex(index)
-    # print(main_window.prefs.prefDict)
-    print(ptoolbar.collnameMenu.currentIndex())
-    print(ptoolbar.collnameMenu.currentText())
+    # print(main_window.prefs)
+    # print(ptoolbar.collnameMenu.currentIndex())
+    # print(ptoolbar.collnameMenu.currentText())

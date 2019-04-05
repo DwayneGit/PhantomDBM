@@ -5,6 +5,8 @@ import json
 from datetime import datetime
 from collections import OrderedDict
 
+from settings.default_general_settings import default_general_settings as dgs
+
 from .json_script import json_script
 from .phm import phm as phm_file
 
@@ -18,10 +20,13 @@ class phm_file_handler():
         # print(type(self))
         self.__file_path = None
 
-        if phm:
+        if phm: 
             self.__phm = phm
         else:
+            setting = dgs()
+            # print(setting)
             self.__phm = phm_file()
+            self.add_script(str(setting), "__settings__")
 
         # print(type(self.__phm))
 
@@ -69,6 +74,13 @@ class phm_file_handler():
         self.get_phm_scripts()[hash(title)] = new_script
 
         return new_script
+
+    def get_settings(self):
+        return json.loads(self.get_script("__settings__").get_script())
+
+    def save_settings(self, sett_dict):
+        sett_str = dgs.to_str(sett_dict)
+        self.get_script("__settings__").set_script(sett_str)
 
     def get_script(self, title):
         if hash(title) in self.get_phm_scripts():

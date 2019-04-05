@@ -11,26 +11,26 @@ from PyQt5.QtWidgets import *
 
 from Users import *
 from Dialogs import *
-from phtm_menu_bar import phtm_menu_bar
 from Preferences import *
-from database.DBConnection import *
-from main_tool_bar import main_tool_bar, reloadCollectionNames, databaseNameChanged
 from Center import center_window
+from database.DBConnection import *
+from phtm_menu_bar import phtm_menu_bar
+from main_tool_bar import main_tool_bar, reloadCollectionNames, databaseNameChanged
 
 from phtm_widgets.phtm_icons import phtm_icons
 from phtm_widgets.phtm_dialog import phtm_dialog
 from phtm_widgets.phtm_tab_widget import phtm_tab_widget
 from phtm_widgets.phtm_plain_text_edit import phtm_plain_text_edit
 
-from file.phm_file_handler import phm_file_handler
 from phtm_editor import phtm_editor
-from phtm_editor_widget import phtm_editor_widget
 from file.json_script import json_script
+from phtm_editor_widget import phtm_editor_widget
+from file.phm_file_handler import phm_file_handler
 
-from file_ctrl import tmpScriptCleaner
 import run_ctrl as r_ctrl
 import file_ctrl as f_ctrl
 from phtm_logger import phtm_logger
+from file_ctrl import tmpScriptCleaner
 
 BUFFERSIZE = 1000
 
@@ -47,16 +47,13 @@ class main_window(QMainWindow):
         self.log = phtm_logger()
         self.log.logInfo("Program Started.")
 
-        self.__blank_cluster = phm_file_handler()
+        self.prefs = None
 
-        self.prefs = Preferences('config', prefDict=DefaultGeneralConfig.prefDict, log=self.log) # name of preference file minus json
-        self.prefs.loadConfig()
+        self.dbData = None
 
         self.icon_set=phtm_icons()
 
         f_ctrl.tmpScriptCleaner(self)
-
-        self.dbData = self.prefs.prefDict['mongodb']
 
         self.isRunning = False
         self.isPaused = True
@@ -64,13 +61,16 @@ class main_window(QMainWindow):
         login = phtm_dialog("Login", QRect(10, 10, 260, 160), self)
         login.set_central_dialog(loginScreen(login))
 
-        if login.exec_():
-            self.log.logInfo("Successfully Logged In.")
-            self.user = login.central_dialog().user
-            self.initUI()
-        else:
-            self.log.logInfo("No login program exited.")
-            sys.exit()
+        self.user = None
+        self.initUI()
+
+        # if login.exec_():
+        #     self.log.logInfo("Successfully Logged In.")
+        #     self.user = login.get_central_dialog().user
+        #     self.initUI()
+        # else:
+        #     self.log.logInfo("No login program exited.")
+        #     sys.exit()
 
     def initUI(self):
         '''
@@ -104,6 +104,8 @@ class main_window(QMainWindow):
         # self.editor_tabs.setTabsClosable(True)
 
         self.__editor_widget = phtm_editor_widget(self)
+
+        self.load_settings()
 
         self.changed = False
         # check if file is loaded and set flag to use to ask if save necessary before running or closing
@@ -191,15 +193,16 @@ class main_window(QMainWindow):
         else:
             self.log.logInfo("Program Ended")
 
-    def showPref(self):
+    def showPref(self, index=0):
         p = phtm_dialog("Preferences", QRect(10, 10, 350, 475), self)
         p.set_central_dialog(preference_body(self.user, self.log, p))
-        
+        p.get_central_dialog().tabW.setCurrentIndex(index)
+
         # print(self.prefs.prefDict)
         if p.exec_():
             self.prefs = p.prefs
-            self.dbData = self.prefs.prefDict['mongodb']
-            self.main_tool_bar.curr_dmi.setPlainText(self.prefs.prefDict["dmi"]["filename"])
+            self.dbData = self.prefs['mongodb']
+            self.main_tool_bar.curr_dmi.setPlainText(self.prefs["dmi"]["filename"])
             self.reloadDbNames()
             # reloadCollectionNames(self.main_tool_bar, self)
 
@@ -213,8 +216,16 @@ class main_window(QMainWindow):
         self.main_tool_bar.dbnameMenu.addItems(database_handler.getDatabaseList(self.dbData['host'], self.dbData['port']))
         self.main_tool_bar.dbnameMenu.currentTextChanged.connect(lambda: databaseNameChanged(self.main_tool_bar, self))
         
-        index = self.main_tool_bar.dbnameMenu.findText(self.prefs.prefDict['mongodb']['dbname'])
+        index = self.main_tool_bar.dbnameMenu.findText(self.prefs['mongodb']['dbname'])
         self.main_tool_bar.dbnameMenu.setCurrentIndex(index)
+
+    def load_settings(self):
+        self.prefs = self.__editor_widget.get_cluster().get_settings()
+        self.dbData = self.prefs['mongodb']
+
+    def reload_curr_dmi(self):
+        self.main_tool_bar.curr_dmi.setPlainText(self.prefs["dmi"]["filename"])
+
 
     def get_editor_widget(self):
         return self.__editor_widget

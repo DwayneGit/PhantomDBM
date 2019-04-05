@@ -71,7 +71,11 @@ def load_phm(main_window):
         main_window.get_editor_widget().clear_tabs()
         main_window.get_editor_widget().load_cluster(filename_w_ext)
 
-        print(filename_w_ext)
+        main_window.load_settings()
+        main_window.reload_curr_dmi()
+        main_window.reloadDbNames()
+
+        # print(filename_w_ext)
 
 def save_script(main_window, editor):
     

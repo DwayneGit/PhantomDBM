@@ -47,7 +47,7 @@ def run_script(main_window, run_counter=0, completed_run_counter=0):
 
         main_window.log.logInfo("Connected to Database. " + main_window.dbData['dbname'] + " collection " + main_window.dbData['collection'])
         print(main_window.dbData)
-        main_window.upld_thrd = upload_thread(curr_tab.get_curr_script().get_script(), db_handler, main_window.log, main_window.prefs.prefDict["dmi"]["filepath"]) # instanciate the Q object
+        main_window.upld_thrd = upload_thread(curr_tab.get_curr_script().get_script(), db_handler, main_window.log, main_window.prefs["dmi"]["filepath"]) # instanciate the Q object
         thread = QThread(main_window) # create a thread
 
         try:

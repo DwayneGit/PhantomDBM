@@ -22,6 +22,7 @@ class phtm_editor_widget(QWidget):
 
         self.parent = parent
         self.cluster = phm_file_handler()
+        # print(self.cluster.get_settings())
 
         self.__layout = QHBoxLayout()
         self.__layout.setContentsMargins(0, 0, 0, 0)
@@ -115,7 +116,8 @@ class phtm_editor_widget(QWidget):
 
         for key, value in self.cluster.get_phm_scripts().items():
             # print(value.get_title())
-            self.add_script_child(self.__tree_root, value.get_title())
+            if value.get_title() != "__settings__":
+                self.add_script_child(self.__tree_root, value.get_title())
 
         self.__script_tree.itemChanged.connect(self.item_changed)
 
