@@ -34,7 +34,7 @@ class preference_body(QDialog):
 
     def loadPreferences(self):
         self.prefs = self.parent.parent.get_editor_widget().get_cluster().get_settings()
-        print(self.prefs)
+        # print(self.prefs)
         self.instancesPrefDict = self.prefs
            
         self.colList = self.getListOfCollections()
@@ -94,7 +94,7 @@ class preference_body(QDialog):
         return btnWidget
 
     def savePreferences(self):
-        print("Saving Preferences ...")
+        # print("Saving Preferences ...")
         self.saveDbTab()
         self.svd = True
 
@@ -144,7 +144,7 @@ class preference_body(QDialog):
 
     def cancelPreferences(self):
         if self.svd == False:
-            print("closeing with false")
+            # print("closeing with false")
             self.parent.reject() #if canceled with out previously being saved
         else:
             self.parent.accept()
@@ -293,7 +293,7 @@ class preference_body(QDialog):
                 editor.setPlainText(text_style.read_text(file_path))
                 self.prefs["dmi"]["filepath"] = path
                 self.prefs["dmi"]["filename"] = name
-            print(self.prefs["dmi"]["filepath"])
+            # print(self.prefs["dmi"]["filepath"])
 
         dmiPrefWidget = QWidget()
         dmiVBox = QVBoxLayout()
