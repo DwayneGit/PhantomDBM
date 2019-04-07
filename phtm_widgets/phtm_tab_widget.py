@@ -81,8 +81,9 @@ class phtm_tab_widget(QTabWidget):
             elif reply == QMessageBox.Yes:
                 self.is_saved(self.tabText(index)[2:], index)
                 
-
         self.removeTab(index)
+        if self.count() < 1:
+            self.hide()
 
     def clear(self):
         for index in range(self.count()):

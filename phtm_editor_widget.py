@@ -50,15 +50,15 @@ class phtm_editor_widget(QWidget):
         self.__editor_tabs.setMovable(True)
         self.__editor_tabs.setTabsClosable(True)
 
-        self.__editor_tabs.tabCloseRequested.connect(self.__tabs_closed)
+        # self.__editor_tabs.tabCloseRequested.connect(self.__tabs_closed)
 
         self.__splitter.addWidget(self.__editor_tabs)
         self.__editor_tabs.hide()
 
-    def __tabs_closed(self):
-        # print("tab being closed..")
-        if self.__editor_tabs.count() < 1:
-            self.__editor_tabs.hide()
+    # def __tabs_closed(self):
+    #     # print("tab being closed..")
+    #     if self.__editor_tabs.count() < 1:
+    #         self.__editor_tabs.hide()
 
     def clear_tabs(self):
         self.__editor_tabs.clear()
