@@ -10,11 +10,11 @@ import untangle
 # from database.DBConnection import database_handler
 
 class dmi_handler():
-    def __init__(self, db_handler, xml_file, log):
+    def __init__(self, db_handler, dmi_instr, log):
         self.log = log
-        print(xml_file)
+        print(dmi_instr)
         try:
-            self.xml_object = untangle.parse(xml_file)
+            self.xml_object = untangle.parse(dmi_instr)
         except:
             # self.log.logError("Error untangleing xml document")
             print("Error untangleing xml document")

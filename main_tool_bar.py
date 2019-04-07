@@ -62,7 +62,7 @@ class main_tool_bar():
         # self.dmi_selected.setDisabled(True)
         # topTBar.addWidget(self.dmi_selected)
         
-        self.curr_dmi = phtm_plain_text_edit(self.mw.prefs["dmi"]["filename"])
+        self.curr_dmi = phtm_plain_text_edit(self.mw.get_editor_widget().get_cluster().get_phm_scripts()["__dmi_instr__"]["name"])
         self.curr_dmi.setFixedSize(QSize(175,31))
         self.curr_dmi.setReadOnly(True)
         self.curr_dmi.mouseDoubleClickEvent = self.__open_dmi_prefs
@@ -142,10 +142,12 @@ class main_tool_bar():
 
 def collectionNameChanged(ptoolbar, main_window):
     main_window.dbData['collection'] = ptoolbar.collnameMenu.currentText()
+    main_window.get_editor_widget().get_cluster().save_settings(col=ptoolbar.collnameMenu.currentText())
 
 def databaseNameChanged(ptoolbar, main_window):
     reloadCollectionNames(ptoolbar, main_window)
     main_window.dbData['dbname'] = ptoolbar.dbnameMenu.currentText()
+    main_window.get_editor_widget().get_cluster().save_settings(db=ptoolbar.dbnameMenu.currentText())
 
 def reloadCollectionNames(ptoolbar, main_window):
     ptoolbar.collnameMenu.currentTextChanged.disconnect()

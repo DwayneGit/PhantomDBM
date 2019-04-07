@@ -10,7 +10,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 
 from Users import *
-from Dialogs import *
+from preference_body import *
 from Preferences import *
 from Center import center_window
 from database.DBConnection import *
@@ -51,7 +51,7 @@ class main_window(QMainWindow):
 
         self.dbData = None
 
-        self.icon_set=phtm_icons()
+        self.icon_set = phtm_icons()
 
         f_ctrl.tmpScriptCleaner(self)
 
@@ -62,6 +62,7 @@ class main_window(QMainWindow):
         login.set_central_dialog(loginScreen(login))
 
         self.user = None
+        self.__editor_widget = None
         self.initUI()
 
         # if login.exec_():
@@ -80,7 +81,7 @@ class main_window(QMainWindow):
 
         self.parent.setWindowIcon(QIcon('icons/phantom.png'))
 
-        splitter1 = QSplitter(Qt.Horizontal)
+        self.__splitter1 = QSplitter(Qt.Horizontal)
 
 
         # Add text field
@@ -109,12 +110,12 @@ class main_window(QMainWindow):
 
         self.changed = False
         # check if file is loaded and set flag to use to ask if save necessary before running or closing
-        splitter1.addWidget(self.brd)
-        splitter1.addWidget(self.__editor_widget)
+        self.__splitter1.addWidget(self.brd)
+        self.__splitter1.addWidget(self.__editor_widget)
 
-        self.setCentralWidget(splitter1)
+        self.setCentralWidget(self.__splitter1)
 
-        splitter1.setSizes([300, 325])
+        self.__splitter1.setSizes([300, 325])
         # self.setStatusBar(StatusBar())
         self.statusBar().showMessage('Ready')
         self.statusBar().setFixedHeight(20)
@@ -202,7 +203,7 @@ class main_window(QMainWindow):
         if p.exec_():
             self.prefs = p.prefs
             self.dbData = self.prefs['mongodb']
-            self.main_tool_bar.curr_dmi.setPlainText(self.prefs["dmi"]["filename"])
+            self.reload_curr_dmi()
             self.reloadDbNames()
             # reloadCollectionNames(self.main_tool_bar, self)
 
@@ -224,11 +225,19 @@ class main_window(QMainWindow):
         self.dbData = self.prefs['mongodb']
 
     def reload_curr_dmi(self):
-        self.main_tool_bar.curr_dmi.setPlainText(self.prefs["dmi"]["filename"])
-
+        self.main_tool_bar.curr_dmi.setPlainText(self.get_editor_widget().get_cluster().get_phm_scripts()["__dmi_instr__"]["name"])
 
     def get_editor_widget(self):
         return self.__editor_widget
+
+    def update_settings(self):
+        pass
+
+    def new_editor_widget(self):
+        new_ew = phtm_editor_widget(self)
+        self.__splitter1.replaceWidget(self.__splitter1.indexOf(self.__editor_widget), new_ew)
+        self.__editor_widget = new_ew
+        self.main_tool_bar.dbnameMenu.setCurrentIndex(0)
 
     # def mousePressEvent(self, evt):
     #     self.__oldPos = evt.globalPos()

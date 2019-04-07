@@ -19,7 +19,7 @@ class upload_thread(QObject):
         self.stopFlag = False
         self.log = log
         
-        if dmi_instr and dmi_instr != "":
+        if dmi_instr:
             self.dmi = dmi_handler(self.dbHandler, dmi_instr, log)
         else:
             self.dmi = None

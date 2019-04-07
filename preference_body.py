@@ -28,16 +28,14 @@ class preference_body(QDialog):
         self.log = log
         self.parent = parent
         
-        self.loadPreferences()
+        self.prefs = self.parent.parent.get_editor_widget().get_cluster().get_settings()
+        self.dmi_instr = self.parent.parent.get_editor_widget().get_cluster().get_phm_scripts()["__dmi_instr__"]
+
+        self.instancesPrefDict = self.prefs
+        self.colList = self.getListOfCollections()
+
 
         self.initUI()
-
-    def loadPreferences(self):
-        self.prefs = self.parent.parent.get_editor_widget().get_cluster().get_settings()
-        # print(self.prefs)
-        self.instancesPrefDict = self.prefs
-           
-        self.colList = self.getListOfCollections()
 
     def getWindowTitle(self):
         return self.parent.getWindowTitle()
@@ -120,10 +118,10 @@ class preference_body(QDialog):
         elif self.prefs['db'] == "sql":
             pass
 
-        # print(self.prefs["dmi"]["filepath"])
+        # print(self.dmi_instr["filepath"])
 
         self.parent.parent.get_editor_widget().get_cluster().save_settings(self.prefs)
-        self.parent.prefs = self.prefs
+        self.parent.prefs = self.prefs 
         
         # items = (self.dbForm.itemAt(i) for i in range(self.dbForm.count())) 
         # for w in range(3, 12, 2):
@@ -285,15 +283,15 @@ class preference_body(QDialog):
 
     def dmiTab(self):
 
-        def __load_dmi_instr(dmi, file_path, editor):
-            name, path = f_ctrl.load_instructions()
+        def __load_dmi_instr(dmi, editor):
+            name, file_path = f_ctrl.load_instructions()
             dmi.setPlainText(name)
-            file_path = path
             if file_path:
-                editor.setPlainText(text_style.read_text(file_path))
-                self.prefs["dmi"]["filepath"] = path
-                self.prefs["dmi"]["filename"] = name
-            # print(self.prefs["dmi"]["filepath"])
+                instr = text_style.read_text(file_path)
+                editor.setPlainText(instr)
+                self.dmi_instr["instr"] = instr
+                self.dmi_instr["name"] = name
+            # print(self.dmi_instr["filepath"])
 
         dmiPrefWidget = QWidget()
         dmiVBox = QVBoxLayout()
@@ -322,13 +320,11 @@ class preference_body(QDialog):
         spBottm.setVerticalStretch(10)
         dmi_editor.setSizePolicy(spBottm)
         
-        load_dmi_btn.clicked.connect(lambda: __load_dmi_instr(self.curr_dmi, self.prefs["dmi"]["filepath"], dmi_editor))
+        load_dmi_btn.clicked.connect(lambda: __load_dmi_instr(self.curr_dmi, dmi_editor))
 
-        if self.prefs["dmi"]["filepath"] and self.prefs["dmi"]["filepath"] != "":
-            contents = text_style.read_text(self.prefs["dmi"]["filepath"])
-            if contents:
-                dmi_editor.setPlainText(contents)
-                self.curr_dmi.setPlainText(self.prefs["dmi"]["filename"])
+        if self.dmi_instr["instr"]:
+            dmi_editor.setPlainText(self.dmi_instr["instr"])
+            self.curr_dmi.setPlainText(self.dmi_instr["name"])
             
 
         dmiVBox.addWidget(load_widget)

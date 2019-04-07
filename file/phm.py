@@ -43,14 +43,14 @@ class phm():
 
     def modified_by(self, user, script_title=None):
         if script_title:
-            self.__scripts[hash(script_title)].set_modified_by()
+            self.__scripts[script_title].set_modified_by()
 
         self.__last_modified_by = user
         self.__modify_log.append(user)
 
     def get_last_modified_by(self, script_title=None):
         if script_title:
-            return self.__scripts[hash(script_title)].get_modified_by()
+            return self.__scripts[script_title].get_modified_by()
         return self.__last_modified_by
 
     def get_access(self, user):

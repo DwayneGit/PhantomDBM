@@ -46,14 +46,14 @@ def load_script(main_window):
         # print(main_window.file_path)
         # main_window.editWindowTitle()
 
-        new_script = main_window.get_editor_widget().add_script(text_style.read_text(filenames[0]), filename, "Dwayne W")
+        new_script = main_window.get_editor_widget().add_script(text_style.read_text(filenames[0]), filename, "Dwayne W")[0]
 
         # new_editor= phtm_editor()
         # new_editor.clear()
         # new_editor=text_style.translate_text(filenames[0],new_editor)
         # new_editor.set_file_path(file_path)
 
-        main_window.get_editor_widget().get_editor_tabs().add_editor(new_script)
+        # main_window.get_editor_widget().get_editor_tabs().add_editor(new_script)
 
 def load_phm(main_window):
     dlg = QFileDialog()
@@ -66,10 +66,11 @@ def load_phm(main_window):
 
         filename_w_ext = os.path.basename(filenames[0])
         filename, file_extension = os.path.splitext(filename_w_ext)
-        # print(main_window.file_path)
+        # print(filenames[0])
+
         main_window.updateWindowTitle(filename)
         main_window.get_editor_widget().clear_tabs()
-        main_window.get_editor_widget().load_cluster(filename_w_ext)
+        main_window.get_editor_widget().load_cluster(filenames[0], filename)
 
         main_window.load_settings()
         main_window.reload_curr_dmi()
@@ -112,33 +113,26 @@ def export_script(main_window):
         save_script(main_window, main_window.get_editor_widget().get_editor_tabs().currentWidget())
 
 def export_phm(main_window):
-    file_path = main_window.get_editor_widget().get_cluster().get_file_path()
-    
     options = QFileDialog.Options()
     options |= QFileDialog.DontUseNativeDialog
-    fileName, _ = QFileDialog.getSaveFileName(main_window, "Save File", "", "Cluster files (*.phm)")
-    if fileName:
-        file_path = fileName
-        main_window.get_editor_widget().get_cluster().save(fileName)
-        return fileName
+    file_path, _ = QFileDialog.getSaveFileName(main_window, "Save File", "", "Cluster files (*.phm)")
+    if file_path:
+        # print(file_path)
+        save_phm(main_window, file_path)
+        return file_path
+    return False
 
-def save_phm(main_window):
-    
-    file_path = main_window.get_editor_widget().get_cluster().get_file_path()
-    phm_handler = main_window.get_editor_widget().get_cluster()
-
+def save_phm(main_window, file_path=None):
     if not file_path:
-        print("Cluster file not saved. would you liket to save?")
-        export_phm(main_window)
-        return
+        file_path = main_window.get_editor_widget().get_cluster().get_file_path()
+        if not file_path:
+            print("Cluster file not saved. would you liket to save?")
+            file_path = export_phm(main_window)
+            if not file_path:   
+                return
 
-    main_window.statusBar().showMessage("Saving PHM ...")
-    for i in range(main_window.get_editor_widget().get_editor_tabs().count()):
-        # print(i)
-        if main_window.get_editor_widget().get_editor_tabs().widget(i).is_changed:
-        #     print(main_window.get_editor_widget().get_editor_tabs().widget(i).get_curr_script().get_title())
-            main_window.get_editor_widget().get_editor_tabs().widget(i).save_script()  
-    phm_handler.save()
+    print(file_path)
+    main_window.get_editor_widget().save_phm(file_path)
 
 def tmpScript(main_window, curr_tab, temp = None):
     

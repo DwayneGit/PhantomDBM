@@ -62,7 +62,7 @@ class phtm_tab_widget(QTabWidget):
         tabIndexFound = -1
         for i in range( self.count()):
             if text == self.tabText(i):
-                tabIndexFound = self.widget(i)
+                tabIndexFound = i
                 self.setCurrentIndex(i)
                 break
         # print(tabIndexFound)
