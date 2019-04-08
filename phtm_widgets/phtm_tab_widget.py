@@ -98,15 +98,15 @@ class phtm_tab_widget(QTabWidget):
             file_name = script.get_title()
             index = self.addTab(editor, editor.title)
 
-            editor.textChanged.connect( lambda: self.isChanged(self.currentIndex()))
-            editor.saved.connect( lambda title: self.is_saved(title, self.currentIndex()))
+            editor.textChanged.connect(lambda: self.isChanged(self.currentIndex()))
+            editor.saved.connect(lambda title: self.is_saved(title, self.currentIndex()))
             # self.editWindowTitle(self.currentIndex())
 
         else:
             editor = phtm_editor()
             index = self.addTab(editor, "")
-            editor.textChanged.connect( lambda: self.isChanged(self.currentIndex()))
-            editor.saved.connect( lambda title: self.is_saved(title, self.currentIndex()))
+            editor.textChanged.connect(lambda: self.isChanged(self.currentIndex()))
+            editor.saved.connect(lambda title: self.is_saved(title, self.currentIndex()))
 
         self.setCurrentIndex(index)
         return index
@@ -131,7 +131,7 @@ class phtm_tab_widget(QTabWidget):
         self.setTabText(index, title)
 
         self.parent.get_script_tree().itemChanged.disconnect()
-        self.widget(index).get_tree_item().setText(0,title)
+        self.widget(index).get_tree_item().setText(0, title)
         self.parent.get_script_tree().itemChanged.connect(self.parent.item_changed)
         
     def isChanged(self, index):

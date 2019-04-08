@@ -103,14 +103,16 @@ def save_script(main_window, editor):
     editor.is_changed = False 
 
 def export_script(main_window):
-    file_path = main_window.get_editor_widget().get_cluster().get_file_path()
-    
+    curr_script = main_window.get_editor_widget().get_editor_tabs().currentWidget().toPlainText()
+    if not curr_script:
+        return
     options = QFileDialog.Options()
     options |= QFileDialog.DontUseNativeDialog
     fileName, _ = QFileDialog.getSaveFileName(main_window, "Save File", "", "JSON files (*.json)")
     if fileName:
-        file_path = fileName
-        save_script(main_window, main_window.get_editor_widget().get_editor_tabs().currentWidget())
+        print(fileName)
+        with open(fileName, "w") as write_file:
+            write_file.write(eval(json.dumps(curr_script, indent=4)))
 
 def export_phm(main_window):
     options = QFileDialog.Options()
@@ -135,14 +137,14 @@ def save_phm(main_window, file_path=None):
     main_window.get_editor_widget().save_phm(file_path)
 
 def tmpScript(main_window, curr_tab, temp = None):
-    
+
     fileName = "tmp/script_"+ strftime("%w%d%m%y_%H%M%S", gmtime()) +".json"
-        
+
     tmpfilePath = fileName
 
     with open(tmpfilePath, 'w') as outfile:
         outfile.write(eval(json.dumps(curr_tab.toPlainText(), indent=4)))
-    
+
     return tmpfilePath
 
 def tmpScriptCleaner(main_window):

@@ -46,7 +46,8 @@ def run_script(main_window, run_counter=0, completed_run_counter=0):
     if db_handler.serverStatus():
 
         main_window.log.logInfo("Connected to Database. " + main_window.dbData['dbname'] + " collection " + main_window.dbData['collection'])
-        print(main_window.dbData)
+        # print("run")
+        # print(main_window.dbData)
         main_window.upld_thrd = upload_thread(curr_tab.get_curr_script().get_script(), db_handler, main_window.log, main_window.get_editor_widget().get_cluster().get_phm_scripts()["__dmi_instr__"]["instr"]) # instanciate the Q object
         thread = QThread(main_window) # create a thread
 
@@ -55,9 +56,10 @@ def run_script(main_window, run_counter=0, completed_run_counter=0):
         except:
             main_window.appendToBoard("error moving to thread")
 
-
-        main_window.upld_thrd.update.connect(main_window.appendToBoard) # link signals to functions
-        main_window.upld_thrd.done.connect(lambda msg: threadDone(main_window, completed_run_counter, msg))
+        main_window.upld_thrd.start.connect(main_window.set_progress_max)
+        main_window.upld_thrd.update.connect(main_window.update_progress) # link signals to functions
+        main_window.upld_thrd.done.connect(lambda nm: script_done(main_window, nm))
+        main_window.upld_thrd.thrd_done.connect(lambda msg: thread_done(main_window, completed_run_counter, msg))
 
         thread.started.connect(main_window.upld_thrd.addToDatabase) # connect function to be started in thread
         thread.start()
@@ -99,7 +101,8 @@ def run_all_scripts(main_window):
     if db_handler.serverStatus():
 
         main_window.log.logInfo("Connected to Database. " + main_window.dbData['dbname'] + " collection " + main_window.dbData['collection'])
-        print(main_window.dbData)
+        print("run all")
+        # print(main_window.dbData)
         main_window.upld_thrd = upload_thread(scripts, db_handler, main_window.log) # instanciate the Q object
         thread = QThread(main_window) # create a thread
 
@@ -108,9 +111,10 @@ def run_all_scripts(main_window):
         except:
             main_window.appendToBoard("error moving to thread")
 
-
-        main_window.upld_thrd.update.connect(main_window.appendToBoard) # link signals to functions
-        main_window.upld_thrd.done.connect(lambda msg: threadDone(main_window, 0, msg))
+        main_window.upld_thrd.start.connect(main_window.set_progress_max)
+        main_window.upld_thrd.update.connect(main_window.update_progress) # link signals to functions
+        main_window.upld_thrd.done.connect(lambda nm: script_done(main_window, nm))
+        main_window.upld_thrd.thrd_done.connect(lambda msg: thread_done(main_window, 0, msg))
 
         thread.started.connect(main_window.upld_thrd.addToDatabase) # connect function to be started in thread
         thread.start()
@@ -161,9 +165,10 @@ def run_plus_below(main_window, index):
         except:
             main_window.appendToBoard("error moving to thread")
 
-
-        main_window.upld_thrd.update.connect(main_window.appendToBoard) # link signals to functions
-        main_window.upld_thrd.done.connect(lambda msg: threadDone(main_window, 0, msg))
+        main_window.upld_thrd.start.connect(main_window.set_progress_max)
+        main_window.upld_thrd.update.connect(main_window.update_progress) # link signals to functions
+        main_window.upld_thrd.done.connect(lambda nm: script_done(main_window, nm))
+        main_window.upld_thrd.thrd_done.connect(lambda msg: thread_done(main_window, 0, msg))
 
         thread.started.connect(main_window.upld_thrd.addToDatabase) # connect function to be started in thread
         thread.start()
@@ -190,7 +195,13 @@ def pauseRun(main_window):
 
 
 @pyqtSlot(str)
-def threadDone(main_window, completed_run_counter, msg):
+def thread_done(main_window, completed_run_counter, msg):
     main_window.appendToBoard(msg)
     completed_run_counter += 1
     main_window.setRunState(False)
+    script_done(main_window, "Upload")
+
+def script_done(main_window, name):
+    main_window.statusBar().showMessage(name + " Complete")
+    main_window.progressBar.setValue(0)
+

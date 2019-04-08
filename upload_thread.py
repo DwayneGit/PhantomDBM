@@ -9,7 +9,10 @@ from instructions.dmi_handler import dmi_handler
 class upload_thread(QObject):
 
     update = pyqtSignal(str) # signal data ready to be appended to th board
-    done = pyqtSignal(str) # done signal
+    start = pyqtSignal(int) # signal data ready to be appended to th board
+    done = pyqtSignal(str)
+
+    thrd_done = pyqtSignal(str) # done signal
 
     def __init__(self, script_s, dbHandler, log, dmi_instr=None):
         QObject.__init__(self)
@@ -41,39 +44,45 @@ class upload_thread(QObject):
         #     return
         if isinstance(self.script_s, str):
             self.__run_script(self.script_s)
+            # print(self.script_s)
 
         elif isinstance( self.script_s, OrderedDict):
+            # print(self.script_s)
             for key, value in self.script_s.items():
-                self.__run_script(value.get_script())
+                if key[:1] != "__" and key[-2:] != "__":
+                    self.__run_script(value.get_script())
+                    self.done.emit(value.get_title())
 
         # self.update.emit("Finished")
-        self.done.emit(str(self.thread_id) + ": Run Complete.")
+        self.thrd_done.emit(str(self.thread_id) + ": Run Complete.")
         time.sleep(1)
 
     def __run_script(self, script):
-            data = json.loads(script)
-            i = 0
-
-            while i < len(data):
-                if self.stopFlag:
-                    return
-                elif not self.pauseFlag:
-                    send_data = data[i]
-                    if self.dmi:
-                        send_data = self.dmi.manipulate(data[i])
-                    self.dbHandler.insertDoc(send_data)
-                    self.update.emit(str(self.thread_id) + ": Sending Objects to Database... %d/%d" %(i+1, len(data)))
-                    time.sleep(1)
-                    i += 1
-                    print(send_data)
-                else:
-                    continue
+        
+        data = json.loads(script)
+        # print(data)
+        i = 0
+        while i < len(data):
+            self.start.emit(len(data))
+            if self.stopFlag:
+                return
+            elif not self.pauseFlag:
+                send_data = data[i]
+                if self.dmi:
+                    send_data = self.dmi.manipulate(data[i])
+                self.dbHandler.insertDoc(send_data)
+                self.update.emit("Sending Objects to Database... %d/%d" %(i+1, len(data)))
+                time.sleep(1)
+                i += 1
+                # print(send_data)
+            else:
+                continue
 
     # def updateSignal(self, msg):
     #     self.update.emit(msg)
     def setStopFlag(self):
         self.log.logInfo(str(self.thread_id) + ": Run Terminated Before Completion")
-        self.done.emit(str(self.thread_id) + ": Run Terminated Before Completion")
+        self.thrd_done.emit(str(self.thread_id) + ": Run Terminated Before Completion")
         self.stopFlag = True
 
     def togglePauseFlag(self):

@@ -121,6 +121,7 @@ class main_window(QMainWindow):
         self.statusBar().setFixedHeight(20)
 
         self.progressBar = QProgressBar()
+        self.progressBar.setTextVisible(False)
 
         self.statusBar().addPermanentWidget(self.progressBar)
         self.progressBar.setFixedWidth(200)
@@ -238,6 +239,15 @@ class main_window(QMainWindow):
         self.__splitter1.replaceWidget(self.__splitter1.indexOf(self.__editor_widget), new_ew)
         self.__editor_widget = new_ew
         self.main_tool_bar.dbnameMenu.setCurrentIndex(0)
+
+    def set_progress_max(self, mx):
+        self.progressBar.setMaximum(mx)
+
+    def update_progress(self, status):
+        self.progressBar.setValue(self.progressBar.value()+1)
+        self.statusBar().showMessage(status)
+
+
 
     # def mousePressEvent(self, evt):
     #     self.__oldPos = evt.globalPos()

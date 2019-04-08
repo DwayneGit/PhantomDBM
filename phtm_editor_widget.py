@@ -143,7 +143,7 @@ class phtm_editor_widget(QWidget):
             title += " " + str(self.__default_count)
 
         item = self.add_script("[\n    {\n        \"\": \"\"\n    }\n]", title, "Default")[1]
-        self.rename_script(self.__tree_root.childCount()-1)
+        self.rename_script(self.__tree_root.indexOfChild(item))
     
         if self.__editor_tabs.isHidden():
             self.__editor_tabs.show()
@@ -155,6 +155,9 @@ class phtm_editor_widget(QWidget):
         self.__script_tree.itemChanged.disconnect()
         item = self.add_script_child(self.__tree_root, title)
         self.__script_tree.itemChanged.connect(self.item_changed)
+
+        if self.__editor_tabs.isHidden():
+            self.__editor_tabs.show()
         
         index = self.__editor_tabs.add_editor(self.__cluster.get_phm_scripts()[title])
         self.__editor_tabs.widget(index).set_tree_item(item)
@@ -239,6 +242,9 @@ class phtm_editor_widget(QWidget):
         # print(item.text(0))
         # print(self.name_temp)
         # print(col)
+        if not self.name_temp:
+            return
+            
         if col != 0:
             return
 
@@ -341,14 +347,14 @@ class phtm_editor_widget(QWidget):
             # print(i)
             if self.__editor_tabs.widget(i).is_changed:
             #     print(main_window.get_editor_widget().get_editor_tabs().widget(i).get_curr_script().get_title())
-                self.__editor_tabs.widget(i).save_script()  
+                self.__editor_tabs.widget(i).save_script()
 
         self.__cluster.save(file_path)
 
         filename_w_ext = os.path.basename(file_path)
-        filename, file_extension = os.path.splitext(filename_w_ext)
+        filename = os.path.splitext(filename_w_ext)[0]
     
-        self.__tree_root.setText(0, filename)
+        self.rename_script_root(filename)
         self.parent.updateWindowTitle(filename)
 
     # def getPermanentTitle(self):

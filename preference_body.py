@@ -30,6 +30,8 @@ class preference_body(QDialog):
         
         self.prefs = self.parent.parent.get_editor_widget().get_cluster().get_settings()
         self.dmi_instr = self.parent.parent.get_editor_widget().get_cluster().get_phm_scripts()["__dmi_instr__"]
+        
+        self.dmi_editor = phtm_plain_text_edit()
 
         self.instancesPrefDict = self.prefs
         self.colList = self.getListOfCollections()
@@ -121,7 +123,9 @@ class preference_body(QDialog):
         # print(self.dmi_instr["filepath"])
 
         self.parent.parent.get_editor_widget().get_cluster().save_settings(self.prefs)
-        self.parent.prefs = self.prefs 
+        self.parent.prefs = self.prefs
+        
+        self.dmi_instr['instr'] = self.dmi_editor.toPlainText()
         
         # items = (self.dbForm.itemAt(i) for i in range(self.dbForm.count())) 
         # for w in range(3, 12, 2):
@@ -314,21 +318,20 @@ class preference_body(QDialog):
         load_widget_layout.setContentsMargins(0, 0, 0, 0)
 
         load_widget.setLayout(load_widget_layout)
-
-        dmi_editor = phtm_plain_text_edit()
+        
         spBottm = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         spBottm.setVerticalStretch(10)
-        dmi_editor.setSizePolicy(spBottm)
+        self.dmi_editor.setSizePolicy(spBottm)
         
-        load_dmi_btn.clicked.connect(lambda: __load_dmi_instr(self.curr_dmi, dmi_editor))
+        load_dmi_btn.clicked.connect(lambda: __load_dmi_instr(self.curr_dmi, self.dmi_editor))
 
         if self.dmi_instr["instr"]:
-            dmi_editor.setPlainText(self.dmi_instr["instr"])
+            self.dmi_editor.setPlainText(self.dmi_instr["instr"])
             self.curr_dmi.setPlainText(self.dmi_instr["name"])
             
 
         dmiVBox.addWidget(load_widget)
-        dmiVBox.addWidget(dmi_editor)
+        dmiVBox.addWidget(self.dmi_editor)
         dmiVBox.setContentsMargins(0, 0, 0, 0)
 
         dmiPrefWidget.setLayout(dmiVBox)

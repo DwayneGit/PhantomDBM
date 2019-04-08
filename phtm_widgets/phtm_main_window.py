@@ -10,7 +10,7 @@ from phtm_widgets.phtm_title_bar import phtm_title_bar
 from Center import center_window
 
 class phtm_main_window(QMainWindow):
-    def __init__(self, style="ghost", geometry=QRect(10, 10, 900, 520)):
+    def __init__(self, style="ghost", geometry=QRect(10, 10, 1100, 620)):
         super().__init__() # set screen size (left, top, width, height
 
         self.setWindowFlags(Qt.FramelessWindowHint)

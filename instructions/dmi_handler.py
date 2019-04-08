@@ -12,7 +12,7 @@ import untangle
 class dmi_handler():
     def __init__(self, db_handler, dmi_instr, log):
         self.log = log
-        print(dmi_instr)
+        # print(dmi_instr)
         try:
             self.xml_object = untangle.parse(dmi_instr)
         except:
@@ -60,6 +60,9 @@ class dmi_handler():
 
                 if not isinstance(lkup.from_key.cdata, str):
                     print("value to look up is not a string")
+                    return
+
+                elif not lkup.from_key.cdata in data:
                     return
 
                 # if more than one look_ups return error
