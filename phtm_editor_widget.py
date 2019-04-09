@@ -143,7 +143,7 @@ class phtm_editor_widget(QWidget):
             title += " " + str(self.__default_count)
 
         item = self.add_script("[\n    {\n        \"\": \"\"\n    }\n]", title, "Default")[1]
-        self.rename_script(self.__tree_root.indexOfChild(item))
+        # self.rename_script(self.__tree_root.indexOfChild(item))
     
         if self.__editor_tabs.isHidden():
             self.__editor_tabs.show()

@@ -88,9 +88,9 @@ class main_tool_bar():
         # toolBar is a pointer to an existing toolbar
         sideTBar.addWidget(spacer)
         
-        tbopen = QAction(QIcon(self.icon_set.wifi), "open", self.mw)
-        # tbopen.triggered.connect()
-        sideTBar.addAction(tbopen)
+        tbreload = QAction(QIcon(self.icon_set.reload), "reload", self.mw)
+        tbreload.triggered.connect(self.mw.reloadDbNames)
+        sideTBar.addAction(tbreload)
         
         dropdownSize = QSize(175,31)
         # self.mw.addrDropdownMenu = QComboBox()

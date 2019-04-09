@@ -81,8 +81,6 @@ def load_phm(main_window):
 def save_script(main_window, editor):
     
     file_path = main_window.get_editor_widget().get_cluster().get_file_path()
-    tabs = main_window.get_editor_widget().get_editor_tabs()
-    curr_tab = tabs.currentWidget()
 
     if not file_path:
         print("Cluster file not saved. would you liket to save?")
