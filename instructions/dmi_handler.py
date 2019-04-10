@@ -7,15 +7,16 @@ from pprint import pprint
 import untangle
 
 # from phtm_logger import phtm_logger
-# from DBConnection import DatabaseHandler
+# from database.DBConnection import database_handler
 
-class DMIHandler():
-    def __init__(self, db_handler, xml_file, log):
+class dmi_handler():
+    def __init__(self, db_handler, dmi_instr, log):
         self.log = log
+        # print(dmi_instr)
         try:
-            self.xml_object = untangle.parse(xml_file)
+            self.xml_object = untangle.parse(dmi_instr)
         except:
-            self.log.logError("Error untangleing xml document")
+            # self.log.logError("Error untangleing xml document")
             print("Error untangleing xml document")
             return
         self.db_handler = db_handler
@@ -48,6 +49,7 @@ class DMIHandler():
 
         if not link.from_db:
             search_data['db_name'] = link.from_db.cdata
+            # print(link.from_db.cdata)
 
         if not link.from_collection:
             search_data['collection_name'] = link.from_collection.cdata
@@ -58,6 +60,9 @@ class DMIHandler():
 
                 if not isinstance(lkup.from_key.cdata, str):
                     print("value to look up is not a string")
+                    return
+
+                elif not lkup.from_key.cdata in data:
                     return
 
                 # if more than one look_ups return error
@@ -114,7 +119,7 @@ class DMIHandler():
                         search_data['criteria'].update(direct_queue)
                     else:
                         search_data['criteria'] = criteria
-
+                    # print(search_data)
                     self.__search_db(search_data, data, link, srch)
 
 

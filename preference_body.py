@@ -4,11 +4,15 @@ from PyQt5.QtGui import *
 
 from Center import center_window
 from Preferences import *
-from DBConnection import *
+from database.DBConnection import *
+
+import file_ctrl as f_ctrl
+import text_style as text_style
 
 from phtm_widgets.phtm_push_button import phtm_push_button
 from phtm_widgets.phtm_combo_box import phtm_combo_box
 from phtm_widgets.phtm_tab_widget import phtm_tab_widget
+from phtm_widgets.phtm_plain_text_edit import phtm_plain_text_edit
 
 class preference_body(QDialog):
     def __init__(self, user, log, parent):
@@ -17,24 +21,23 @@ class preference_body(QDialog):
         Initialize the window
         '''
         
-        self.prefDict = parent.parent.dbData
-        print(self.prefDict)
+        # self.prefDict = parent.parent.dbData
+        # print(self.prefDict)
         self.user = user
         self.svd = False
         self.log = log
         self.parent = parent
         
-        self.loadPreferences()
+        self.prefs = self.parent.parent.get_editor_widget().get_cluster().get_settings()
+        self.dmi_instr = self.parent.parent.get_editor_widget().get_cluster().get_phm_scripts()["__dmi_instr__"]
+        
+        self.dmi_editor = phtm_plain_text_edit()
+
+        self.instancesPrefDict = self.prefs
+        self.colList = self.getListOfCollections()
+
 
         self.initUI()
-
-    def loadPreferences(self):
-        self.prefs = Preferences('config', self.log, prefDict = DefaultGeneralConfig.prefDict) # name of preference file minus json
-        self.prefs.loadConfig()
-        self.prefDict = self.prefs.prefDict
-        self.instancesPrefDict = self.prefDict
-           
-        self.colList = self.getListOfCollections()
 
     def getWindowTitle(self):
         return self.parent.getWindowTitle()
@@ -44,10 +47,10 @@ class preference_body(QDialog):
 
     def getListOfCollections(self):
         
-        if not self.prefDict['mongodb']['dbname'] or self.prefDict['mongodb']['dbname']=="":
+        if not self.prefs['mongodb']['dbname'] or self.prefs['mongodb']['dbname']=="":
             return []
 
-        return DatabaseHandler.getCollectionList(self.prefDict['mongodb']['host'], self.prefDict['mongodb']['port'], self.prefDict['mongodb']['dbname'])
+        return database_handler.getCollectionList(self.prefs['mongodb']['host'], self.prefs['mongodb']['port'], self.prefs['mongodb']['dbname'])
 
 
     def initUI(self):
@@ -57,15 +60,15 @@ class preference_body(QDialog):
 
         vBox = QVBoxLayout()
 
-        tabW = phtm_tab_widget(self)
-        tabW.setTabPosition(QTabWidget.North)
+        self.tabW = phtm_tab_widget(self)
+        self.tabW.setTabPosition(QTabWidget.North)
 
-        tabW.addTab(self.databaseTab(),"Database")
-        tabW.addTab(self.apiTab(),"API")
-        tabW.addTab(self.userTab(),"User")
-        tabW.addTab(self.themeTab(),"Theme")
+        self.tabW.addTab(self.databaseTab(), "Database")
+        self.tabW.addTab(self.dmiTab(), "DMI")
+        # self.tabW.addTab(self.userTab(), "User")
+        self.tabW.addTab(self.themeTab(), "Theme")
 
-        vBox.addWidget(tabW)
+        vBox.addWidget(self.tabW)
         vBox.addWidget(self.buttons())
 
         self.setLayout(vBox)
@@ -91,35 +94,38 @@ class preference_body(QDialog):
         return btnWidget
 
     def savePreferences(self):
-        print("Saving Preferences ...")
+        # print("Saving Preferences ...")
         self.saveDbTab()
         self.svd = True
 
     def saveDbTab(self):
-        # self.prefDict['db'] = self.dbBtnGroup.checkedButton().text().lower()
+        # self.prefs['db'] = self.dbBtnGroup.checkedButton().text().lower()
         # print(self.dbBtnGroup.checkedButton().text().lower())
-        if self.prefDict['db'] == "mongodb":
-            self.prefDict['mongodb']['dbname'] = self.dbForm.itemAt(3).widget().currentText()
-            print(self.prefDict['mongodb']['dbname'])
+        if self.prefs['db'] == "mongodb":
+            self.prefs['mongodb']['dbname'] = self.dbForm.itemAt(3).widget().currentText()
+            # print(self.prefs['mongodb']['dbname'])
 
-            self.prefDict['mongodb']['collection'] = self.dbForm.itemAt(11).widget().currentText()
-            print(self.prefDict['mongodb']['collection'])
+            self.prefs['mongodb']['collection'] = self.dbForm.itemAt(11).widget().currentText()
+            # print(self.prefs['mongodb']['collection'])
 
-            self.prefDict['mongodb']['host'] = self.dbForm.itemAt(5).widget().text()
-            print(self.prefDict['mongodb']['host'])
+            self.prefs['mongodb']['host'] = self.dbForm.itemAt(5).widget().text()
+            # print(self.prefs['mongodb']['host'])
 
-            self.prefDict['mongodb']['port'] = int(self.dbForm.itemAt(7).widget().text())
-            print(self.prefDict['mongodb']['port'])
+            self.prefs['mongodb']['port'] = int(self.dbForm.itemAt(7).widget().text())
+            # print(self.prefs['mongodb']['port'])
 
-            self.prefDict['mongodb']['tableSize'] = int(self.dbForm.itemAt(9).widget().text())
-            print(self.prefDict['mongodb']['tableSize'])
+            self.prefs['mongodb']['tableSize'] = int(self.dbForm.itemAt(9).widget().text())
+            # print(self.prefs['mongodb']['tableSize'])
 
-
-
-        elif self.prefDict['db'] == "sql":
+        elif self.prefs['db'] == "sql":
             pass
 
-        self.prefs.saveConfig()
+        # print(self.dmi_instr["filepath"])
+
+        self.parent.parent.get_editor_widget().get_cluster().save_settings(self.prefs)
+        self.parent.prefs = self.prefs
+        
+        self.dmi_instr['instr'] = self.dmi_editor.toPlainText()
         
         # items = (self.dbForm.itemAt(i) for i in range(self.dbForm.count())) 
         # for w in range(3, 12, 2):
@@ -140,7 +146,7 @@ class preference_body(QDialog):
 
     def cancelPreferences(self):
         if self.svd == False:
-            print("closeing with false")
+            # print("closeing with false")
             self.parent.reject() #if canceled with out previously being saved
         else:
             self.parent.accept()
@@ -187,7 +193,7 @@ class preference_body(QDialog):
             
             self.instancesPrefDict['mongodb']['collection'] = coll
 
-            index = colEditBtn.findText(self.prefDict['mongodb']['collection'])
+            index = colEditBtn.findText(self.prefs['mongodb']['collection'])
             colEditBtn.setCurrentIndex(index)
 
         def dbChanged(name):
@@ -200,7 +206,7 @@ class preference_body(QDialog):
 
             colEditBtn.addItems(self.colList)
 
-            index = colEditBtn.findText(self.prefDict['mongodb']['collection'])
+            index = colEditBtn.findText(self.prefs['mongodb']['collection'])
             colEditBtn.setCurrentIndex(index)
             
         self.clrFlag = False
@@ -209,7 +215,7 @@ class preference_body(QDialog):
         colEditBtn = phtm_combo_box()
 
         colEditBtn.addItems(self.colList)
-        index = colEditBtn.findText(self.prefDict['mongodb']['collection'])
+        index = colEditBtn.findText(self.prefs['mongodb']['collection'])
         colEditBtn.setCurrentIndex(index)
 
         colEditBtn.currentTextChanged.connect(lambda a : changeColl(colEditBtn.currentText()))
@@ -218,9 +224,9 @@ class preference_body(QDialog):
        
         dbNameLabel = QLabel("Database Name: ")
         dbNameBox = phtm_combo_box()
-        dbNameBox.addItems(DatabaseHandler.getDatabaseList(self.prefs.prefDict['mongodb']['host'],self.prefs.prefDict['mongodb']['port']))
+        dbNameBox.addItems(database_handler.getDatabaseList(self.prefs['mongodb']['host'],self.prefs['mongodb']['port']))
         
-        index = dbNameBox.findText(self.prefDict['mongodb']['dbname'])
+        index = dbNameBox.findText(self.prefs['mongodb']['dbname'])
         dbNameBox.setCurrentIndex(index)
 
         dbChanged(dbNameBox.currentText())
@@ -279,10 +285,58 @@ class preference_body(QDialog):
     def editCollections(self):
         print("Open Edit Collections Window")
 
-    def apiTab(self):
-        apiPrefWidget = QWidget()
+    def dmiTab(self):
 
-        return apiPrefWidget
+        def __load_dmi_instr(dmi, editor):
+            name, file_path = f_ctrl.load_instructions()
+            dmi.setPlainText(name)
+            if file_path:
+                instr = text_style.read_text(file_path)
+                editor.setPlainText(instr)
+                self.dmi_instr["instr"] = instr
+                self.dmi_instr["name"] = name
+            # print(self.dmi_instr["filepath"])
+
+        dmiPrefWidget = QWidget()
+        dmiVBox = QVBoxLayout()
+
+        load_widget = QWidget()
+        spTop = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        spTop.setVerticalStretch(1)
+        load_widget.setSizePolicy(spTop)
+        load_widget_layout = QHBoxLayout()
+        # load_widget_layout.setSpacing(2)
+
+        load_dmi_btn = phtm_push_button("Open Instruction Doc")
+
+        self.curr_dmi = phtm_plain_text_edit()
+        self.curr_dmi.setFixedSize(QSize(175,31))
+        self.curr_dmi.setReadOnly(True)
+        
+        load_widget_layout.addWidget(load_dmi_btn)
+        load_widget_layout.addWidget(self.curr_dmi)
+        load_widget_layout.setContentsMargins(0, 0, 0, 0)
+
+        load_widget.setLayout(load_widget_layout)
+        
+        spBottm = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        spBottm.setVerticalStretch(10)
+        self.dmi_editor.setSizePolicy(spBottm)
+        
+        load_dmi_btn.clicked.connect(lambda: __load_dmi_instr(self.curr_dmi, self.dmi_editor))
+
+        if self.dmi_instr["instr"]:
+            self.dmi_editor.setPlainText(self.dmi_instr["instr"])
+            self.curr_dmi.setPlainText(self.dmi_instr["name"])
+            
+
+        dmiVBox.addWidget(load_widget)
+        dmiVBox.addWidget(self.dmi_editor)
+        dmiVBox.setContentsMargins(0, 0, 0, 0)
+
+        dmiPrefWidget.setLayout(dmiVBox)
+            
+        return dmiPrefWidget
 
     def userTab(self):
         usrPrefWidget = QWidget()
@@ -314,7 +368,7 @@ class preference_body(QDialog):
 
     def mngAccess(self):
         if self.user.access.lower() == "admin":
-            db = self.prefDict['mongodb']['dbname']
+            db = self.prefs['mongodb']['dbname']
             mngAcessDialog = QDialog()
 
             form = QFormLayout()
@@ -322,7 +376,7 @@ class preference_body(QDialog):
             usrLabel = QLabel("Users: ")
             usrDropMenu = phtm_combo_box()
             acsDropMenu = phtm_combo_box()
-            users = User.getUserList(self.prefDict['mongodb']['dbname'])
+            users = User.getUserList(self.prefs['mongodb']['dbname'])
             #print(users)
             def getAccesses():
                 acsDropMenu.clear()
@@ -354,7 +408,7 @@ class preference_body(QDialog):
 
     def mngUsers(self):
         if self.user.access.lower() == "admin":
-            db = self.prefDict['mongodb']['dbname']
+            db = self.prefs['mongodb']['dbname']
             mngUsersDialog = QDialog()
 
             form = QFormLayout()
@@ -363,7 +417,7 @@ class preference_body(QDialog):
             usrDropMenu = phtm_combo_box()
             acsDropMenu = phtm_combo_box()
             users = User.getUserList()
-            usersdb = User.getUserList(self.prefDict['mongodb']['dbname'])
+            usersdb = User.getUserList(self.prefs['mongodb']['dbname'])
             #print(users)
             def getUsers():
                 ret = []

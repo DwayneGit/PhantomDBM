@@ -1,5 +1,9 @@
 {
     "db": "mongodb",
+    "dmi": {
+        "filename": "test_link",
+        "filepath": "/home/dwayne/Desktop/Workspace/PhantomDBM/instructions/test_link.xml"
+    },
     "login": {
         "password": "Admin",
         "username": "Admin"

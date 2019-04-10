@@ -1,9 +1,12 @@
 import pickle
 import numpy
 import json
+from copy import deepcopy
 
 from datetime import datetime
 from collections import OrderedDict
+
+from settings.default_general_settings import default_general_settings as dgs
 
 from .json_script import json_script
 from .phm import phm as phm_file
@@ -16,12 +19,16 @@ class phm_file_handler():
         self.__class__.__name__ = "phm_file_handler"
 
         # print(type(self))
-        self.__file_path = None
+        self.__file_path = ""
 
-        if phm:
+        if phm: 
             self.__phm = phm
         else:
+            setting = dgs()
+            # print(setting)
             self.__phm = phm_file()
+            self.add_script(str(setting), "__settings__")
+            self.get_phm_scripts()["__dmi_instr__"] = {"instr" : "", "name" : "" }
 
         # print(type(self.__phm))
 
@@ -46,40 +53,57 @@ class phm_file_handler():
     # def __len__(self):
     #     return len(self.__scripts)
 
-    def save(self, file_name=None, user=None):
+    def save(self, file_path, user=None):
         self.__phm.modified_by(user)
-        if file_name:
-            pickle.dump(self.__phm, open(file_name + ".phm", "wb"))
-        else:
-            pickle.dump(self.__phm, open(self.__file_path, "wb"))
+        
+        tmp = deepcopy(file_path)
+        if tmp[-4:] == ".phm":
+            tmp = tmp[0:-4]
+        pickle.dump(self.__phm, open(tmp + ".phm", "wb"))
+        
+        self.__file_path = file_path
 
     def load(self, file_path):
-        self.__file_path = file_path
         self.__phm = pickle.load(open(file_path, "rb" ))
+        self.__file_path = file_path
 
 #------------------------- script methods --------------------------
     def add_script(self, script, title=None, creator=None):
         # print(self.get_phm_scripts())
-        if hash(title) in self.get_phm_scripts():
+        if title in self.get_phm_scripts():
             print("Error: script title already exist in this ____(cluster)")
             return False
 
         new_script = json_script(script, title, creator)
 
-        self.get_phm_scripts()[hash(title)] = new_script
+        self.get_phm_scripts()[title] = new_script
 
         return new_script
 
+    def get_settings(self):
+        return json.loads(self.get_script("__settings__").get_script())
+
+    def save_settings(self, sett_dict=None, db=None, col=None):
+        if not sett_dict:
+            sett_dict = self.get_settings()
+            if db:
+                sett_dict["mongodb"]["dbname"] = db
+            elif col:
+                sett_dict["mongodb"]["collection"] = col
+
+        sett_str = dgs.to_str(sett_dict)
+        self.get_script("__settings__").set_script(sett_str)
+
     def get_script(self, title):
-        if hash(title) in self.get_phm_scripts():
-            return self.get_phm_scripts()[hash(title)]
-        return None
+        if title in self.get_phm_scripts():
+            return self.get_phm_scripts()[title]
+        return None 
 
     def get_phm(self):
         return self.__phm
 
     def export_script(self, title, dest, user=None):
-        json.dump(self.get_phm_scripts()[hash(title)], dest)
+        json.dump(self.get_phm_scripts()[title], dest)
 
     def get_phm_scripts(self):
         return self.__phm.get_scripts()
@@ -101,14 +125,14 @@ class phm_file_handler():
 
     # def modified_by(self, user, script_title=None):
     #     if script_title:
-    #         self.__scripts[hash(script_title)]["modified_by"] = [user]
+    #         self.__scripts[script_title]["modified_by"] = [user]
 
     #     self.__last_modified_by = user
     #     self.__modify_log.append(user)
 
     # def get_last_modified_by(self, script_title=None):
     #     if script_title:
-    #         return self.__scripts[hash(script_title)]["modified_by"][-1]
+    #         return self.__scripts[script_title]["modified_by"][-1]
     #     return self.__last_modified_by
 
     # def get_access(self, user):

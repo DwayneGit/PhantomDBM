@@ -13,13 +13,13 @@ from pymongo import errors as pyErrs
 
 from collections import OrderedDict
 
-class DatabaseHandler():
+class database_handler():
 
     @staticmethod
     def getDatabaseList(host, port):
         client = MongoClient(host, port)
         try:
-            dbn = client.database_names()
+            dbn = [""] + client.database_names()
         except pyErrs.ServerSelectionTimeoutError as err:
             print("Connection refused @ " + host + ":" + str(port))
             #log err
@@ -29,7 +29,7 @@ class DatabaseHandler():
     @staticmethod
     def getCollectionList(host, port, dbname):
         if not dbname or dbname=="":
-            return 
+            return []
         client = MongoClient(host=host, port=port, document_class=OrderedDict)
         try:
             db = client[dbname]
@@ -166,8 +166,8 @@ class DatabaseHandler():
 
     def findDoc(self, **search_data):
         # self.log.logInfo("Info to find " + search_data['criteria'])
-        if search_data['__db_name']:
-            db = self.client[search_data['__db_name']]
+        if search_data['db_name']:
+            db = self.client[search_data['db_name']]
         else:
             db = self.db
 
@@ -179,7 +179,8 @@ class DatabaseHandler():
         results = []
 
         for doc in docs.find(search_data['criteria']):
-            results.append(OrderedDict(doc))
+            # print(doc)
+            results.append(doc)
 
         if len(results) > 1:
             return results
