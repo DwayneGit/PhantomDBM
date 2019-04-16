@@ -31,14 +31,15 @@ def load_script(main_window):
         # print(main_window.file_path)
         # main_window.editWindowTitle()
 
-        new_script = main_window.get_editor_widget().add_script(text_style.read_text(filenames[0]), filename, "Dwayne W")
+        # new_script = main_window.get_editor_widget().add_script(text_style.read_text(filenames[0]), filename, "Dwayne W")[0]
 
         # new_editor= phtm_editor()
         # new_editor.clear()
         # new_editor=text_style.translate_text(filenames[0],new_editor)
         # new_editor.set_file_path(file_path)
 
-        main_window.get_editor_widget().get_editor_tabs().add_editor(new_script)
+        # main_window.get_editor_widget().get_editor_tabs().add_editor(new_script)
+    return filename, filenames[0]
 
 def load_phm(main_window):
     dlg = QFileDialog()

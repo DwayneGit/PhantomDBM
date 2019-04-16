@@ -5,6 +5,7 @@ from PyQt5.QtCore import Qt
 
 import file_ctrl as f_ctrl
 import run_ctrl as r_ctrl
+import text_style
 
 class phtm_menu_bar(QMenuBar):
     def __init__(self, main_window):
@@ -35,7 +36,7 @@ class phtm_menu_bar(QMenuBar):
         openJsonAction = QAction("Open JSON", self.mw)
         openJsonAction.setShortcut("Ctrl+O")
         openJsonAction.setStatusTip('Open a Script File')
-        openJsonAction.triggered.connect(lambda: f_ctrl.load_script(self.mw))
+        openJsonAction.triggered.connect(self.__load_scrpt)
         fileMenu.addAction(openJsonAction)
 
         openPhmAction = QAction("Open PHM", self.mw)
@@ -75,7 +76,7 @@ class phtm_menu_bar(QMenuBar):
 
         importAction = QAction("Import JSON File", self.mw)
         importAction.setStatusTip('Save Script File')
-        importAction.triggered.connect(lambda: f_ctrl.load_script(self.mw))
+        importAction.triggered.connect(self.__load_scrpt)
         fileMenu.addAction(importAction)
 
         exportAction = QAction("Export JSON File", self.mw)
@@ -188,3 +189,6 @@ class phtm_menu_bar(QMenuBar):
     def getRecentFilesList(self):
         return self.recentFilesList
     
+    def __load_scrpt(self):
+        file_name, file_path = f_ctrl.load_script(self.mw)
+        new_script = self.mw.get_editor_widget().add_script(text_style.read_text(file_path), file_name, "Dwayne W")[0]

@@ -10,6 +10,8 @@ from numbers import Number
 
 from pymongo import MongoClient
 from pymongo import errors as pyErrs
+from database.schema import schema
+import mongoengine as mEngine
 
 from collections import OrderedDict
 
@@ -49,6 +51,11 @@ class DatabaseHandler():
         self.__db_host = db_data['host']
         #self.fLimit = db_data['tableSize']
 
+        self.__doc_schema_cls = None
+
+        self.__schema = None
+        # self.__schema.set_connection(self.__db_name)
+
         self.client = None
         self.auth = authentication
 
@@ -60,7 +67,8 @@ class DatabaseHandler():
 
         self.mDbDocs = []
         #print(self.mDbDocs)
-        self.connectToDatabase()
+        self.connected = False
+        self.__connectToDatabase()
 
     def get_db_name(self):
         return self.__db_name
@@ -70,6 +78,8 @@ class DatabaseHandler():
         return self.__db_collection
     def get_db_host(self):
         return self.__db_host
+    def get_schema(self):
+        return self.__schema
 
     def set_db_name(self, name):
         self.__db_name = name
@@ -79,9 +89,19 @@ class DatabaseHandler():
         self.__db_collection = collection
     def set_db_host(self, host):
         self.__db_host = host
+    def set_schema(self, schema_json, db_name=None, db_coll=None):
+        if db_name:
+            self.__db_name = db_name
+        if db_coll:
+            self.__db_collection = db_coll
+
+        self.__schema_json = schema_json
+        self.__schema = schema(self.__db_name, self.__db_collection, schema_json)
+        self.__schema.set_connection(self.__db_name, self.__db_host, self.__db_port_number)
 
     def serverStatus(self):
         max_sev_sel_delay = 2
+        
         if self.auth and (not self.auth.user or not self.auth.password):
             print("Please provide both username and password")
 
@@ -111,17 +131,25 @@ class DatabaseHandler():
         
         return False
 
-    def connectToDatabase(self):
+    def __connectToDatabase(self):
         #, document_class=OrderedDict insures that the client retruns documents as ordered in database as OrderedDicts
         if not self.serverStatus():
+            self.connected = False
             return
 
         self.collects = []
+        try:
+            self.db = self.client[self.__db_name]
+        except pyErrs.InvalidName as err:
+            print(err)
+            self.connected = False
+            return
 
-        self.db = self.client[self.__db_name]
         #print(self.db.list_collection_names())
         for col in self.db.list_collections():
             self.collects.append(col["name"])
+
+        self.connected = True
 
         # if not self.__db_collection == None:
         #     docs = self.db[self.__db_collection]
@@ -146,40 +174,50 @@ class DatabaseHandler():
     returns -1 if ther is an error or 0 if it does not follow the model
     '''
     def insertDoc(self, document):
-        if not any(document.values()):
-            self.errMsgs(2)
-            return False
-        # elif self.model:
-        #     for d in document.keys():
-        #         #print(document[d])
-        #         #print(self.model[d])
-        #         if not self.isRightType(document[d], self.model[d]) and not(d == "_id"):
-        #             self.errMsgs(0)
-        #             return False
-        try:
-            self.db[self.__db_collection].insert_one(document)
-        except:
-            self.errMsgs(-1)
-            return False
+        new_doc = self.__schema.get_schema_cls()
+        for field in document:
+            setattr(new_doc, field, document[field])
+            print(document[field])
+        print(type(new_doc))
 
-        return True
+        try:
+            new_doc.save()
+        except mEngine.ValidationError as err:
+            print(err)
+        except mEngine.connection.MongoEngineConnectionError as err:
+            print(err)
+        # if not any(document.values()):
+        #     self.errMsgs(2)
+        #     return False
+        # # elif self.model:
+        # #     for d in document.keys():
+        # #         #print(document[d])
+        # #         #print(self.model[d])
+        # #         if not self.isRightType(document[d], self.model[d]) and not(d == "_id"):
+        # #             self.errMsgs(0)
+        # #             return False
+        # try:
+        #     self.db[self.__db_collection].insert_one(document)
+        # except:
+        #     self.errMsgs(-1)
+        #     return False
+
+        # return True
 
     def findDoc(self, **search_data):
         # self.log.logInfo("Info to find " + search_data['criteria'])
-        if search_data['__db_name']:
-            db = self.client[search_data['__db_name']]
+        if search_data['db_name']:
+            temp_sechma = schema(search_data['db_name'], search_data['collection_name'], search_data['schema'])
+        elif not search_data['db_name'] and search_data['collection_name']:
+            temp_sechma = schema(self.__db_name, search_data['collection_name'], self.__schema_json) #db[search_data['collection_name']]
         else:
-            db = self.db
-
-        if search_data['collection_name']:
-            docs = db[search_data['collection_name']]
-        else:
-            docs = db[self.__db_collection]
-
+            temp_sechma = self.__schema
+        
         results = []
 
-        for doc in docs.find(search_data['criteria']):
-            results.append(OrderedDict(doc))
+        for doc in temp_sechma.get_schema_cls().objects(search_data['criteria']):
+            # print(doc)
+            results.append(doc)
 
         if len(results) > 1:
             return results
@@ -187,6 +225,28 @@ class DatabaseHandler():
             return results[0]
         
         return False
+        # if search_data['db_name']:
+        #     db = self.client[search_data['db_name']]
+        # else:
+        #     db = self.db
+
+        # if search_data['collection_name']:
+        #     docs = db[search_data['collection_name']]
+        # else:
+        #     docs = db[self.__db_collection]
+
+        # results = []
+
+        # for doc in docs.find(search_data['criteria']):
+        #     # print(doc)
+        #     results.append(doc)
+
+        # if len(results) > 1:
+        #     return results
+        # elif len(results) == 1:
+        #     return results[0]
+        
+        # return False
         
 
     # def removeDoc(self, document_id):
@@ -211,19 +271,19 @@ class DatabaseHandler():
     # def dropCollection(self, collectionName):
     #     self.db.drop_collection(collectionName)
 
-    def errMsgs(self, code):
-        msg = None
-        if code == 0: msg ="One or more fields have an invalid type.\nPlease check that you have followed the model."
-        elif code == 2: msg = "Entry cannot be completely empty."
-        elif code == 3: msg = "No results found."
+    # def errMsgs(self, code):
+    #     msg = None
+    #     if code == 0: msg ="One or more fields have an invalid type.\nPlease check that you have followed the model."
+    #     elif code == 2: msg = "Entry cannot be completely empty."
+    #     elif code == 3: msg = "No results found."
             
-        errMsg = QMessageBox()
-        errMsg.setText(msg)
-        errMsg.setStandardButtons(QMessageBox.Ok)
-        errMsg.buttonClicked.connect(errMsg.close)
-        errMsg.exec_()
-        return
+    #     errMsg = QMessageBox()
+    #     errMsg.setText(msg)
+    #     errMsg.setStandardButtons(QMessageBox.Ok)
+    #     errMsg.buttonClicked.connect(errMsg.close)
+    #     errMsg.exec_()
+    #     return
         
-        if code == -1:
-            print('Error inserting document')
-            return
+    #     if code == -1:
+    #         print('Error inserting document')
+    #         return

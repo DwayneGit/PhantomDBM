@@ -2,6 +2,8 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import QThread, pyqtSlot
 from PyQt5.QtWidgets import QMessageBox
 
+import json
+
 from upload_thread import upload_thread
 
 from collections import OrderedDict
@@ -40,7 +42,18 @@ def run_script(main_window, run_counter=0, completed_run_counter=0):
 
     main_window.log.logInfo("Checking Database Connection...")
 
-    db_handler = DatabaseHandler(main_window.dbData, main_window.log)
+    db_handler = database_handler(main_window.dbData, main_window.log)
+    if not db_handler.connected:
+        print("Unable to connect to database")
+        return False
+
+    try:
+        json.loads(main_window.get_editor_widget().get_cluster().get_phm_scripts()["__schema__"].get_script())
+        db_handler.set_schema(main_window.get_editor_widget().get_cluster().get_phm_scripts()["__schema__"].get_script())
+    except KeyError as err:
+        print(err)
+    
+
     if db_handler.serverStatus():
 
         main_window.log.logInfo("Connected to Database. " + main_window.dbData['dbname'] + " collection " + main_window.dbData['collection'])
@@ -92,7 +105,16 @@ def run_all_scripts(main_window):
 
     main_window.log.logInfo("Checking Database Connection...")
 
-    db_handler = DatabaseHandler(main_window.dbData, main_window.log)
+    db_handler = database_handler(main_window.dbData, main_window.log)
+    if not db_handler.connected:
+        print("Unable to connect to database")
+        return False
+
+    try:
+        json.loads(main_window.get_editor_widget().get_cluster().get_phm_scripts()["__schema__"])
+        db_handler.set_schema(main_window.get_editor_widget().get_cluster().get_phm_scripts()["__schema__"])
+    except KeyError as err:
+        print(err)
 
     if db_handler.serverStatus():
 
@@ -145,7 +167,16 @@ def run_plus_below(main_window, index):
 
     main_window.log.logInfo("Checking Database Connection...")
 
-    db_handler = DatabaseHandler(main_window.dbData, main_window.log)
+    db_handler = database_handler(main_window.dbData, main_window.log)
+    if not db_handler.connected:
+        print("Unable to connect to database")
+        return False
+
+    try:
+        json.loads(main_window.get_editor_widget().get_cluster().get_phm_scripts()["__schema__"])
+        db_handler.set_schema(main_window.get_editor_widget().get_cluster().get_phm_scripts()["__schema__"])
+    except KeyError as err:
+        print(err)
 
     if db_handler.serverStatus():
 

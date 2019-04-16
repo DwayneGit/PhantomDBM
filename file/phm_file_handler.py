@@ -22,6 +22,9 @@ class phm_file_handler():
             self.__phm = phm
         else:
             self.__phm = phm_file()
+            self.add_script(str(setting), "__settings__")
+            self.add_script("Schemas use the keywords found in mongoengine.\nFor Details go to https://www.blahblahblah.com.", "__schema__")
+            self.get_phm_scripts()["__dmi_instr__"] = {"instr" : "", "name" : "" }
 
         # print(type(self.__phm))
 

@@ -11,6 +11,9 @@ from phtm_widgets.phtm_combo_box import phtm_combo_box
 
 import run_ctrl as r_ctrl
 import file_ctrl as f_ctrl
+import text_style
+
+from instructions.dmi_handler import dmi_handler
 
 class main_tool_bar():
     """ application toolbars class """
@@ -24,7 +27,7 @@ class main_tool_bar():
         topTBar = phtm_tool_bar()
         
         tbfile = QAction(QIcon(self.icon_set.import_file),"import",self.mw)
-        tbfile.triggered.connect(lambda: f_ctrl.load_script(self.mw))
+        tbfile.triggered.connect(self.__load_scrpt)
         topTBar.addAction(tbfile)
         
         tbsave = QAction(QIcon(self.icon_set.save),"save",self.mw)
@@ -93,6 +96,22 @@ class main_tool_bar():
 
         self.mw.addToolBar(Qt.TopToolBarArea, topTBar)
         self.mw.addToolBar(Qt.TopToolBarArea, sideTBar)
+
+    def set_instructions(self):
+        self.instr_filename, self.instr_filepath = f_ctrl.load_instructions()
+        # print(self.instr_filepath)
+        # self.dmi_selected.setDisabled(False)
+        self.curr_dmi.setPlainText(self.instr_filename)
+
+    def get_instr_filepath(self):
+        return self.instr_filepath
+
+    def __open_dmi_prefs(self, e): 
+        self.mw.showPref(1)
+
+    def __load_scrpt(self):
+        file_name, file_path = f_ctrl.load_script(self.mw)
+        new_script = self.mw.get_editor_widget().add_script(text_style.read_text(file_path), file_name, "Dwayne W")[0]
 
 def collectionNameChanged(ptoolbar, main_window):
     main_window.dbData['collection'] = ptoolbar.collnameMenu.currentText()

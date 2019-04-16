@@ -25,6 +25,16 @@ class preference_body(QDialog):
         self.parent = parent
         
         self.loadPreferences()
+        self.prefs = self.parent.parent.get_editor_widget().get_cluster().get_settings()
+        self.dmi_instr = self.parent.parent.get_editor_widget().get_cluster().get_phm_scripts()["__dmi_instr__"]
+        
+        self.dmi_editor = phtm_plain_text_edit()
+
+        self.schema = self.parent.parent.get_editor_widget().get_cluster().get_phm_scripts()["__schema__"]
+        self.schema_editor = phtm_plain_text_edit()
+
+        self.instancesPrefDict = self.prefs
+        self.colList = self.getListOfCollections()
 
         self.initUI()
 
@@ -60,10 +70,11 @@ class preference_body(QDialog):
         tabW = phtm_tab_widget(self)
         tabW.setTabPosition(QTabWidget.North)
 
-        tabW.addTab(self.databaseTab(),"Database")
-        tabW.addTab(self.apiTab(),"API")
-        tabW.addTab(self.userTab(),"User")
-        tabW.addTab(self.themeTab(),"Theme")
+        self.tabW.addTab(self.databaseTab(), "Database")
+        self.tabW.addTab(self.dmiTab(), "DMI")
+        self.tabW.addTab(self.schemaTab(), "Schema")
+        # self.tabW.addTab(self.userTab(), "User")
+        self.tabW.addTab(self.themeTab(), "Theme")
 
         vBox.addWidget(tabW)
         vBox.addWidget(self.buttons())
@@ -120,6 +131,11 @@ class preference_body(QDialog):
             pass
 
         self.prefs.saveConfig()
+        self.parent.parent.get_editor_widget().get_cluster().save_settings(self.prefs)
+        self.parent.prefs = self.prefs
+        
+        self.dmi_instr['instr'] = self.dmi_editor.toPlainText()
+        self.schema.set_script(self.schema_editor.toPlainText())
         
         # items = (self.dbForm.itemAt(i) for i in range(self.dbForm.count())) 
         # for w in range(3, 12, 2):
@@ -281,8 +297,110 @@ class preference_body(QDialog):
 
     def apiTab(self):
         apiPrefWidget = QWidget()
+        
+    def schemaTab(self):
 
-        return apiPrefWidget
+        def __load_schema(schema, editor):
+            name, file_path = f_ctrl.load_script(self.parent.parent)
+            schema.setPlainText(name)
+            if file_path:
+                schema = text_style.read_text(file_path)
+                editor.setPlainText(schema)
+                self.schema.set_script(schema)
+                self.curr_schema.addItem(name)
+            # print(self.schema_instr["filepath"])
+
+        schemaPrefWidget = QWidget()
+        schemaVBox = QVBoxLayout()
+
+        load_widget = QWidget()
+        spTop = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        spTop.setVerticalStretch(1)
+        load_widget.setSizePolicy(spTop)
+        load_widget_layout = QHBoxLayout()
+        # load_widget_layout.setSpacing(2)
+
+        load_schema_btn = phtm_push_button("Open Instruction Doc")
+
+        self.curr_schema = phtm_combo_box()
+        self.curr_schema.setFixedSize(QSize(175,31))
+        # self.curr_schema.setReadOnly(True)
+        
+        load_widget_layout.addWidget(load_schema_btn)
+        load_widget_layout.addWidget(self.curr_schema)
+        load_widget_layout.setContentsMargins(0, 0, 0, 0)
+
+        load_widget.setLayout(load_widget_layout)
+        
+        spBottm = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        spBottm.setVerticalStretch(10)
+        self.schema_editor.setSizePolicy(spBottm)
+        
+        load_schema_btn.clicked.connect(lambda: __load_schema(self.curr_schema, self.schema_editor))
+
+        if self.schema.get_script():
+            self.schema_editor.setPlainText(self.schema.get_script())
+            # self.curr_schema.setPlainText(self.schema)
+            
+        schemaVBox.addWidget(load_widget)
+        schemaVBox.addWidget(self.schema_editor)
+        schemaVBox.setContentsMargins(0, 0, 0, 0)
+
+        schemaPrefWidget.setLayout(schemaVBox)
+            
+        return dmiPrefWidget
+        
+    def schemaTab(self):
+
+        def __load_schema(schema, editor):
+            name, file_path = f_ctrl.load_script(self.parent.parent)
+            schema.setPlainText(name)
+            if file_path:
+                schema = text_style.read_text(file_path)
+                editor.setPlainText(schema)
+                self.schema.set_script(schema)
+                self.curr_schema.addItem(name)
+            # print(self.schema_instr["filepath"])
+
+        schemaPrefWidget = QWidget()
+        schemaVBox = QVBoxLayout()
+
+        load_widget = QWidget()
+        spTop = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        spTop.setVerticalStretch(1)
+        load_widget.setSizePolicy(spTop)
+        load_widget_layout = QHBoxLayout()
+        # load_widget_layout.setSpacing(2)
+
+        load_schema_btn = phtm_push_button("Open Instruction Doc")
+
+        self.curr_schema = phtm_combo_box()
+        self.curr_schema.setFixedSize(QSize(175,31))
+        # self.curr_schema.setReadOnly(True)
+        
+        load_widget_layout.addWidget(load_schema_btn)
+        load_widget_layout.addWidget(self.curr_schema)
+        load_widget_layout.setContentsMargins(0, 0, 0, 0)
+
+        load_widget.setLayout(load_widget_layout)
+        
+        spBottm = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+        spBottm.setVerticalStretch(10)
+        self.schema_editor.setSizePolicy(spBottm)
+        
+        load_schema_btn.clicked.connect(lambda: __load_schema(self.curr_schema, self.schema_editor))
+
+        if self.schema.get_script():
+            self.schema_editor.setPlainText(self.schema.get_script())
+            # self.curr_schema.setPlainText(self.schema)
+            
+        schemaVBox.addWidget(load_widget)
+        schemaVBox.addWidget(self.schema_editor)
+        schemaVBox.setContentsMargins(0, 0, 0, 0)
+
+        schemaPrefWidget.setLayout(schemaVBox)
+            
+        return schemaPrefWidget
 
     def userTab(self):
         usrPrefWidget = QWidget()
