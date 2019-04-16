@@ -3,7 +3,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 
 class phtm_plain_text_edit(QPlainTextEdit):
-    def __init__(self, style="ghost"):
+    def __init__(self, text=None, style="ghost"):
         super().__init__()
         self.style=style
 
@@ -11,6 +11,7 @@ class phtm_plain_text_edit(QPlainTextEdit):
         self.addScrollBarWidget(self.scroll_bar, Qt.AlignRight)
 
         self.set_style()
+        self.setPlainText(text)
 
     def set_style(self):
         if self.style == "ghost":

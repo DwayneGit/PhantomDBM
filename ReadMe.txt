@@ -7,13 +7,6 @@ add signal to edit ui to get rid of error:
 next:  
     - integrate mongodb authentication  
     - db authentication <- duplicate  
-    - automated instruction scripts  
-
-       - scripts that will help with handling other operations when sending data  
-          such as updateding other data entries if the one being inserted requires that  
-          (standard alterations occur naturally) in xml format  
-        - start off with xml then create own markup language  
-        + validation element    
 
     - api  
     - website  
@@ -26,19 +19,18 @@ next:
             - add setting button  (or have as option in combobox)  
 
 in progress:  
-    - tabbed script edit window  
-        - https://stackoverflow.com/questions/19975137/how-can-i-add-a-new-tab-button-next-to-the-tabs-of-a-qmdiarea-in-tabbed-view-m  
-        - https://stackoverflow.com/questions/22616446/add-plus-button-to-tabwidget-pyqt4  
-        - edit so tab text changes back after save and the rest of the code interactes with the tab widget  
+    - automated instruction scripts  
 
+       - scripts that will help with handling other operations when sending data  
+          such as updateding other data entries if the one being inserted requires that  
+          (standard alterations occur naturally) in xml format  
+        - start off with xml then create own markup language  
+        + validation element    
 testing:  
-    - menubar ✓  
-    - logging ✓  
     - automated instruction scripts  
         - link element ✓  
-    - seperate files (divide operations)  
-    - themes   
 
+    - themes   
     - script grouping (clustering)  
         - branch: "Add_file_grouping"  
         - grouping scripts into a folder for data compiled over time rather than updating  
@@ -54,3 +46,10 @@ testing:
 
 done:  
     - run scripts from program with out saving ✓  
+    - tabbed script edit window  
+        - https://stackoverflow.com/questions/19975137/how-can-i-add-a-new-tab-button-next-to-the-tabs-of-a-qmdiarea-in-tabbed-view-m  
+        - https://stackoverflow.com/questions/22616446/add-plus-button-to-tabwidget-pyqt4  
+        - edit so tab text changes back after save and the rest of the code interactes with the tab widget  
+    - menubar ✓  
+    - logging ✓  
+    - seperate files (divide operations)  

@@ -38,7 +38,19 @@ class phtm_editor(phtm_plain_text_edit):
         self.file_path = None
         self.is_changed = False
         self.tree_item = None
+
+        font = QFont()
+        font.setFamily("Courier")
+        font.setStyleHint(QFont.Monospace)
+        font.setFixedPitch(True)
+        font.setPointSize(10)
+
+        self.setFont(font)
+        tabStop = 4
         
+        metrics = QFontMetrics(font)
+        self.setTabStopWidth(tabStop * metrics.width(' '))
+
         if script:
             self.__curr_script = script
         else:
@@ -68,6 +80,7 @@ class phtm_editor(phtm_plain_text_edit):
         self.__curr_script.set_script(self.toPlainText())
         self.__curr_script.set_modified_by(user)
         self.__curr_script.update_date_time_modified()
+        print(self.__curr_script.get_title())
         self.saved.emit(self.__curr_script.get_title())
 
     def get_tree_item(self):

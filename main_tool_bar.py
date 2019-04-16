@@ -2,12 +2,14 @@
 
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt, QSize
-from PyQt5.QtWidgets import QToolBar, QAction, QWidget, QSizePolicy, QComboBox
+from PyQt5.QtWidgets import QToolBar, QAction, QWidget, QSizePolicy, QComboBox, QCheckBox
 
-from DBConnection import DatabaseHandler
+from database.DBConnection import database_handler
+from Preferences import *
 
 from phtm_widgets.phtm_tool_bar import phtm_tool_bar
 from phtm_widgets.phtm_combo_box import phtm_combo_box
+from phtm_widgets.phtm_plain_text_edit import phtm_plain_text_edit
 
 import run_ctrl as r_ctrl
 import file_ctrl as f_ctrl
@@ -20,6 +22,9 @@ class main_tool_bar():
     def __init__(self, main_window, icon_set):
         self.mw = main_window
         self.icon_set=icon_set
+
+        self.instr_filepath = None
+        self.instr_filename = None
     
     def setUpToolBar(self):
 
@@ -46,17 +51,37 @@ class main_tool_bar():
         tbstop.triggered.connect(lambda: r_ctrl.stopRun(self.mw))
         topTBar.addAction(tbstop)
 
+        spacer = QWidget()
+        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        # toolBar is a pointer to an existing toolbar
+        topTBar.addWidget(spacer)
+
+        # self.select_dmi = QAction(QIcon(self.icon_set.load_file),"import pre-uplaod instructions", self.mw)
+        # self.select_dmi.triggered.connect(lambda: self.set_instructions())
+        # topTBar.addAction(self.select_dmi)
+        
+        # self.dmi_selected = QCheckBox()
+        # self.dmi_selected.setDisabled(True)
+        # topTBar.addWidget(self.dmi_selected)
+        
+        self.curr_dmi = phtm_plain_text_edit(self.mw.get_editor_widget().get_cluster().get_phm_scripts()["__dmi_instr__"]["name"])
+        self.curr_dmi.setFixedSize(QSize(175,31))
+        self.curr_dmi.setReadOnly(True)
+        self.curr_dmi.mouseDoubleClickEvent = self.__open_dmi_prefs
+        # self.currDMI.setFixedSize()
+        topTBar.addWidget(self.curr_dmi)
+
         # ----------------- Side Toolbar ---------------------------
         sideTBar = phtm_tool_bar()
-        tbload = QAction(QIcon(self.icon_set.load_file),"open",self.mw)
+        tbload = QAction(QIcon(self.icon_set.load_file), "load", self.mw)
         # tbload.triggered.connect()
         sideTBar.addAction(tbload)
         
-        tbedit = QAction(QIcon(self.icon_set.edit),"open",self.mw)
+        tbedit = QAction(QIcon(self.icon_set.edit), "edit", self.mw)
         # tbedit.triggered.connect()
         sideTBar.addAction(tbedit)
         
-        tbsettings = QAction(QIcon(self.icon_set.settings),"open",self.mw)
+        tbsettings = QAction(QIcon(self.icon_set.settings), "settings", self.mw)
         tbsettings.triggered.connect(self.mw.showPref)
         sideTBar.addAction(tbsettings)
 
@@ -65,9 +90,9 @@ class main_tool_bar():
         # toolBar is a pointer to an existing toolbar
         sideTBar.addWidget(spacer)
         
-        tbopen = QAction(QIcon(self.icon_set.wifi),"open",self.mw)
-        # tbopen.triggered.connect()
-        sideTBar.addAction(tbopen)
+        tbreload = QAction(QIcon(self.icon_set.reload), "reload", self.mw)
+        tbreload.triggered.connect(self.mw.reloadDbNames)
+        sideTBar.addAction(tbreload)
         
         dropdownSize = QSize(175,31)
         # self.mw.addrDropdownMenu = QComboBox()
@@ -77,9 +102,13 @@ class main_tool_bar():
         
         self.dbnameMenu = phtm_combo_box()
         self.dbnameMenu.setFixedSize(dropdownSize)
-        self.dbnameMenu.addItems(DatabaseHandler.getDatabaseList(self.mw.dbData['host'], self.mw.dbData['port']))
 
-        index = self.dbnameMenu.findText(self.mw.prefs.prefDict['mongodb']['dbname'])
+        try:
+            self.dbnameMenu.addItems(database_handler.getDatabaseList(self.mw.dbData['host'], self.mw.dbData['port']))
+        except TypeError:
+            print("No databases found")
+
+        index = self.dbnameMenu.findText(self.mw.prefs['mongodb']['dbname'])
         self.dbnameMenu.setCurrentIndex(index)
         self.dbnameMenu.currentTextChanged.connect(lambda: databaseNameChanged(self, self.mw))
 
@@ -87,14 +116,18 @@ class main_tool_bar():
         
         self.collnameMenu = phtm_combo_box()
         self.collnameMenu.setFixedSize(dropdownSize)
-        self.collnameMenu.addItems(DatabaseHandler.getCollectionList(self.mw.dbData['host'], self.mw.dbData['port'], self.mw.dbData['dbname']))
-        
-        index = self.collnameMenu.findText(self.mw.prefs.prefDict['mongodb']['collection'])
+        try:
+            self.collnameMenu.addItems(database_handler.getCollectionList(self.mw.dbData['host'], self.mw.dbData['port'], self.mw.dbData['dbname']))
+        except TypeError:
+            print("No collections found")
+
+        index = self.collnameMenu.findText(self.mw.prefs['mongodb']['collection'])
         self.collnameMenu.setCurrentIndex(index)
         self.collnameMenu.currentTextChanged.connect(lambda: collectionNameChanged(self, self.mw))
         sideTBar.addWidget(self.collnameMenu)
 
         self.mw.addToolBar(Qt.TopToolBarArea, topTBar)
+        self.mw.addToolBarBreak(Qt.TopToolBarArea)
         self.mw.addToolBar(Qt.TopToolBarArea, sideTBar)
 
     def set_instructions(self):
@@ -108,6 +141,22 @@ class main_tool_bar():
 
     def __open_dmi_prefs(self, e): 
         self.mw.showPref(1)
+        
+    def __load_scrpt(self):
+        file_name, file_path = f_ctrl.load_script(self.mw)
+        new_script = self.mw.get_editor_widget().add_script(text_style.read_text(file_path), file_name, "Dwayne W")[0]
+
+    def __load_scrpt(self):
+        file_name, file_path = f_ctrl.load_script(self.mw)
+        new_script = self.mw.get_editor_widget().add_script(text_style.read_text(file_path), file_name, "Dwayne W")[0]
+
+    def __load_scrpt(self):
+        file_name, file_path = f_ctrl.load_script(self.mw)
+        new_script = self.mw.get_editor_widget().add_script(text_style.read_text(file_path), file_name, "Dwayne W")[0]
+
+    def __load_scrpt(self):
+        file_name, file_path = f_ctrl.load_script(self.mw)
+        new_script = self.mw.get_editor_widget().add_script(text_style.read_text(file_path), file_name, "Dwayne W")[0]
 
     def __load_scrpt(self):
         file_name, file_path = f_ctrl.load_script(self.mw)
@@ -115,13 +164,22 @@ class main_tool_bar():
 
 def collectionNameChanged(ptoolbar, main_window):
     main_window.dbData['collection'] = ptoolbar.collnameMenu.currentText()
+    main_window.get_editor_widget().get_cluster().save_settings(col=ptoolbar.collnameMenu.currentText())
 
 def databaseNameChanged(ptoolbar, main_window):
     reloadCollectionNames(ptoolbar, main_window)
     main_window.dbData['dbname'] = ptoolbar.dbnameMenu.currentText()
+    main_window.get_editor_widget().get_cluster().save_settings(db=ptoolbar.dbnameMenu.currentText())
 
 def reloadCollectionNames(ptoolbar, main_window):
+    ptoolbar.collnameMenu.currentTextChanged.disconnect()
     ptoolbar.collnameMenu.clear()
-    ptoolbar.collnameMenu.addItems(DatabaseHandler.getCollectionList(main_window.dbData['host'], main_window.dbData['port'], ptoolbar.dbnameMenu.currentText()))
-    index = ptoolbar.collnameMenu.findText(main_window.prefs.prefDict['mongodb']['collection'])
+    # print(main_window.dbData)
+    ptoolbar.collnameMenu.addItems(database_handler.getCollectionList(main_window.dbData['host'], main_window.dbData['port'], ptoolbar.dbnameMenu.currentText()))
+    ptoolbar.collnameMenu.currentTextChanged.connect(lambda: collectionNameChanged(ptoolbar, main_window))
+
+    index = ptoolbar.collnameMenu.findText(main_window.prefs['mongodb']['collection'])
     ptoolbar.collnameMenu.setCurrentIndex(index)
+    # print(main_window.prefs)
+    # print(ptoolbar.collnameMenu.currentIndex())
+    # print(ptoolbar.collnameMenu.currentText())

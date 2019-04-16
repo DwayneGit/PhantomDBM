@@ -118,5 +118,5 @@ class phtm_dialog(QDialog):
             self.__layout.addWidget(dialog)
         self.__central_dialog = dialog
 
-    def central_dialog(self):
+    def get_central_dialog(self):
         return self.__central_dialog

@@ -30,6 +30,11 @@ class phtm_menu_bar(QMenuBar):
         newJsonAction.setShortcut("Ctrl+N")
         newJsonAction.triggered.connect(self.mw.get_editor_widget().add_defualt_script)
         fileMenu.addAction(newJsonAction)
+
+        newPhmAction = QAction("New PHM", self.mw)
+        newPhmAction.setShortcut("Ctrl+N+P")
+        newPhmAction.triggered.connect(self.mw.new_editor_widget)
+        fileMenu.addAction(newPhmAction)
         
         fileMenu.addSeparator()
 
@@ -96,25 +101,25 @@ class phtm_menu_bar(QMenuBar):
     def editMenu(self):
         undoAction = QAction("Undo", self.mw)
         undoAction.setShortcut("Ctrl+Z")
-        undoAction.triggered.connect(self.mw.get_editor_widget().get_editor_tabs().currentWidget().undo)
+        undoAction.triggered.connect(lambda: self.f_undo(0))
 
         redoAction = QAction("Redo", self.mw)
         redoAction.setShortcut("Ctrl+Y")
-        redoAction.triggered.connect(self.mw.get_editor_widget().get_editor_tabs().currentWidget().redo)
+        redoAction.triggered.connect(lambda: self.f_undo(1))
 
         cutAction = QAction("Cut", self.mw)
         cutAction.setShortcut("Ctrl+X")
-        cutAction.triggered.connect(self.mw.get_editor_widget().get_editor_tabs().currentWidget().cut)
+        cutAction.triggered.connect(lambda: self.f_undo(2))
 
         copyAction = QAction("Copy", self.mw)
         copyAction.setShortcut("Ctrl+C")
-        copyAction.triggered.connect(self.mw.get_editor_widget().get_editor_tabs().currentWidget().copy)
+        copyAction.triggered.connect(lambda: self.f_undo(3))
 
         pasteAction = QAction("Paste", self.mw)
         pasteAction.setShortcut("Ctrl+V")
-        pasteAction.triggered.connect(self.mw.get_editor_widget().get_editor_tabs().currentWidget().paste)
+        pasteAction.triggered.connect(lambda: self.f_undo(4))
 
-        findAction = QAction("FInd", self.mw)
+        findAction = QAction("Find", self.mw)
         findAction.setShortcut("Ctrl+F")
         # findAction.triggered.connect()
 
@@ -134,6 +139,21 @@ class phtm_menu_bar(QMenuBar):
 
         editMenu.addAction(findAction)
         editMenu.addAction(replaceAction)
+
+    def edit_operations(self, op):
+        curr_wid = self.mw.get_editor_widget().get_editor_tabs().currentWidget()
+        if not curr_wid:
+            return
+        if op == 0:
+            curr_wid.undo()
+        if op == 1:
+            curr_wid.redo()
+        if op == 2:
+            curr_wid.cut()
+        if op == 3:
+            curr_wid.copy()
+        if op == 4:
+            curr_wid.paste()
 
     def runMenu(self):
         runMenu = self.main_menu.addMenu("Run")

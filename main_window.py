@@ -10,27 +10,27 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 
 from Users import *
-from Dialogs import *
-from phtm_menu_bar import phtm_menu_bar
+from preference_body import *
 from Preferences import *
-from DBConnection import *
-from main_tool_bar import main_tool_bar, reloadCollectionNames
 from Center import center_window
+from database.DBConnection import *
+from phtm_menu_bar import phtm_menu_bar
+from main_tool_bar import main_tool_bar, reloadCollectionNames, databaseNameChanged
 
 from phtm_widgets.phtm_icons import phtm_icons
 from phtm_widgets.phtm_dialog import phtm_dialog
 from phtm_widgets.phtm_tab_widget import phtm_tab_widget
 from phtm_widgets.phtm_plain_text_edit import phtm_plain_text_edit
 
-from file.phm_file_handler import phm_file_handler
 from phtm_editor import phtm_editor
-from phtm_editor_widget import phtm_editor_widget
 from file.json_script import json_script
+from phtm_editor_widget import phtm_editor_widget
+from file.phm_file_handler import phm_file_handler
 
-from file_ctrl import tmpScriptCleaner
 import run_ctrl as r_ctrl
 import file_ctrl as f_ctrl
 from phtm_logger import phtm_logger
+from file_ctrl import tmpScriptCleaner
 
 BUFFERSIZE = 1000
 
@@ -47,16 +47,13 @@ class main_window(QMainWindow):
         self.log = phtm_logger()
         self.log.logInfo("Program Started.")
 
-        self.__blank_cluster = phm_file_handler()
+        self.prefs = None
 
-        self.prefs = Preferences('config', prefDict=DefaultGeneralConfig.prefDict, log=self.log) # name of preference file minus json
-        self.prefs.loadConfig()
+        self.dbData = None
 
-        self.icon_set=phtm_icons()
+        self.icon_set = phtm_icons()
 
         f_ctrl.tmpScriptCleaner(self)
-
-        self.dbData = self.prefs.prefDict['mongodb']
 
         self.isRunning = False
         self.isPaused = True
@@ -64,13 +61,17 @@ class main_window(QMainWindow):
         login = phtm_dialog("Login", QRect(10, 10, 260, 160), self)
         login.set_central_dialog(loginScreen(login))
 
-        if login.exec_():
-            self.log.logInfo("Successfully Logged In.")
-            self.user = login.central_dialog().user
-            self.initUI()
-        else:
-            self.log.logInfo("No login program exited.")
-            sys.exit()
+        self.user = None
+        self.__editor_widget = None
+        self.initUI()
+
+        # if login.exec_():
+        #     self.log.logInfo("Successfully Logged In.")
+        #     self.user = login.get_central_dialog().user
+        #     self.initUI()
+        # else:
+        #     self.log.logInfo("No login program exited.")
+        #     sys.exit()
 
     def initUI(self):
         '''
@@ -80,7 +81,7 @@ class main_window(QMainWindow):
 
         self.parent.setWindowIcon(QIcon('icons/phantom.png'))
 
-        splitter1 = QSplitter(Qt.Horizontal)
+        self.__splitter1 = QSplitter(Qt.Horizontal)
 
 
         # Add text field
@@ -105,19 +106,22 @@ class main_window(QMainWindow):
 
         self.__editor_widget = phtm_editor_widget(self)
 
+        self.load_settings()
+
         self.changed = False
         # check if file is loaded and set flag to use to ask if save necessary before running or closing
-        splitter1.addWidget(self.brd)
-        splitter1.addWidget(self.__editor_widget)
+        self.__splitter1.addWidget(self.brd)
+        self.__splitter1.addWidget(self.__editor_widget)
 
-        self.setCentralWidget(splitter1)
+        self.setCentralWidget(self.__splitter1)
 
-        splitter1.setSizes([300, 325])
+        self.__splitter1.setSizes([300, 325])
         # self.setStatusBar(StatusBar())
         self.statusBar().showMessage('Ready')
         self.statusBar().setFixedHeight(20)
 
         self.progressBar = QProgressBar()
+        self.progressBar.setTextVisible(False)
 
         self.statusBar().addPermanentWidget(self.progressBar)
         self.progressBar.setFixedWidth(200)
@@ -191,29 +195,59 @@ class main_window(QMainWindow):
         else:
             self.log.logInfo("Program Ended")
 
-    def showPref(self):
+    def showPref(self, index=0):
         p = phtm_dialog("Preferences", QRect(10, 10, 350, 475), self)
         p.set_central_dialog(preference_body(self.user, self.log, p))
-        
+        p.get_central_dialog().tabW.setCurrentIndex(index)
+
         # print(self.prefs.prefDict)
         if p.exec_():
-            self.prefs.loadConfig()
-            self.dbData = self.prefs.prefDict['mongodb']
-            
+            self.prefs = p.prefs
+            self.dbData = self.prefs['mongodb']
+            self.reload_curr_dmi()
             self.reloadDbNames()
-            reloadCollectionNames(self.main_tool_bar, self)
+            # reloadCollectionNames(self.main_tool_bar, self)
 
         else:
             pass
 
     def reloadDbNames(self):
+        self.main_tool_bar.dbnameMenu.currentTextChanged.disconnect()
         self.main_tool_bar.dbnameMenu.clear()
-        self.main_tool_bar.dbnameMenu.addItems(DatabaseHandler.getDatabaseList(self.dbData['host'], self.dbData['port']))
-        index = self.main_tool_bar.dbnameMenu.findText(self.prefs.prefDict['mongodb']['dbname'])
+        
+        self.main_tool_bar.dbnameMenu.addItems(database_handler.getDatabaseList(self.dbData['host'], self.dbData['port']))
+        self.main_tool_bar.dbnameMenu.currentTextChanged.connect(lambda: databaseNameChanged(self.main_tool_bar, self))
+        
+        index = self.main_tool_bar.dbnameMenu.findText(self.prefs['mongodb']['dbname'])
         self.main_tool_bar.dbnameMenu.setCurrentIndex(index)
+
+    def load_settings(self):
+        self.prefs = self.__editor_widget.get_cluster().get_settings()
+        self.dbData = self.prefs['mongodb']
+
+    def reload_curr_dmi(self):
+        self.main_tool_bar.curr_dmi.setPlainText(self.get_editor_widget().get_cluster().get_phm_scripts()["__dmi_instr__"]["name"])
 
     def get_editor_widget(self):
         return self.__editor_widget
+
+    def update_settings(self):
+        pass
+
+    def new_editor_widget(self):
+        new_ew = phtm_editor_widget(self)
+        self.__splitter1.replaceWidget(self.__splitter1.indexOf(self.__editor_widget), new_ew)
+        self.__editor_widget = new_ew
+        self.main_tool_bar.dbnameMenu.setCurrentIndex(0)
+
+    def set_progress_max(self, mx):
+        self.progressBar.setMaximum(mx)
+
+    def update_progress(self, status):
+        self.progressBar.setValue(self.progressBar.value()+1)
+        self.statusBar().showMessage(status)
+
+
 
     # def mousePressEvent(self, evt):
     #     self.__oldPos = evt.globalPos()
