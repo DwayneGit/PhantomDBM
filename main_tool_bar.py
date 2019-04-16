@@ -141,11 +141,11 @@ class main_tool_bar():
 
     def __open_dmi_prefs(self, e): 
         self.mw.showPref(1)
-        
+
     def __load_scrpt(self):
         file_name, file_path = f_ctrl.load_script(self.mw)
         new_script = self.mw.get_editor_widget().add_script(text_style.read_text(file_path), file_name, "Dwayne W")[0]
-        
+
 def collectionNameChanged(ptoolbar, main_window):
     main_window.dbData['collection'] = ptoolbar.collnameMenu.currentText()
     main_window.get_editor_widget().get_cluster().save_settings(col=ptoolbar.collnameMenu.currentText())
