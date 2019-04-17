@@ -177,8 +177,8 @@ class database_handler():
         new_doc = self.__schema.get_schema_cls()
         for field in document:
             setattr(new_doc, field, document[field])
-            print(document[field])
-        print(type(new_doc))
+            # print(document[field])
+        # print(type(new_doc))
 
         try:
             new_doc.save()
