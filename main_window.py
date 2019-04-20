@@ -10,7 +10,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 
 from Users import *
-from preference_body import *
+from preferences.preference_body import *
 from Preferences import *
 from Center import center_window
 from database.DBConnection import *

@@ -3,9 +3,11 @@ import json
 import mongoengine as  mEngine
 
 class schema():
-    def __init__(self, db_name, coll_name, schema_json):
+    def __init__(self, db_name, coll_name, schema_json, ref_schemas={}):
         super()
         self.__schema_cls = None
+        self.__ref_schemas = ref_schemas
+
         self.db_name = db_name
 
         self.__db_name = db_name
@@ -98,3 +100,10 @@ class schema():
                             unique=attrs_dict.get("unique"), unique_with=attrs_dict.get("unique_with"), primary_key=attrs_dict.get("primary_key"),
                             validation=attrs_dict.get("validation"), choices=attrs_dict.get("choices"), null=attrs_dict.get("null"))
 
+    def get_field(self, field_str, doc_type=None):
+        if (field_str == "EmbeddedDocument" or field_str == "Reference") and not doc_type:
+                print("No document type given for given field")
+        elif field_str == "EmbeddedDocument":
+            return self.embedded_document_field(self.__ref_schemas[doc_type])
+        elif field_str == "Reference":
+            return self.reference_field(self.__ref_schemas[doc_type])
