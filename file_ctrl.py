@@ -85,7 +85,9 @@ def save_script(main_window, editor):
 
     if not file_path:
         print("Cluster file not saved. would you liket to save?")
-        main_window.get_editor_widget().get_cluster().set_file_path(export_phm(main_window))
+        x = export_phm(main_window)
+        if x: main_window.get_editor_widget().get_cluster().set_file_path(x)
+        else: return False
 
     main_window.statusBar().showMessage("Saving File ...")
     # pprint.pprint(re.sub('\'|\n', '', main_window.fileContents.toPlainText()))
@@ -100,6 +102,8 @@ def save_script(main_window, editor):
     #     main_window.editor_tabs.setTabTitle(main_window.currTitle)
 
     editor.is_changed = False 
+
+    return True
 
 def export_script(main_window):
     curr_script = main_window.get_editor_widget().get_editor_tabs().currentWidget().toPlainText()
