@@ -343,9 +343,9 @@ class preference_body(QDialog):
 
         schemaPrefWidget.setLayout(schemaVBox)
             
-        return dmiPrefWidget
+        return schemaPrefWidget
         
-    def schemaTab(self):
+    def DMITab(self):
 
         def __load_schema(schema, editor):
             name, file_path = f_ctrl.load_script(self.parent.parent)
