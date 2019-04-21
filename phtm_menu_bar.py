@@ -21,7 +21,11 @@ class phtm_menu_bar(QMenuBar):
         self.fileMenu()
         self.editMenu()
         self.runMenu()
+        self.searchMenu()
         self.helpMenu()
+
+    def searchMenu(self):
+        searchMenu = self.main_menu.addMenu('Search')
 
     def fileMenu(self):
         fileMenu = self.main_menu.addMenu('File')
