@@ -2,6 +2,8 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import QThread, pyqtSlot
 from PyQt5.QtWidgets import QMessageBox
 
+import json
+
 from upload_thread import upload_thread
 
 from collections import OrderedDict
@@ -43,6 +45,22 @@ def run_script(main_window, run_counter=0, completed_run_counter=0):
     main_window.log.logInfo("Checking Database Connection...")
 
     db_handler = database_handler(main_window.dbData, main_window.log)
+    if not db_handler.connected:
+        print("Unable to connect to database")
+        return False
+        
+    try:
+        json.loads(main_window.get_editor_widget().get_cluster().get_phm_scripts()["__schema__"].get_script())
+        db_handler.set_schema(main_window.get_editor_widget().get_cluster().get_phm_scripts()["__schema__"].get_script(), main_window.get_editor_widget().get_cluster().get_phm_scripts()["__reference_schemas__"])
+    except KeyError as err:
+        print(err)
+        main_window.setRunState(False)
+        return
+    except (AttributeError, json.decoder.JSONDecodeError) as err:
+        print("Invalid schema for main collection")
+        main_window.setRunState(False)
+        return
+
     if db_handler.serverStatus():
 
         main_window.log.logInfo("Connected to Database. " + main_window.dbData['dbname'] + " collection " + main_window.dbData['collection'])
@@ -55,6 +73,7 @@ def run_script(main_window, run_counter=0, completed_run_counter=0):
             main_window.upld_thrd.moveToThread(thread) # send object to its own thread
         except:
             main_window.appendToBoard("error moving to thread")
+            return
 
         main_window.upld_thrd.start.connect(main_window.set_progress_max)
         main_window.upld_thrd.update.connect(main_window.update_progress) # link signals to functions
@@ -97,6 +116,21 @@ def run_all_scripts(main_window):
     main_window.log.logInfo("Checking Database Connection...")
 
     db_handler = database_handler(main_window.dbData, main_window.log)
+    if not db_handler.connected:
+        print("Unable to connect to database")
+        return False
+
+    try:
+        json.loads(main_window.get_editor_widget().get_cluster().get_phm_scripts()["__schema__"])
+        db_handler.set_schema(main_window.get_editor_widget().get_cluster().get_phm_scripts()["__schema__"].get_script(), main_window.get_editor_widget().get_cluster().get_phm_scripts()["__reference_schemas__"])
+    except KeyError as err:
+        print(err)
+        main_window.setRunState(False)
+        return
+    except AttributeError as err:
+        print("Invalid schema for main collection")
+        main_window.setRunState(False)
+        return
 
     if db_handler.serverStatus():
 
@@ -152,6 +186,21 @@ def run_plus_below(main_window, index):
     main_window.log.logInfo("Checking Database Connection...")
 
     db_handler = database_handler(main_window.dbData, main_window.log)
+    if not db_handler.connected:
+        print("Unable to connect to database")
+        return False
+
+    try:
+        json.loads(main_window.get_editor_widget().get_cluster().get_phm_scripts()["__schema__"])
+        db_handler.set_schema(main_window.get_editor_widget().get_cluster().get_phm_scripts()["__schema__"].get_script(), main_window.get_editor_widget().get_cluster().get_phm_scripts()["__reference_schemas__"])
+    except KeyError as err:
+        print(err)
+        main_window.setRunState(False)
+        return
+    except AttributeError as err:
+        print("Invalid schema for main collection")
+        main_window.setRunState(False)
+        return
 
     if db_handler.serverStatus():
 

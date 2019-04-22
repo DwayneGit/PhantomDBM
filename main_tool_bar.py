@@ -13,6 +13,8 @@ from phtm_widgets.phtm_plain_text_edit import phtm_plain_text_edit
 
 import run_ctrl as r_ctrl
 import file_ctrl as f_ctrl
+import text_style
+
 from instructions.dmi_handler import dmi_handler
 
 class main_tool_bar():
@@ -30,7 +32,7 @@ class main_tool_bar():
         topTBar = phtm_tool_bar()
         
         tbfile = QAction(QIcon(self.icon_set.import_file),"import",self.mw)
-        tbfile.triggered.connect(lambda: f_ctrl.load_script(self.mw))
+        tbfile.triggered.connect(self.__load_scrpt)
         topTBar.addAction(tbfile)
         
         tbsave = QAction(QIcon(self.icon_set.save),"save",self.mw)
@@ -139,6 +141,10 @@ class main_tool_bar():
 
     def __open_dmi_prefs(self, e): 
         self.mw.showPref(1)
+
+    def __load_scrpt(self):
+        file_name, file_path = f_ctrl.load_script(self.mw)
+        new_script = self.mw.get_editor_widget().add_script(text_style.read_text(file_path), file_name, "Dwayne W")[0]
 
 def collectionNameChanged(ptoolbar, main_window):
     main_window.dbData['collection'] = ptoolbar.collnameMenu.currentText()
