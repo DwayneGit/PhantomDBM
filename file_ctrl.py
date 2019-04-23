@@ -56,7 +56,7 @@ def load_script(main_window):
         # main_window.get_editor_widget().get_editor_tabs().add_editor(new_script)
     return filename, filenames[0]
 
-def load_phm(main_window):
+def load_phm(main_window, editor_widget=0):
     dlg = QFileDialog()
     dlg.setFileMode(QFileDialog.AnyFile)
     dlg.setNameFilter("Cluster files (*.phm)")
@@ -79,34 +79,24 @@ def load_phm(main_window):
 
         # print(filename_w_ext)
 
-def save_script(main_window, editor):
+def save_script(editor, cluster):
     
-    file_path = main_window.get_editor_widget().get_cluster().get_file_path()
-
-    if not file_path:
+    fp = cluster.get_file_path()
+    if not fp:
         print("Cluster file not saved. would you liket to save?")
-        x = export_phm(main_window)
-        if x: main_window.get_editor_widget().get_cluster().set_file_path(x)
+        x = export_phm(editor_widget)
+        if x: cluster.set_file_path(x)
         else: return False
 
-    main_window.statusBar().showMessage("Saving File ...")
-    # pprint.pprint(re.sub('\'|\n', '', main_window.fileContents.toPlainText()))
-    # with open(curr_tab.file_path, 'w') as outfile:
-    #     outfile.write(eval(json.dumps(curr_tab.toPlainText(), indent=4)))
+    # main_window.statusBar().showMessage("Saving File ...")
     
     editor.save_script()
-    save_phm(main_window)
-    # if file_path:
-    #     main_window.get_editor_widget().get_editor_tabs()(curr_tab.title)
-    # else:
-    #     main_window.editor_tabs.setTabTitle(main_window.currTitle)
-
+    save_phm(fp)
     editor.is_changed = False 
 
     return True
 
-def export_script(main_window):
-    curr_script = main_window.get_editor_widget().get_editor_tabs().currentWidget().toPlainText()
+def export_script(curr_script):
     if not curr_script:
         return
     options = QFileDialog.Options()
@@ -117,30 +107,28 @@ def export_script(main_window):
         with open(fileName, "w") as write_file:
             write_file.write(eval(json.dumps(curr_script, indent=4)))
 
-def export_phm(main_window):
+def export_phm(editor_widget=None):
     options = QFileDialog.Options()
     options |= QFileDialog.DontUseNativeDialog
     file_path, _ = QFileDialog.getSaveFileName(main_window, "Save File", "", "Cluster files (*.phm)")
     if file_path:
         # print(file_path)
-        save_phm(main_window, file_path)
+        save_phm(file_path, editor_widget)
         return file_path
     return False
 
-def save_phm(main_window, file_path=None):
+def save_phm(file_path=None, editor_widget=None):
     if not file_path:
-        file_path = main_window.get_editor_widget().get_cluster().get_file_path()
+        file_path = editor_widget.get_cluster().get_file_path()
         if not file_path:
             print("Cluster file not saved. would you liket to save?")
-            file_path = export_phm(main_window)
+            file_path = export_phm()
             if not file_path:   
                 return
 
-    print(file_path)
-    main_window.get_editor_widget().save_phm(file_path)
+    editor_widget.save_phm(file_path)
 
 def tmpScript(main_window, curr_tab, temp = None):
-
     fileName = "tmp/script_"+ strftime("%w%d%m%y_%H%M%S", gmtime()) +".json"
 
     tmpfilePath = fileName
@@ -151,6 +139,5 @@ def tmpScript(main_window, curr_tab, temp = None):
     return tmpfilePath
 
 def tmpScriptCleaner(main_window):
-
     main_window.cleanScripts = cleanTmpScripts(main_window.log, 0) # for now deletes all previous temp files on startup
     main_window.cleanScripts.start()

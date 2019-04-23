@@ -22,10 +22,8 @@ class database_handler():
         client = MongoClient(host, port)
         try:
             dbn = [""] + client.database_names()
-        except pyErrs.ServerSelectionTimeoutError as err:
-            print("Connection refused @ " + host + ":" + str(port))
-            #log err
-            dbn = []
+        except pyErrs.ServerSelectionTimeoutError:
+            raise Exception("Connection refused @ " + host + ":" + str(port))
         return dbn
 
     @staticmethod
@@ -36,10 +34,8 @@ class database_handler():
         try:
             db = client[dbname]
             coln = db.list_collection_names()
-        except pyErrs.ServerSelectionTimeoutError as err:
-            print("Connection refused @ " + host + ":" + str(port) + " Database: " + dbname)
-            #log err
-            coln = []
+        except pyErrs.ServerSelectionTimeoutError:
+            raise Exception("Connection refused @ " + host + ":" + str(port) + " Database: " + dbname)
         return coln
 
     def __init__(self, db_data, log, authentication=None):
@@ -67,7 +63,6 @@ class database_handler():
 
         self.mDbDocs = []
         #print(self.mDbDocs)
-        self.connected = False
         self.__connectToDatabase()
 
     def get_db_name(self):
@@ -99,11 +94,9 @@ class database_handler():
         self.__schema = schema(self.__db_name, self.__db_collection, schema_json, ref_schemas)
         self.__schema.set_connection(self.__db_name, self.__db_host, self.__db_port_number)
 
-    def serverStatus(self):
-        max_sev_sel_delay = 2
-
+    def serverStatus(self, max_sev_sel_delay=2):
         if self.auth and (not self.auth.user or not self.auth.password):
-            print("Please provide both username and password")
+            raise Exception("Please provide both username and password")
 
         elif self.auth and (self.auth.username and self.auth.password):
             try:
@@ -116,7 +109,7 @@ class database_handler():
                 self.client.server_info()
                 return True
             except pyErrs.ServerSelectionTimeoutError as err:
-                self.log.logError(err)
+                raise err
 
         else:
             try:
@@ -127,29 +120,24 @@ class database_handler():
                 self.client.server_info()
                 return True
             except pyErrs.ServerSelectionTimeoutError as err:
-                self.log.logError(err)
+                raise err
 
         return False
 
     def __connectToDatabase(self):
         #, document_class=OrderedDict insures that the client retruns documents as ordered in database as OrderedDicts
-        if not self.serverStatus():
-            self.connected = False
-            return
-
-        self.collects = []
         try:
+            self.serverStatus()
+            self.collects = []
             self.db = self.client[self.__db_name]
-        except pyErrs.InvalidName as err:
-            print(err)
-            self.connected = False
-            return
+
+        except Exception as err:
+            raise Exception(err)
+            self.log.logError(err)
 
         #print(self.db.list_collection_names())
         for col in self.db.list_collections():
             self.collects.append(col["name"])
-
-        self.connected = True
 
         # if not self.__db_collection == None:
         #     docs = self.db[self.__db_collection]

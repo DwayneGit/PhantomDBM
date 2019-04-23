@@ -7,7 +7,6 @@ from PyQt5.QtCore import pyqtSlot, pyqtSignal, QObject, QThread
 from instructions.dmi_handler import dmi_handler
 
 class upload_thread(QObject):
-
     update = pyqtSignal(str) # signal data ready to be appended to th board
     start = pyqtSignal(int) # signal data ready to be appended to th board
     done = pyqtSignal(str)
@@ -30,37 +29,26 @@ class upload_thread(QObject):
 
     @pyqtSlot()
     def addToDatabase(self):
-
-        # thread_name = QThread.currentThread().objectName()
         self.thread_id = int(QThread.currentThreadId())  # cast to int() is necessary
 
-        # print("Opening Child FIFO...")
         self.log.logInfo(str(self.thread_id) + ": Running JSON Script...")
         time.sleep(1)
 
-        # if self.filePath == None: # dont do because user may want to run script with out saving handle in main and add functionality for this situation
-        #     self.stop()
-        #     self.done.emit(thread_id)
-        #     return
         if isinstance(self.script_s, str):
             self.__run_script(self.script_s)
-            # print(self.script_s)
 
         elif isinstance( self.script_s, OrderedDict):
-            # print(self.script_s)
             for key, value in self.script_s.items():
                 if key[:1] != "__" and key[-2:] != "__":
                     self.__run_script(value.get_script())
                     self.done.emit(value.get_title())
 
-        # self.update.emit("Finished")
         self.thrd_done.emit(str(self.thread_id) + ": Run Complete.")
         time.sleep(1)
 
     def __run_script(self, script):
         
         data = json.loads(script)
-        # print(data)
         i = 0
         while i < len(data):
             self.start.emit(len(data))
@@ -74,12 +62,9 @@ class upload_thread(QObject):
                 self.update.emit("Sending Objects to Database... %d/%d" %(i+1, len(data)))
                 time.sleep(1)
                 i += 1
-                # print(send_data)
             else:
                 continue
 
-    # def updateSignal(self, msg):
-    #     self.update.emit(msg)
     def setStopFlag(self):
         self.log.logInfo(str(self.thread_id) + ": Run Terminated Before Completion")
         self.thrd_done.emit(str(self.thread_id) + ": Run Terminated Before Completion")

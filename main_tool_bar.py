@@ -25,6 +25,9 @@ class main_tool_bar():
 
         self.instr_filepath = None
         self.instr_filename = None
+
+        self.isRunning = False
+        self.isPaused = True
     
     def setUpToolBar(self):
 
@@ -40,11 +43,11 @@ class main_tool_bar():
         topTBar.addAction(tbsave)
             
         tbfiles = QAction(QIcon(self.icon_set.export_file),"export",self.mw)
-        tbfiles.triggered.connect(lambda: f_ctrl.export_script(self.mw))
+        tbfiles.triggered.connect(lambda: f_ctrl.export_script(self.mw.get_editor_widget().get_editor_tabs().currentWidget().toPlainText()))
         topTBar.addAction(tbfiles)
         
         self.tbrun = QAction()
-        self.mw.setRunBtnAction(False)
+        self.setRunBtnAction(False)
         topTBar.addAction(self.tbrun)
 
         tbstop = QAction(QIcon(self.icon_set.stop),"stop",self.mw)
@@ -53,22 +56,12 @@ class main_tool_bar():
 
         spacer = QWidget()
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        # toolBar is a pointer to an existing toolbar
         topTBar.addWidget(spacer)
-
-        # self.select_dmi = QAction(QIcon(self.icon_set.load_file),"import pre-uplaod instructions", self.mw)
-        # self.select_dmi.triggered.connect(lambda: self.set_instructions())
-        # topTBar.addAction(self.select_dmi)
-        
-        # self.dmi_selected = QCheckBox()
-        # self.dmi_selected.setDisabled(True)
-        # topTBar.addWidget(self.dmi_selected)
         
         self.curr_dmi = phtm_plain_text_edit(self.mw.get_editor_widget().get_cluster().get_phm_scripts()["__dmi_instr__"]["name"])
         self.curr_dmi.setFixedSize(QSize(175,31))
         self.curr_dmi.setReadOnly(True)
         self.curr_dmi.mouseDoubleClickEvent = self.__open_dmi_prefs
-        # self.currDMI.setFixedSize()
         topTBar.addWidget(self.curr_dmi)
 
         # ----------------- Side Toolbar ---------------------------
@@ -95,18 +88,14 @@ class main_tool_bar():
         sideTBar.addAction(tbreload)
         
         dropdownSize = QSize(175,31)
-        # self.mw.addrDropdownMenu = QComboBox()
-        # self.mw.addrDropdownMenu.setFixedSize(dropdownSize)
-
-        # sideTBar.addWidget(self.mw.addrDropdownMenu)
         
         self.dbnameMenu = phtm_combo_box()
         self.dbnameMenu.setFixedSize(dropdownSize)
 
         try:
             self.dbnameMenu.addItems(database_handler.getDatabaseList(self.mw.dbData['host'], self.mw.dbData['port']))
-        except TypeError:
-            print("No databases found")
+        except TypeError as err:
+            raise Exception("No databases found")
 
         index = self.dbnameMenu.findText(self.mw.prefs['mongodb']['dbname'])
         self.dbnameMenu.setCurrentIndex(index)
@@ -119,7 +108,7 @@ class main_tool_bar():
         try:
             self.collnameMenu.addItems(database_handler.getCollectionList(self.mw.dbData['host'], self.mw.dbData['port'], self.mw.dbData['dbname']))
         except TypeError:
-            print("No collections found")
+            raise Exception("No collections found")
 
         index = self.collnameMenu.findText(self.mw.prefs['mongodb']['collection'])
         self.collnameMenu.setCurrentIndex(index)
@@ -146,24 +135,53 @@ class main_tool_bar():
         file_name, file_path = f_ctrl.load_script(self.mw)
         new_script = self.mw.get_editor_widget().add_script(text_style.read_text(file_path), file_name, "Dwayne W")[0]
 
-def collectionNameChanged(ptoolbar, main_window):
+    def setRunState(self, state):
+        self.setIsRunning(state)
+        self.setRunBtnAction(state)
+
+    def setIsRunning(self, state):
+        self.isRunning = state
+    
+    def setRunBtnIcon(self, icon):
+        self.tbrun.setIcon(icon)
+
+    def setRunBtnAction(self, state):
+        if state == False:
+            self.setRunBtnIcon(QIcon(self.icon_set.play))
+            self.tbrun.setIconText("run")
+            
+            if self.mw.runs > 0:
+                self.tbrun.triggered.disconnect()
+            self.tbrun.triggered.connect(self.__run) 
+        elif state == True: 
+            self.setRunBtnIcon(QIcon(self.icon_set.reload))
+            self.tbrun.setIconText("pause")
+            self.tbrun.triggered.disconnect()
+    #         self.tbrun.triggered.connect(self.pauseRun)
+
+    def __run(self): 
+        if self.mw.get_editor_widget().get_editor_tabs().currentWidget()
+            r_ctrl.run_script(curr_tab=self.mw.get_editor_widget().get_editor_tabs().currentWidget(), run_counter=self.mw.runs, completed_runs=self.mw.completedRuns,
+                                log=self.mw.log, dbData=self.mw.dbData, phm_scripts=self.mw.get_editor_widget().get_cluster().get_phm_scripts(), main_toolbar=self,
+                                editor_widget=self.mw.get_editor_widget())
+
+def collectionNameChanged(ptoolbar, main_window, edit_widget=0, db_data=0):
     main_window.dbData['collection'] = ptoolbar.collnameMenu.currentText()
     main_window.get_editor_widget().get_cluster().save_settings(col=ptoolbar.collnameMenu.currentText())
 
-def databaseNameChanged(ptoolbar, main_window):
+def databaseNameChanged(ptoolbar, main_window, edit_widget=0, db_data=0):
     reloadCollectionNames(ptoolbar, main_window)
     main_window.dbData['dbname'] = ptoolbar.dbnameMenu.currentText()
     main_window.get_editor_widget().get_cluster().save_settings(db=ptoolbar.dbnameMenu.currentText())
 
-def reloadCollectionNames(ptoolbar, main_window):
+def reloadCollectionNames(ptoolbar, main_window, edit_widget=0, db_data=0):
     ptoolbar.collnameMenu.currentTextChanged.disconnect()
     ptoolbar.collnameMenu.clear()
-    # print(main_window.dbData)
+
     ptoolbar.collnameMenu.addItems(database_handler.getCollectionList(main_window.dbData['host'], main_window.dbData['port'], ptoolbar.dbnameMenu.currentText()))
     ptoolbar.collnameMenu.currentTextChanged.connect(lambda: collectionNameChanged(ptoolbar, main_window))
 
+    # print(main_window.dbData)
+    # print(main_Window.prefs)
     index = ptoolbar.collnameMenu.findText(main_window.prefs['mongodb']['collection'])
     ptoolbar.collnameMenu.setCurrentIndex(index)
-    # print(main_window.prefs)
-    # print(ptoolbar.collnameMenu.currentIndex())
-    # print(ptoolbar.collnameMenu.currentText())

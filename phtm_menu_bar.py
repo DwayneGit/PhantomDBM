@@ -90,7 +90,7 @@ class phtm_menu_bar(QMenuBar):
 
         exportAction = QAction("Export JSON File", self.mw)
         exportAction.setStatusTip('Save Script File')
-        exportAction.triggered.connect(lambda: f_ctrl.export_script(self.mw))
+        exportAction.triggered.connect(lambda: f_ctrl.export_script(self.mw.get_editor_widget().get_editor_tabs().currentWidget().toPlainText()))
         fileMenu.addAction(exportAction)
 
         exittAction = QAction("Exit", self.mw)

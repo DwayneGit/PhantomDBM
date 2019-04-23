@@ -35,33 +35,23 @@ from file_ctrl import tmpScriptCleaner
 BUFFERSIZE = 1000
 
 class main_window(QMainWindow):
-    __runs = 0
-    __completedRuns = 0
+    runs = 0
+    completedRuns = 0
     def __init__(self, parent=None):
         super().__init__()
-
-        self.dmi_settings = None
         self.parent = parent
-        # self.__oldPos = QPoint
-
         self.log = phtm_logger()
         self.log.logInfo("Program Started.")
-
+        self.dmi_settings = None
         self.prefs = None
-
         self.dbData = None
-
+        
+        self.user = None
         self.icon_set = phtm_icons()
 
         f_ctrl.tmpScriptCleaner(self)
-
-        self.isRunning = False
-        self.isPaused = True
-
         login = phtm_dialog("Login", QRect(10, 10, 260, 160), self)
         login.set_central_dialog(loginScreen(login))
-
-        self.user = None
         self.__editor_widget = None
         self.initUI()
 
@@ -88,21 +78,9 @@ class main_window(QMainWindow):
         self.brd = phtm_plain_text_edit()
         self.brd.setReadOnly(True)
         self.brd.insertPlainText("Welcome to Phantom Database Manager (DBM).")
-        # self.brd.move(10,10)
-        # self.brd.resize(self.width-60,self.height-20)
 
         self.fileLoaded = True
         self.filePath = None
-
-        # self.fileContents = phtm_editor()
-        # self.fileContents.setPlainText("[\n    {\n        \"\": \"\"\n    }\n]")
-        # self.fileContents.textChanged.connect(self.isChanged)
-
-        # self.editor_tabs = phtm_tab_widget(self)
-        # self.editor_tabs.add_editor()
-
-        # self.editor_tabs.setMovable(True)
-        # self.editor_tabs.setTabsClosable(True)
 
         self.__editor_widget = phtm_editor_widget(self)
 
@@ -142,37 +120,11 @@ class main_window(QMainWindow):
     def getWindowTitle(self):
         return self.parent.getWindowTitle()
 
-    # def isChanged(self):
-    #     if not self.changed:
-    #         self.changed = True
-    #         self.set_window_title("* " + self.currTitle)
-
     def updateWindowTitle(self, newTitle):
         self.set_window_title(newTitle + " - " + self.parent.getPermanentTitle())
 
-    def setRunState(self, state):
-        self.setIsRunning(state)
-        self.setRunBtnAction(state)
-
-    def setIsRunning(self, state):
-        self.isRunning = state
-    
-    def setRunBtnIcon(self, icon):
-        self.main_tool_bar.tbrun.setIcon(icon)
-
-    def setRunBtnAction(self, state):
-        if state == False:
-            self.setRunBtnIcon(QIcon(self.icon_set.play))
-            self.main_tool_bar.tbrun.setIconText("run")
-            if main_window.__runs > 0:
-                self.main_tool_bar.tbrun.triggered.disconnect()
-            self.main_tool_bar.tbrun.triggered.connect(lambda: r_ctrl.run_script(self, main_window.__runs, main_window.__completedRuns))
-
-        elif state == True: 
-            self.setRunBtnIcon(QIcon("icons/pause.png"))
-            self.main_tool_bar.tbrun.setIconText("pause")
-            self.main_tool_bar.tbrun.triggered.disconnect()
-    #         self.main_tool_bar.tbrun.triggered.connect(self.pauseRun)
+    def get_main_toolbar(self):
+        return self.main_tool_bar
 
     #create custom signal to ubdate UI
     @pyqtSlot(str)
@@ -180,7 +132,6 @@ class main_window(QMainWindow):
         # self.log.logInfo(message)
         self.brd.appendHtml(message)
         QCoreApplication.processEvents()
-
 
     def closeEvent(self, event):
         if self.changed:
@@ -246,14 +197,3 @@ class main_window(QMainWindow):
     def update_progress(self, status):
         self.progressBar.setValue(self.progressBar.value()+1)
         self.statusBar().showMessage(status)
-
-
-
-    # def mousePressEvent(self, evt):
-    #     self.__oldPos = evt.globalPos()
-        
-    # def mouseMoveEvent(self, evt):
-    #     delta = QPoint()
-    #     delta  = evt.globalPos() - self.__oldPos
-    #     move(x()+delta.x(), y()+delta.y())
-    #     self.__oldPos = evt.globalPos()
