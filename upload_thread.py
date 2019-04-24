@@ -25,7 +25,6 @@ class upload_thread(QObject):
             self.dmi = dmi_handler(self.dbHandler, dmi_instr, log)
         else:
             self.dmi = None
-        
 
     @pyqtSlot()
     def addToDatabase(self):
@@ -33,7 +32,7 @@ class upload_thread(QObject):
 
         self.log.logInfo(str(self.thread_id) + ": Running JSON Script...")
         time.sleep(1)
-
+        
         if isinstance(self.script_s, str):
             self.__run_script(self.script_s)
 

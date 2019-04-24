@@ -172,7 +172,7 @@ class schema_tab(QWidget):
         # print(curr)
 
     def __import_ref_schema(self, schemaBox):
-        file_path = f_ctrl.load_script(self.mw)[1]
+        file_path = f_ctrl.load_script()[1]
         if file_path:
             name, ok = QInputDialog.getText(self, "Enter Schema Name", "Name: ", QLineEdit.Normal, "")
             if ok and name:
@@ -188,7 +188,7 @@ class schema_tab(QWidget):
         # print(self.schema_instr["filepath"])
 
     def __import_primary_schema(self):
-        file_path = f_ctrl.load_script(self.mw)[1]
+        file_path = f_ctrl.load_script()[1]
         if file_path:
             schema = text_style.read_text(file_path)
             self.__schema_editor.setPlainText(schema)

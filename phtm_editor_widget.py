@@ -14,7 +14,8 @@ from phtm_widgets.phtm_plain_text_edit import phtm_plain_text_edit
 from phtm_editor import phtm_editor
 from tab_widget import tab_widget
 
-import run_ctrl as r_ctrl
+from collections import OrderedDict
+from itertools import islice
 
 class phtm_editor_widget(QWidget):
     def __init__(self, parent=None):
@@ -126,7 +127,7 @@ class phtm_editor_widget(QWidget):
         self.__script_tree = phtm_tree_widget()
         self.__script_tree.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.__script_tree.setColumnCount(1)
-        self.__script_tree.setContentsMargins(0,50,0,0)
+        self.__script_tree.setContentsMargins(0, 50, 0, 0)
         self.__script_tree.setHeaderHidden(True)
 
         self.__script_tree_details_box = phtm_plain_text_edit()
@@ -138,7 +139,7 @@ class phtm_editor_widget(QWidget):
 
         self.__script_tree_widget = QWidget()
         self.__script_tree_widget.setLayout(self.__script_tree_layout)
-        self.__script_tree_layout.setContentsMargins(0,26,0,0)
+        self.__script_tree_layout.setContentsMargins(0, 26, 0, 0)
 
         self.__script_tree.itemDoubleClicked.connect(self.__open_script)
         self.__script_tree.itemClicked.connect(self.__show_details)
@@ -240,10 +241,10 @@ class phtm_editor_widget(QWidget):
                 menu.addSeparator()
 
                 runAction = QAction("Run", self)
-                runAction.triggered.connect(lambda x: r_ctrl.run_script(self.parent))
+                runAction.triggered.connect(lambda: self.self.parent.r_ctrl.run(0))
 
                 runBelow = QAction("Run + Scripts Below", self)
-                runBelow.triggered.connect(lambda x: r_ctrl.run_plus_below(self.parent, index))
+                runBelow.triggered.connect(lambda: self.parent.r_ctrl.run(2, index))
 
                 menu.addAction(runAction)
                 menu.addAction(runBelow)
@@ -256,7 +257,7 @@ class phtm_editor_widget(QWidget):
                 menu.addSeparator()
 
                 runAllAction = QAction("Run All", self)
-                runAllAction.triggered.connect(lambda x: r_ctrl.run_all_scripts(self.parent))
+                runAllAction.triggered.connect(lambda: self.self.parent.r_ctrl.run(1))
                 menu.addAction(runAllAction)
 
             menu.popup(self.__script_tree.viewport().mapToGlobal(pos))

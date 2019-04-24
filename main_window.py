@@ -27,7 +27,7 @@ from file.json_script import json_script
 from phtm_editor_widget import phtm_editor_widget
 from file.phm_file_handler import phm_file_handler
 
-import run_ctrl as r_ctrl
+from run_ctrl import run_ctrl
 import file_ctrl as f_ctrl
 from phtm_logger import phtm_logger
 from file_ctrl import tmpScriptCleaner
@@ -36,7 +36,7 @@ BUFFERSIZE = 1000
 
 class main_window(QMainWindow):
     runs = 0
-    completedRuns = 0
+    completed_run_counter = 0
     def __init__(self, parent=None):
         super().__init__()
         self.parent = parent
@@ -45,6 +45,8 @@ class main_window(QMainWindow):
         self.dmi_settings = None
         self.prefs = None
         self.dbData = None
+        
+        self.r_ctrl = run_ctrl(self)
         
         self.user = None
         self.icon_set = phtm_icons()
@@ -182,18 +184,8 @@ class main_window(QMainWindow):
     def get_editor_widget(self):
         return self.__editor_widget
 
-    def update_settings(self):
-        pass
-
     def new_editor_widget(self):
         new_ew = phtm_editor_widget(self)
         self.__splitter1.replaceWidget(self.__splitter1.indexOf(self.__editor_widget), new_ew)
         self.__editor_widget = new_ew
         self.main_tool_bar.dbnameMenu.setCurrentIndex(0)
-
-    def set_progress_max(self, mx):
-        self.progressBar.setMaximum(mx)
-
-    def update_progress(self, status):
-        self.progressBar.setValue(self.progressBar.value()+1)
-        self.statusBar().showMessage(status)

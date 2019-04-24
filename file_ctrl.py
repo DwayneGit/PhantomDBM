@@ -27,12 +27,12 @@ def load_instructions():
         filenames = dlg.selectedFiles()
 
         filename_w_ext = os.path.basename(filenames[0])
-        # print(filenames)
-        filename, file_ext = os.path.splitext(filename_w_ext)
+        filename = os.path.splitext(filename_w_ext)[0]
+
         return filename, filenames[0]
     return "", None
 
-def load_script(main_window):
+def load_script():
     dlg = QFileDialog()
     dlg.setFileMode(QFileDialog.AnyFile)
     dlg.setNameFilter("JSON files (*.json)")
@@ -42,7 +42,7 @@ def load_script(main_window):
         filenames = dlg.selectedFiles()
 
         filename_w_ext = os.path.basename(filenames[0])
-        filename, file_extension = os.path.splitext(filename_w_ext)
+        filename = os.path.splitext(filename_w_ext)[0]
         # print(main_window.file_path)
         # main_window.editWindowTitle()
 
@@ -56,7 +56,7 @@ def load_script(main_window):
         # main_window.get_editor_widget().get_editor_tabs().add_editor(new_script)
     return filename, filenames[0]
 
-def load_phm(main_window, editor_widget=0):
+def load_phm(main_window):
     dlg = QFileDialog()
     dlg.setFileMode(QFileDialog.AnyFile)
     dlg.setNameFilter("Cluster files (*.phm)")
@@ -66,8 +66,7 @@ def load_phm(main_window, editor_widget=0):
         filenames = dlg.selectedFiles()
 
         filename_w_ext = os.path.basename(filenames[0])
-        filename, file_extension = os.path.splitext(filename_w_ext)
-        # print(filenames[0])
+        filename = os.path.splitext(filename_w_ext)[0]
 
         main_window.updateWindowTitle(filename)
         main_window.get_editor_widget().clear_tabs()
@@ -79,19 +78,20 @@ def load_phm(main_window, editor_widget=0):
 
         # print(filename_w_ext)
 
-def save_script(editor, cluster):
+def save_script(editor, editor_widget):
     
-    fp = cluster.get_file_path()
+    fp = editor_widget.get_cluster().get_file_path()
     if not fp:
         print("Cluster file not saved. would you liket to save?")
         x = export_phm(editor_widget)
-        if x: cluster.set_file_path(x)
+        if x: 
+            editor_widget.get_cluster().set_file_path(x)
         else: return False
 
     # main_window.statusBar().showMessage("Saving File ...")
     
     editor.save_script()
-    save_phm(fp)
+    save_phm(editor_widget, fp)
     editor.is_changed = False 
 
     return True
@@ -101,29 +101,28 @@ def export_script(curr_script):
         return
     options = QFileDialog.Options()
     options |= QFileDialog.DontUseNativeDialog
-    fileName, _ = QFileDialog.getSaveFileName(main_window, "Save File", "", "JSON files (*.json)")
+    fileName, _ = QFileDialog.getSaveFileName(0, "Save File", "", "JSON files (*.json)")
     if fileName:
         print(fileName)
         with open(fileName, "w") as write_file:
             write_file.write(eval(json.dumps(curr_script, indent=4)))
 
-def export_phm(editor_widget=None):
+def export_phm(editor_widget):
     options = QFileDialog.Options()
     options |= QFileDialog.DontUseNativeDialog
-    file_path, _ = QFileDialog.getSaveFileName(main_window, "Save File", "", "Cluster files (*.phm)")
+    file_path, _ = QFileDialog.getSaveFileName(0, "Save File", "", "Cluster files (*.phm)")
     if file_path:
-        # print(file_path)
-        save_phm(file_path, editor_widget)
+        save_phm(editor_widget, file_path)
         return file_path
     return False
 
-def save_phm(file_path=None, editor_widget=None):
+def save_phm(editor_widget, file_path=None):
     if not file_path:
         file_path = editor_widget.get_cluster().get_file_path()
         if not file_path:
             print("Cluster file not saved. would you liket to save?")
-            file_path = export_phm()
-            if not file_path:   
+            file_path = export_phm(editor_widget)
+            if not file_path:
                 return
 
     editor_widget.save_phm(file_path)
