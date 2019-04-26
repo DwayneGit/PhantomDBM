@@ -90,11 +90,7 @@ class main_tool_bar():
         
         self.dbnameMenu = phtm_combo_box()
         self.dbnameMenu.setFixedSize(dropdownSize)
-
-        try:
-            self.dbnameMenu.addItems(database_handler.getDatabaseList(self.parent.dbData['host'], self.parent.dbData['port']))
-        except TypeError as err:
-            raise Exception("No databases found")
+        self.dbnameMenu.addItems(database_handler.getDatabaseList(self.parent.dbData['host'], self.parent.dbData['port'], self.parent.log))
 
         index = self.dbnameMenu.findText(self.parent.prefs['mongodb']['dbname'])
         self.dbnameMenu.setCurrentIndex(index)
@@ -106,8 +102,8 @@ class main_tool_bar():
         self.collnameMenu.setFixedSize(dropdownSize)
         try:
             self.collnameMenu.addItems(database_handler.getCollectionList(self.parent.dbData['host'], self.parent.dbData['port'], self.parent.dbData['dbname']))
-        except TypeError:
-            raise Exception("No collections found")
+        except:
+            self.parent.log.logError("No collections found in database")
 
         index = self.collnameMenu.findText(self.parent.prefs['mongodb']['collection'])
         self.collnameMenu.setCurrentIndex(index)
@@ -132,7 +128,7 @@ class main_tool_bar():
 
     def __load_scrpt(self):
         file_name, file_path = f_ctrl.load_script()
-        new_script = self.parent.get_editor_widget().add_script(text_style.read_text(file_path), file_name, "Dwayne W")[0]
+        self.parent.get_editor_widget().add_script(text_style.read_text(file_path), file_name, "Dwayne W")[0]
 
     def setRunState(self, state):
         self.setIsRunning(state)

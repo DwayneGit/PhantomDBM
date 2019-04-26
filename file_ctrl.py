@@ -101,7 +101,7 @@ def export_script(curr_script):
         return
     options = QFileDialog.Options()
     options |= QFileDialog.DontUseNativeDialog
-    fileName, _ = QFileDialog.getSaveFileName(0, "Save File", "", "JSON files (*.json)")
+    fileName, _ = QFileDialog.getSaveFileName(None, "Save File", "", "JSON files (*.json)")
     if fileName:
         print(fileName)
         with open(fileName, "w") as write_file:
@@ -110,7 +110,7 @@ def export_script(curr_script):
 def export_phm(editor_widget):
     options = QFileDialog.Options()
     options |= QFileDialog.DontUseNativeDialog
-    file_path, _ = QFileDialog.getSaveFileName(0, "Save File", "", "Cluster files (*.phm)")
+    file_path, _ = QFileDialog.getSaveFileName(None, "Save File", "", "Cluster files (*.phm)")
     if file_path:
         save_phm(editor_widget, file_path)
         return file_path

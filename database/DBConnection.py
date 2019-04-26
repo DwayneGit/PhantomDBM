@@ -18,25 +18,28 @@ from collections import OrderedDict
 class database_handler():
 
     @staticmethod
-    def getDatabaseList(host, port):
+    def getDatabaseList(host, port, log):
         client = MongoClient(host, port)
+        dbn = []
         try:
             dbn = [""] + client.database_names()
-        except pyErrs.ServerSelectionTimeoutError:
-            raise Exception("Connection refused @ " + host + ":" + str(port))
-        return dbn
+        except pyErrs.ServerSelectionTimeoutError as err:
+            log.logError("Connection refused @ " + host + ":" + str(port))
+        finally:
+            return dbn
 
     @staticmethod
     def getCollectionList(host, port, dbname):
-        if not dbname or dbname=="":
-            return []
+        coln = []
         client = MongoClient(host=host, port=port, document_class=OrderedDict)
         try:
             db = client[dbname]
-            coln = db.list_collection_names()
-        except pyErrs.ServerSelectionTimeoutError:
-            raise Exception("Connection refused @ " + host + ":" + str(port) + " Database: " + dbname)
-        return coln
+            coln = [""] + db.list_collection_names()
+        except pyErrs.ServerSelectionTimeoutError as err:
+            print("Connection refused @ " + host + ":" + str(port) + " Database: " + dbname)
+            raise err
+        finally:
+            return coln
 
     def __init__(self, db_data, log, authentication=None):
         self.log = log

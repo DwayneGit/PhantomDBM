@@ -168,7 +168,7 @@ class main_window(QMainWindow):
         self.main_tool_bar.dbnameMenu.currentTextChanged.disconnect()
         self.main_tool_bar.dbnameMenu.clear()
         
-        self.main_tool_bar.dbnameMenu.addItems(database_handler.getDatabaseList(self.dbData['host'], self.dbData['port']))
+        self.main_tool_bar.dbnameMenu.addItems(database_handler.getDatabaseList(self.dbData['host'], self.dbData['port'], self.log))
         self.main_tool_bar.dbnameMenu.currentTextChanged.connect(lambda: databaseNameChanged(self.main_tool_bar, self))
         
         index = self.main_tool_bar.dbnameMenu.findText(self.prefs['mongodb']['dbname'])

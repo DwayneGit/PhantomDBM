@@ -8,10 +8,11 @@ from phtm_widgets.phtm_push_button import phtm_push_button
 from database.DBConnection import *
 
 class database_tab(QWidget):
-    def __init__(self, prefs, instancesPrefDict):
+    def __init__(self, prefs, instancesPrefDict, log):
         super().__init__()
         self.prefs = prefs
         self.instancesPrefDict = instancesPrefDict
+        self.log = log
 
         self.__colList = self.__getListOfCollections()
 
@@ -55,7 +56,7 @@ class database_tab(QWidget):
         
         dbNameLabel = QLabel("Database Name: ")
         dbNameBox = phtm_combo_box()
-        dbNameBox.addItems(database_handler.getDatabaseList(self.prefs['mongodb']['host'],self.prefs['mongodb']['port']))
+        dbNameBox.addItems(database_handler.getDatabaseList(self.prefs['mongodb']['host'],self.prefs['mongodb']['port'], self.log))
         
         index = dbNameBox.findText(self.prefs['mongodb']['dbname'])
         dbNameBox.setCurrentIndex(index)

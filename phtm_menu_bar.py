@@ -32,7 +32,7 @@ class phtm_menu_bar(QMenuBar):
 
         newJsonAction = QAction("New JSON", self.parent)
         newJsonAction.setShortcut("Ctrl+N")
-        newJsonAction.triggered.connect(self.parent.get_editor_widget().add_defualt_script)
+        newJsonAction.triggered.connect(self.parent.get_editor_widget().add_new_script)
         fileMenu.addAction(newJsonAction)
 
         newPhmAction = QAction("New PHM", self.parent)

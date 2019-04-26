@@ -38,7 +38,7 @@ class preference_body(QDialog):
 
         self.dmiTab = dmi_tab(self.parent.parent)
         self.schemaTab = schema_tab(self.parent.parent)
-        self.databaseTab = database_tab(self.prefs, self.instancesPrefDict)
+        self.databaseTab = database_tab(self.prefs, self.instancesPrefDict, self.parent.parent.log)
         self.themeTab = theme_tab()
 
         self.initUI()
