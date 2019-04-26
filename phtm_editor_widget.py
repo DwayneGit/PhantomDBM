@@ -308,7 +308,6 @@ class phtm_editor_widget(QWidget):
         tree_item = QTreeWidgetItem(root)
         tree_item.setText(0, name)
         tree_item.setFlags(tree_item.flags() | Qt.ItemIsEditable)
-        # print(type(tree_item.text(0)))
         root.addChild(tree_item)
         return tree_item
 
