@@ -129,7 +129,7 @@ class main_window(QMainWindow):
 
     #create custom signal to ubdate UI
     @pyqtSlot(str)
-    def appendToBoard(self, message):
+    def appendToBoard(self, message, msg_type = 0):
         # self.log.logInfo(message)
         self.brd.appendHtml(message)
         QCoreApplication.processEvents()
@@ -152,7 +152,6 @@ class main_window(QMainWindow):
         p.set_central_dialog(prefs.preference_body(self.user, self.log, p))
         p.get_central_dialog().tabW.setCurrentIndex(index)
 
-        # print(self.prefs.prefDict)
         if p.exec_():
             self.prefs = p.prefs
             self.dbData = self.prefs['mongodb']

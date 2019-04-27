@@ -124,10 +124,6 @@ class main_tool_bar():
     def __open_dmi_prefs(self, e): 
         self.parent.showPref(1)
 
-    # def __load_script(self):
-    #     file_name, file_path = f_ctrl.load_script()
-    #     self.parent.get_editor_widget().add_script(text_style.read_text(file_path), file_name, "Dwayne W")[0]
-
     def setRunState(self, state):
         self.setIsRunning(state)
         self.setRunBtnAction(state)
@@ -172,7 +168,5 @@ def reloadCollectionNames(ptoolbar, main_window, edit_widget=0, db_data=0):
     ptoolbar.collnameMenu.addItems(database_handler.getCollectionList(main_window.dbData['host'], main_window.dbData['port'], ptoolbar.dbnameMenu.currentText()))
     ptoolbar.collnameMenu.currentTextChanged.connect(lambda: collectionNameChanged(ptoolbar, main_window))
 
-    # print(main_window.dbData)
-    # print(main_Window.prefs)
     index = ptoolbar.collnameMenu.findText(main_window.prefs['mongodb']['collection'])
     ptoolbar.collnameMenu.setCurrentIndex(index)

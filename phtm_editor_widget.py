@@ -110,23 +110,6 @@ class phtm_editor_widget(QWidget):
         self.__script_tree.setCurrentItem(item)
         self.__script_tree.editItem(item)
 
-    # def add_script(self, script, title, creator):
-    #     try:
-    #         new_script = self.__cluster.add_script(script, title, creator)
-    #     except Exception as err:
-    #         self.parent.log.logError(err)
-    #         return
-
-    #     item = self.add_script_child(self.__tree_root, title)
-
-    #     if self.__editor_tabs.isHidden():
-    #         self.__editor_tabs.show()
-        
-    #     index = self.__editor_tabs.add_editor(new_script)
-    #     self.__editor_tabs.widget(index).set_tree_item(item)
-
-    #     return new_script, item
-
     def load_script(self):
         file_name, file_path = f_ctrl.load_script()
         try:

@@ -65,7 +65,6 @@ class database_handler():
         #for docs from all collections in db#self.mDbDocs = [[0 for x in range(0)] for y in range (len(self.__db_collections))] # creates a matrix of with len(self.__db_collections) number of empty lists
 
         self.mDbDocs = []
-        #print(self.mDbDocs)
         self.__connectToDatabase()
 
     def get_db_name(self):
@@ -120,7 +119,6 @@ class database_handler():
                 self.client = MongoClient(host=self.__db_host, port=self.__db_port_number,
                                           document_class=OrderedDict, serverSelectionTimeoutMS=max_sev_sel_delay)
 
-                # The ismaster command is cheap and does not require auth.
                 self.client.server_info()
                 return True
             except pyErrs.ServerSelectionTimeoutError as err:
@@ -140,7 +138,6 @@ class database_handler():
             raise Exception(err)
             self.log.logError(err)
 
-        #print(self.db.list_collection_names())
         for col in self.db.list_collections():
             self.collects.append(col["name"])
 
@@ -166,7 +163,7 @@ class database_handler():
                 raise
 
     def findDoc(self, **search_data):
-        # self.log.logInfo("Info to find " + search_data['criteria'])
+        self.log.logInfo("Info to find " + search_data['criteria'])
         if search_data['db_name']:
             temp_sechma = schema(search_data['db_name'], search_data['collection_name'], search_data['schema'], {})
         elif not search_data['db_name'] and search_data['collection_name']:
@@ -177,7 +174,6 @@ class database_handler():
         results = []
 
         for doc in temp_sechma.get_schema_cls().objects(search_data['criteria']):
-            # print(doc)
             results.append(doc)
 
         if len(results) > 1:

@@ -24,10 +24,8 @@ class schema():
             new_doc = self.get_schema_cls()
         if level == 0:
             tmp = json.loads(self.__schema_json)
-        # print("Hello " + str(level))
         for field in doc:
             if hasattr(new_doc, field):
-                # print(tmp.get(field))
                 if level == 0 and (tmp[field].get("type") == "EmbeddedDocument" or tmp[field].get("type") == "Reference"):
                     setattr(new_doc, field, self.build_document(doc[field], self.__ref_schema_cls_dict[tmp[field]["document_type"]](), level+1))
                 else:
@@ -38,8 +36,6 @@ class schema():
             return None
 
         return new_doc
-            # print(attr_dict[field])
-        # print(type(new_doc))
 
     def get_schema_cls(self, schema="Main"):
         if schema == "Main" and not self.__schema_cls:
@@ -55,8 +51,6 @@ class schema():
         except json.decoder.JSONDecodeError as err:
             print(err)
             return False
-    # def swtch_collections(self, coll_name):
-    #     self.__schema_cls.switch_collections()
 
     def set_schema_json(self, new_schema):
         self.__schema_json = new_schema
@@ -88,7 +82,6 @@ class schema():
             elif attr_set[key]["type"] == "Reference":
                 attribute_dict[key] = self.reference_field(attr_set[key])
 
-        # print(attribute_dict)
         return attribute_dict
 
     def string_field(self, attrs_dict):
@@ -124,11 +117,9 @@ class schema():
     def embedded_document_field(self, attrs_dict):
         if not self.__ref_schemas.get(attrs_dict["document_type"]):
             return "no schema for given document type"
-        # print(self.__ref_schemas.get(attrs_dict["document_type"]))
         if not self.__ref_schema_cls_dict.get(attrs_dict["document_type"]):
             self.__ref_schema_cls_dict[attrs_dict["document_type"]] = self.__mk_schema_cls(attrs_dict["document_type"], mEngine.EmbeddedDocument, self.__ref_schemas.get(attrs_dict["document_type"]))
         
-        # print(ref_cls)
         return mEngine.EmbeddedDocumentField(document_type= self.__ref_schema_cls_dict[attrs_dict["document_type"]], db_field=attrs_dict.get("db_field"), required=attrs_dict.get("required"),
                                     default=attrs_dict.get("default"), unique=attrs_dict.get("unique"), unique_with=attrs_dict.get("unique_with"),
                                     primary_key=string_to_bool(attrs_dict.get("primary_key")), validation=attrs_dict.get("validation"), choices=attrs_dict.get("choices"),

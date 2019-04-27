@@ -69,7 +69,6 @@ def load_phm(main_window):
         main_window.reloadDbNames()
 
         return True
-        # print(filename_w_ext)
     raise Exception("Error loading cluster file")
 
 def save_script(editor, editor_widget):
@@ -97,7 +96,6 @@ def export_script(curr_script):
     options |= QFileDialog.DontUseNativeDialog
     fileName, _ = QFileDialog.getSaveFileName(None, "Save File", "", "JSON files (*.json)")
     if fileName:
-        # print(fileName)
         with open(fileName, "w") as write_file:
             write_file.write(eval(json.dumps(curr_script, indent=4)))
 
