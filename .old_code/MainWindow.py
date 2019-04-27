@@ -792,7 +792,7 @@ class Manager(QMainWindow):
         if checked==None: return
         dialog = addCollectionDialog(self.dbData)
         if dialog.exec_():
-            print("Hello Tabs")
+            # print("Hello Tabs")
             self.setTabs()
 
     def showPref(self):

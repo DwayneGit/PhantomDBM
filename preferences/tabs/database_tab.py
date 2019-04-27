@@ -1,11 +1,9 @@
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
-from PyQt5.QtGui import * 
+from PyQt5.QtWidgets import QWidget, QFormLayout, QHBoxLayout, QRadioButton, QLabel, QButtonGroup, QLineEdit
 
 from phtm_widgets.phtm_combo_box import phtm_combo_box
 from phtm_widgets.phtm_push_button import phtm_push_button
 
-from database.DBConnection import *
+from database.DBConnection import database_handler
 
 class database_tab(QWidget):
     def __init__(self, prefs, instancesPrefDict, log):

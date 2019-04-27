@@ -1,6 +1,4 @@
-from PyQt5.QtGui import *
-from PyQt5.QtCore import *
-from PyQt5.QtWidgets import *
+from PyQt5.QtWidgets import QPushButton
 
 class phtm_push_button(QPushButton):
     def __init__(self, text, parent=None, style="ghost"):

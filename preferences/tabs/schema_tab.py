@@ -1,13 +1,16 @@
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
-from PyQt5.QtGui import * 
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLineEdit, QMessageBox, QVBoxLayout, QSizePolicy, QMenu, QAction, QInputDialog
+from PyQt5.QtCore import QSize, Qt
+
+import json
 
 from phtm_widgets.phtm_combo_box import phtm_combo_box
 from phtm_widgets.phtm_push_button import phtm_push_button
 from phtm_widgets.phtm_plain_text_edit import phtm_plain_text_edit
 
 import file_ctrl as f_ctrl
-import text_style
+import utility.text_style as text_style 
+
+import utility
 
 class schema_tab(QWidget):
     def __init__(self, main_window):
@@ -127,7 +130,8 @@ class schema_tab(QWidget):
         self.__curr_item_changed = True
 
     def __new_ref_script(self, schema_box):
-        self.__save_schema(self.__curr_item)
+        if not self.__save_schema(self.__curr_item):
+            return False
         name, ok = QInputDialog.getText(self, "Enter Schema Name", "Name: ", QLineEdit.Normal, "")
         if ok and name:
             self.__ref_schemas[name] = ""
@@ -147,6 +151,13 @@ class schema_tab(QWidget):
             schemaBox.addItem(schema)
 
     def __save_schema(self, schema):
+        try:
+            utility.validate_json_script(schema)
+        except (ValueError, json.decoder.JSONDecodeError) as err:
+            self.mw.log.logError(err)
+            QMessageBox(self, "Invalid Json Format\n" + err)
+            return False
+
         if schema == "Main":
             self.__schema.set_script(self.__schema_editor.toPlainText())
         else:
@@ -183,9 +194,7 @@ class schema_tab(QWidget):
                 schemaBox.setCurrentIndex(schemaBox.count()-1)
                 self.__curr_item = name
             else:
-                print("Please enter the name of the collection the schema represents.")
-
-        # print(self.schema_instr["filepath"])
+                QMessageBox(self, "Invalid Input", "Please enter the name of the collection the schema represents.")
 
     def __import_primary_schema(self):
         file_path = f_ctrl.load_script()[1]
@@ -194,5 +203,3 @@ class schema_tab(QWidget):
             self.__schema_editor.setPlainText(schema)
             self.__schema.set_script(schema)
             self.__curr_item = "Main"
-
-        # print(self.schema_instr["filepath"])

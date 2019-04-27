@@ -1,10 +1,9 @@
-from PyQt5.QtGui import *
-from PyQt5.QtCore import *
-from PyQt5.QtWidgets import *
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QDialog, QVBoxLayout
 
 from phtm_widgets.phtm_title_bar import phtm_title_bar
 
-from Center import center_window
+from utility.center import center_window
 
 class phtm_dialog(QDialog):
     def __init__(self, title, geometry, parent, central_dialog=None, style="ghost"):

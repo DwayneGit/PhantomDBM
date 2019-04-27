@@ -5,14 +5,13 @@ import json
 import pprint
 import logging
 
-from PyQt5.QtGui import *
-from PyQt5.QtCore import *
-from PyQt5.QtWidgets import *
+from PyQt5.QtGui import QIcon
+from PyQt5.QtCore import QRect, Qt, QCoreApplication, pyqtSlot
+from PyQt5.QtWidgets import QMainWindow, QSplitter, QProgressBar, QMessageBox
 
 from Users import *
-from preferences.preference_body import *
-from Preferences import *
-from Center import center_window
+import preferences as prefs
+from utility.center import center_window
 from database.DBConnection import *
 from phtm_menu_bar import phtm_menu_bar
 from main_tool_bar import main_tool_bar, reloadCollectionNames, databaseNameChanged
@@ -150,7 +149,7 @@ class main_window(QMainWindow):
 
     def showPref(self, index=0):
         p = phtm_dialog("Preferences", QRect(10, 10, 350, 475), self)
-        p.set_central_dialog(preference_body(self.user, self.log, p))
+        p.set_central_dialog(prefs.preference_body(self.user, self.log, p))
         p.get_central_dialog().tabW.setCurrentIndex(index)
 
         # print(self.prefs.prefDict)

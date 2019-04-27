@@ -5,7 +5,6 @@ from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtWidgets import QToolBar, QAction, QWidget, QSizePolicy, QComboBox, QCheckBox
 
 from database.DBConnection import database_handler
-from Preferences import *
 
 from phtm_widgets.phtm_tool_bar import phtm_tool_bar
 from phtm_widgets.phtm_combo_box import phtm_combo_box
@@ -13,7 +12,6 @@ from phtm_widgets.phtm_plain_text_edit import phtm_plain_text_edit
 
 from run_ctrl import run_ctrl
 import file_ctrl as f_ctrl
-import text_style
 
 from instructions.dmi_handler import dmi_handler
 
@@ -34,7 +32,7 @@ class main_tool_bar():
         topTBar = phtm_tool_bar()
         
         tbfile = QAction(QIcon(self.icon_set.import_file),"import",self.parent)
-        tbfile.triggered.connect(self.__load_scrpt)
+        tbfile.triggered.connect(self.parent.get_editor_widget().load_script)
         topTBar.addAction(tbfile)
         
         tbsave = QAction(QIcon(self.icon_set.save),"save",self.parent)
@@ -126,9 +124,9 @@ class main_tool_bar():
     def __open_dmi_prefs(self, e): 
         self.parent.showPref(1)
 
-    def __load_scrpt(self):
-        file_name, file_path = f_ctrl.load_script()
-        self.parent.get_editor_widget().add_script(text_style.read_text(file_path), file_name, "Dwayne W")[0]
+    # def __load_script(self):
+    #     file_name, file_path = f_ctrl.load_script()
+    #     self.parent.get_editor_widget().add_script(text_style.read_text(file_path), file_name, "Dwayne W")[0]
 
     def setRunState(self, state):
         self.setIsRunning(state)

@@ -4,8 +4,8 @@ import os
 import bson
 import requests
 
-from Center import center_window
-from Preferences import *
+from utility.center import center_window
+import preferences as prefs
 from numbers import Number
 
 from pymongo import MongoClient
@@ -92,7 +92,7 @@ class database_handler():
             self.__db_name = db_name
         if db_coll:
             self.__db_collection = db_coll
-        # print(schema_json + " " + str(ref_schemas))
+            
         self.__schema_json = schema_json
         self.__schema = schema(self.__db_name, self.__db_collection, schema_json, ref_schemas)
         self.__schema.set_connection(self.__db_name, self.__db_host, self.__db_port_number)
@@ -112,7 +112,8 @@ class database_handler():
                 self.client.server_info()
                 return True
             except pyErrs.ServerSelectionTimeoutError as err:
-                raise err
+                self.log.logError(str(err))
+                raise
 
         else:
             try:
@@ -123,7 +124,8 @@ class database_handler():
                 self.client.server_info()
                 return True
             except pyErrs.ServerSelectionTimeoutError as err:
-                raise err
+                self.log.logError(str(err))
+                raise
 
         return False
 
@@ -142,21 +144,6 @@ class database_handler():
         for col in self.db.list_collections():
             self.collects.append(col["name"])
 
-        # if not self.__db_collection == None:
-        #     docs = self.db[self.__db_collection]
-        #     #print(docs)
-        #     for doc in docs.find({"_id":"__Model__"}):
-        #         self.model = doc
-        #         #print(doc)
-        #         self.mDbDocs.append(OrderedDict(self.model))
-
-        #     for doc in docs.find(limit = self.fLimit, skip = self.fLimit*self.fSkip):
-        #         #print(doc)
-        #         if not doc["_id"] == "__Model__":
-        #             self.mDbDocs.append(OrderedDict(doc))
-        #     #print("")
-        #     #print(self.mDbDocs)
-
     '''
     insertDoc
     inserts a document into collection
@@ -172,27 +159,12 @@ class database_handler():
                 new_doc.save()
                 return True
             except mEngine.ValidationError as err:
-                print(err)
+                self.log.logError(str(err))
+                raise
             except mEngine.connection.MongoEngineConnectionError as err:
-                print(err)
-        
-        # if not any(document.values()):
-        #     self.errMsgs(2)
-        #     return False
-        # # elif self.model:
-        # #     for d in document.keys():
-        # #         #print(document[d])
-        # #         #print(self.model[d])
-        # #         if not self.isRightType(document[d], self.model[d]) and not(d == "_id"):
-        # #             self.errMsgs(0)
-        # #             return False
-        # try:
-        #     self.db[self.__db_collection].insert_one(document)
-        # except:
-        #     self.errMsgs(-1)
-        #     return False
+                self.log.logError(str(err))
+                raise
 
-        # return True
     def findDoc(self, **search_data):
         # self.log.logInfo("Info to find " + search_data['criteria'])
         if search_data['db_name']:
@@ -214,64 +186,3 @@ class database_handler():
             return results[0]
 
         return False
-        # if search_data['db_name']:
-        #     db = self.client[search_data['db_name']]
-        # else:
-        #     db = self.db
-
-        # if search_data['collection_name']:
-        #     docs = db[search_data['collection_name']]
-        # else:
-        #     docs = db[self.__db_collection]
-
-        # results = []
-
-        # for doc in docs.find(search_data['criteria']):
-        #     # print(doc)
-        #     results.append(doc)
-
-        # if len(results) > 1:
-        #     return results
-        # elif len(results) == 1:
-        #     return results[0]
-
-        # return False
-
-    # def removeDoc(self, document_id):
-    #     docIdQuery = dict(OrderedDict(document_id))
-    #     self.db[self.__db_collection].delete_one(docIdQuery)
-
-    # def reload(self):
-    #     docs = self.db[self.__db_collection]
-    #     self.mDbDocs = []
-        
-    #     if self.model:
-    #         self.mDbDocs.append(OrderedDict(self.model))
-
-    #     for doc in docs.find(limit = self.fLimit, skip = self.fLimit*self.fSkip):
-    #         #print(doc)
-    #         if not doc["_id"] == "__Model__":
-    #             self.mDbDocs.append(OrderedDict(doc))
-
-    # def createCollection(self, collectionName, data):
-    #     self.db[collectionName].insert_one(data)
-
-    # def dropCollection(self, collectionName):
-    #     self.db.drop_collection(collectionName)
-
-    # def errMsgs(self, code):
-    #     msg = None
-    #     if code == 0: msg ="One or more fields have an invalid type.\nPlease check that you have followed the model."
-    #     elif code == 2: msg = "Entry cannot be completely empty."
-    #     elif code == 3: msg = "No results found."
-
-    #     errMsg = QMessageBox()
-    #     errMsg.setText(msg)
-    #     errMsg.setStandardButtons(QMessageBox.Ok)
-    #     errMsg.buttonClicked.connect(errMsg.close)
-    #     errMsg.exec_()
-    #     return
-
-    #     if code == -1:
-    #         print('Error inserting document')
-    #         return

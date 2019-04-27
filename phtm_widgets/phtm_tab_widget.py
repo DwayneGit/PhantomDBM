@@ -1,8 +1,7 @@
 import re
 
-from PyQt5.QtGui import *
-from PyQt5.QtCore import *
-from PyQt5.QtWidgets import *
+from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtWidgets import QTabWidget, QMessageBox
 
 from phtm_editor import phtm_editor
 from phtm_widgets.phtm_main_window import phtm_main_window
@@ -109,18 +108,14 @@ class phtm_tab_widget(QTabWidget):
         self.widget(index).is_changed = False
         self.setTabText(index, title)
 
-        self.parent.get_script_tree().itemChanged.disconnect()
         self.widget(index).get_tree_item().setText(0, title)
-        self.parent.get_script_tree().itemChanged.connect(self.parent.item_changed)
         
     def isChanged(self, index):
         if not self.widget(index).is_changed and self.tabText(index):
             self.widget(index).is_changed = True
             self.setTabText(index, "* " + self.tabText(index))
 
-            self.parent.get_script_tree().itemChanged.disconnect()
             self.widget(index).get_tree_item().setText(0, self.tabText(index))
-            self.parent.get_script_tree().itemChanged.connect(self.parent.item_changed)
 
     def get_index(self, editor):
         return self.indexOf(editor)

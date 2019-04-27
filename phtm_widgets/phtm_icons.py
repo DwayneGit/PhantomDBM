@@ -1,7 +1,3 @@
-from PyQt5.QtGui import *
-from PyQt5.QtCore import *
-from PyQt5.QtWidgets import *
-
 class phtm_icons():
     def __init__(self, path="icons/standard_white/"):
         self.get_icons(path)

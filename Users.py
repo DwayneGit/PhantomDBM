@@ -3,7 +3,7 @@ import os.path
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import * 
-from Center import center_window
+from utility.center import center_window
 
 from phtm_widgets.phtm_push_button import phtm_push_button
 

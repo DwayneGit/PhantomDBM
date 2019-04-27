@@ -29,7 +29,7 @@ class run_ctrl():
 
         try:
             db_handler = database_handler(self.parent.dbData, self.parent.log)
-            json.loads(self.parent.get_editor_widget().get_cluster().get_phm_scripts()["__schema__"].get_script())
+            # json.loads(self.parent.get_editor_widget().get_cluster().get_phm_scripts()["__schema__"].get_script())
             db_handler.set_schema(self.parent.get_editor_widget().get_cluster().get_phm_scripts()["__schema__"].get_script(), self.parent.get_editor_widget().get_cluster().get_phm_scripts()["__reference_schemas__"])
 
         except (Exception, KeyError, AttributeError, json.decoder.JSONDecodeError) as err:
@@ -53,7 +53,7 @@ class run_ctrl():
         self.__upld_thrd.start.connect(self.set_progress_max)
         self.__upld_thrd.update.connect(self.update_progress) # link signals to functions
         self.__upld_thrd.done.connect(self.script_done)
-        self.__upld_thrd.thrd_done.connect(self.thread_done)
+        self.__upld_thrd.thrd_done.connect(lambda msg:self.thread_done(thread, msg))
 
         thread.started.connect(self.__upld_thrd.addToDatabase) # connect function to be started in thread
         thread.start()
@@ -83,11 +83,12 @@ class run_ctrl():
         main_toolbar.setRunBtnIcon(QIcon("icons/pause.png"))
         return True
 
-    def thread_done(self, msg):
+    def thread_done(self, thread, msg):
         self.parent.appendToBoard(msg)
         self.parent.completed_run_counter += 1
         self.parent.get_main_toolbar().setRunState(False)
         self.script_done("Upload")
+        thread.exit(1)
 
     def script_done(self, name):
         self.parent.statusBar().showMessage(name + " Complete")

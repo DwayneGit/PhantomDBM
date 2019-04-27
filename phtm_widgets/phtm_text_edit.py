@@ -1,6 +1,4 @@
-from PyQt5.QtGui import *
-from PyQt5.QtCore import *
-from PyQt5.QtWidgets import *
+from PyQt5.QtWidgets import QTextEdit
 
 class phtm_text_edit(QTextEdit):
     def __init__(self, style="ghost"):

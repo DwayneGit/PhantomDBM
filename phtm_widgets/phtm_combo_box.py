@@ -1,6 +1,4 @@
-from PyQt5.QtGui import *
-from PyQt5.QtCore import *
-from PyQt5.QtWidgets import *
+from PyQt5.QtWidgets import QComboBox
 
 class phtm_combo_box(QComboBox):
     def __init__(self, style="ghost"):

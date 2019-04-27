@@ -5,7 +5,7 @@ from PyQt5.QtGui import *
 from PyQt5.QtCore import *
 from PyQt5.QtWidgets import *
 
-from Center import center_window
+from utility.center import center_window
 
 class phtm_icons():
     def __init__(self, path="icons/standard_white/"):
@@ -406,7 +406,7 @@ class phtm_tab_widget(QTabWidget):
         self.tabCloseRequested.connect(self.close_tab)
 
     def close_tab(self, index):
-        print(self.count())
+        # print(self.count())
         if self.count() <= 1:
             self.add_page()
             self.removeTab(index)

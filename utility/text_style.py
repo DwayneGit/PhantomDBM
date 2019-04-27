@@ -15,8 +15,6 @@ def translate_text(xfile, text_edit=None):
             line = regex.sub("(?<!\<span)\s", "&nbsp;", line)
             text_edit.appendHtml(line) #regex.sub("\n", "", line)
 
-            # print(line)
-        # print(text)
     return text_edit
 
 def read_text(xfile):
@@ -26,8 +24,6 @@ def read_text(xfile):
         for line in f:
             script += line
 
-            # print(line)
-        # print(text)
     return script
 
 def read_string(xString):
@@ -36,19 +32,15 @@ def read_string(xString):
     for line in xString.splitlines():
         script += line
 
-        # print(line)
-    # print(text)
     return script
     
 def add_style_to_text_col(matchobj):
-    # print(matchobj.group(0) + "2")
     cpy = "<span style=\"color:#8a08e0;\">"
     cpy += matchobj.group(0)
     cpy += "</span>"
     return cpy
     
 def add_style_to_text(matchobj):
-    # print(matchobj.group(0) + "1")
     cpy = "<span style=\"color:#128712;\">"
     cpy += matchobj.group(0)
     cpy += "</span>"

@@ -2,12 +2,10 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import * 
 
-from Center import center_window
-from Preferences import *
+from utility.center import center_window
 from database.DBConnection import *
 
 import file_ctrl as f_ctrl
-import text_style as text_style
 
 from phtm_widgets.phtm_push_button import phtm_push_button
 from phtm_widgets.phtm_combo_box import phtm_combo_box
@@ -26,8 +24,6 @@ class preference_body(QDialog):
         Initialize the window
         '''
         
-        # self.prefDict = parent.parent.dbData
-        # print(self.prefDict)
         self.user = user
         self.svd = False
         self.log = log
@@ -44,10 +40,6 @@ class preference_body(QDialog):
         self.initUI()
 
     def initUI(self):
-        #Window initial size
-
-        #Window title
-
         vBox = QVBoxLayout()
 
         self.tabW = phtm_tab_widget(self)
@@ -85,26 +77,26 @@ class preference_body(QDialog):
         return btnWidget
 
     def savePreferences(self):
-        # print("Saving Preferences ...")
         self.saveDbTab()
+        try:
+            self.schemaTab.save_schemas()
+        except ValueError as err:
+            self.parent.parent.log.logError(err)
+            return False
         self.svd = True
+        return True
 
     def saveDbTab(self):
         if self.prefs['db'] == "mongodb":
             self.prefs['mongodb']['dbname'] = self.databaseTab.get_db_form().itemAt(3).widget().currentText()
-            # print(self.prefs['mongodb']['dbname'])
 
             self.prefs['mongodb']['collection'] = self.databaseTab.get_db_form().itemAt(11).widget().currentText()
-            # print(self.prefs['mongodb']['collection'])
 
             self.prefs['mongodb']['host'] = self.databaseTab.get_db_form().itemAt(5).widget().text()
-            # print(self.prefs['mongodb']['host'])
 
             self.prefs['mongodb']['port'] = int(self.databaseTab.get_db_form().itemAt(7).widget().text())
-            # print(self.prefs['mongodb']['port'])
 
             self.prefs['mongodb']['tableSize'] = int(self.databaseTab.get_db_form().itemAt(9).widget().text())
-            # print(self.prefs['mongodb']['tableSize'])
 
         elif self.prefs['db'] == "sql":
             pass
@@ -113,26 +105,13 @@ class preference_body(QDialog):
         self.parent.prefs = self.prefs
         
         self.dmiTab.save_dmi()
-        self.schemaTab.save_schemas()
-        
-        # items = (self.dbFodatabaseTab.get_db_form()rm.itemAt(i) for i in range(self.databaseTab.get_db_form().count())) 
-        # for w in range(3, 12, 2):
-        #     widget = self.databaseTab.get_db_form().itemAt(w).widget()
-        #     if isinstance(widget, phtm_combo_box):
-        #         # print(widget.currentIndex())
-        #         print(widget.currentText())
-        #     else:
-        #         print(widget.text())
-
-        # pass
 
     def submitPreferences(self):
-        self.savePreferences()
-        self.parent.accept()
+        if self.savePreferences():
+            self.parent.accept()
 
     def cancelPreferences(self):
         if self.svd == False:
-            # print("closeing with false")
             self.parent.reject() #if canceled with out previously being saved
         else:
             self.parent.accept()

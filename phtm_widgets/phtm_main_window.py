@@ -1,13 +1,13 @@
 import sys
 import os
 
-from PyQt5.QtGui import *
-from PyQt5.QtCore import *
-from PyQt5.QtWidgets import *
+from PyQt5.QtGui import QIcon
+from PyQt5.QtCore import Qt, QRect
+from PyQt5.QtWidgets import QMainWindow
 
 from phtm_widgets.phtm_title_bar import phtm_title_bar
 
-from Center import center_window
+from utility.center import center_window
 
 class phtm_main_window(QMainWindow):
     def __init__(self, style="ghost", geometry=QRect(10, 10, 1100, 620)):

@@ -1,9 +1,8 @@
 import sys
 import json
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
-from PyQt5.QtGui import * 
-from Center import center_window
+from PyQt5.QtWidgets import QDialog, QVBoxLayout, QPushButton, QTextEdit, QFileDialog, QLabel
+from PyQt5.QtGui import QPixmap
+from utility.center import center_window
 
 class FileDialogDemo(QDialog):
    def __init__(self):

@@ -1,15 +1,11 @@
-from PyQt5.QtGui import *
-from PyQt5.QtCore import *
-from PyQt5.QtWidgets import *
+from PyQt5.QtGui import QFont, QFontMetrics, QPainter, QColor, QTextFormat
+from PyQt5.QtCore import QSize, pyqtSignal, QRect, Qt
+from PyQt5.QtWidgets import QWidget, QTextEdit
 
-import sys
 import re
-from datetime import datetime
 
 from phtm_widgets.phtm_plain_text_edit import phtm_plain_text_edit
 from file.json_script import json_script
-
-import text_style as text_style
 
 import numpy as np
 
@@ -80,7 +76,7 @@ class phtm_editor(phtm_plain_text_edit):
         self.__curr_script.set_script(self.toPlainText())
         self.__curr_script.set_modified_by(user)
         self.__curr_script.update_date_time_modified()
-        print(self.__curr_script.get_title())
+        
         self.saved.emit(self.__curr_script.get_title())
 
     def get_tree_item(self):
@@ -159,11 +155,3 @@ class phtm_editor(phtm_plain_text_edit):
 
         file_name = re.split('^(.+)\/([^\/]+)$', path)
         self.title = file_name[2]
-
-    # def setTabTitle(self, index, title):
-    #     # use regex to grab the name of the file from the path and added to title
-    #     newTitle = self.parent.progTitle
-    #     newTitle = self.tabText(index) + " - " + newTitle
-    #     self.parent.set_window_title(newTitle)
-    #     self.parent.currTitle = newTitle
-    #     print(newTitle)

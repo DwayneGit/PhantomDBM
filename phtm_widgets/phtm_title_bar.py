@@ -1,8 +1,8 @@
 import sys
 
-from PyQt5.QtGui import *
-from PyQt5.QtCore import *
-from PyQt5.QtWidgets import *
+from PyQt5.QtGui import QIcon
+from PyQt5.QtCore import QSize, QPoint, Qt
+from PyQt5.QtWidgets import QToolBar, QToolButton, QWidget, QAction, QLabel, QSizePolicy
 
 class phtm_title_bar(QToolBar):
     def __init__(self, window, is_main_window=False, style="ghost"):

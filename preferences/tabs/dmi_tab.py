@@ -1,12 +1,11 @@
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import *
-from PyQt5.QtGui import * 
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QSizePolicy, QHBoxLayout
+from PyQt5.QtCore import QSize
 
 from phtm_widgets.phtm_push_button import phtm_push_button
 from phtm_widgets.phtm_plain_text_edit import phtm_plain_text_edit
 
 import file_ctrl as f_ctrl
-import text_style
+import utility.text_style as text_style
 
 class dmi_tab(QWidget):
     def __init__(self, main_window):

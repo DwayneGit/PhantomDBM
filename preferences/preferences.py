@@ -4,31 +4,7 @@ import json
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import * 
-from Center import center_window
-
-class DefaultGeneralConfig:
-    prefDict = { 
-                    'login' : {
-                            'username' : 'Admin',
-                            'password' : 'Admin'
-                            },
-                    'db' : 'mongodb', #defualt database
-                    'mongodb': {
-                                'dbname' : 'test',
-                                'collection' : 'test',
-                                'host' : 'localhost',
-                                'tableSize' : 100,
-                                'port' : 27017
-                            },
-                    'mysql' : {
-                                'host' : '',
-                                'user' : 'Admin',
-                                'password' : 'Admin'
-                            },
-                    'style' : {},
-                    'searchWebsites' : [],
-                    'searchTags' : []  
-                }
+from utility.center import center_window
 
 class Preferences():
     def __init__(self, configFileName, log, prefDict = None):

@@ -9,7 +9,7 @@ from phtm_editor import phtm_editor
 
 from file.json_script import json_script
 
-import text_style as text_style
+import utility.text_style as text_style
 
 from time import gmtime, strftime
     
@@ -43,18 +43,10 @@ def load_script():
 
         filename_w_ext = os.path.basename(filenames[0])
         filename = os.path.splitext(filename_w_ext)[0]
-        # print(main_window.file_path)
-        # main_window.editWindowTitle()
-
-        # new_script = main_window.get_editor_widget().add_script(text_style.read_text(filenames[0]), filename, "Dwayne W")[0]
-
-        # new_editor= phtm_editor()
-        # new_editor.clear()
-        # new_editor=text_style.translate_text(filenames[0],new_editor)
-        # new_editor.set_file_path(file_path)
-
-        # main_window.get_editor_widget().get_editor_tabs().add_editor(new_script)
-    return filename, filenames[0]
+    
+        return filename, filenames[0]
+    
+    return False, False
 
 def load_phm(main_window):
     dlg = QFileDialog()
@@ -76,7 +68,9 @@ def load_phm(main_window):
         main_window.reload_curr_dmi()
         main_window.reloadDbNames()
 
+        return True
         # print(filename_w_ext)
+    raise Exception("Error loading cluster file")
 
 def save_script(editor, editor_widget):
     
@@ -103,7 +97,7 @@ def export_script(curr_script):
     options |= QFileDialog.DontUseNativeDialog
     fileName, _ = QFileDialog.getSaveFileName(None, "Save File", "", "JSON files (*.json)")
     if fileName:
-        print(fileName)
+        # print(fileName)
         with open(fileName, "w") as write_file:
             write_file.write(eval(json.dumps(curr_script, indent=4)))
 

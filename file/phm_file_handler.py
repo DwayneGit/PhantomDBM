@@ -11,6 +11,8 @@ from settings.default_general_settings import default_general_settings as dgs
 from .json_script import json_script
 from .phm import phm as phm_file
 
+import utility
+
 class phm_file_handler():
     def __init__(self, phm=None, db_handler=None):
         
@@ -25,7 +27,7 @@ class phm_file_handler():
             setting = dgs()
             self.__phm = phm_file()
             self.add_script(str(setting), "__settings__")
-            self.add_script("", "__schema__")
+            self.add_script("{\n}", "__schema__")
             self.get_phm_scripts()["__dmi_instr__"] = {"instr" : "", "name" : "" }
             self.get_phm_scripts()["__reference_schemas__"] = {}
 
@@ -48,12 +50,14 @@ class phm_file_handler():
 #------------------------- script methods --------------------------
     def add_script(self, script, title=None, creator=None):
         if title in self.get_phm_scripts():
-            print("Error: script title already exist in this ____(cluster)")
-            return False
+            raise Exception("Error: script title already exist in this ____(cluster)")
 
-        new_script = json_script(script, title, creator)
-
-        self.get_phm_scripts()[title] = new_script
+        try:
+            utility.validate_json_script(script)
+            new_script = json_script(script, title, creator)
+            self.get_phm_scripts()[title] = new_script
+        except (KeyError, ValueError, json.decoder.JSONDecodeError) as err:
+            raise
 
         return new_script
 

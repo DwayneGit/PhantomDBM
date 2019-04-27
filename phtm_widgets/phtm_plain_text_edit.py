@@ -1,6 +1,5 @@
-from PyQt5.QtGui import *
-from PyQt5.QtCore import *
-from PyQt5.QtWidgets import *
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QPlainTextEdit, QScrollBar
 
 class phtm_plain_text_edit(QPlainTextEdit):
     def __init__(self, text=None, style="ghost"):

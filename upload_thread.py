@@ -6,6 +6,8 @@ from collections import OrderedDict
 from PyQt5.QtCore import pyqtSlot, pyqtSignal, QObject, QThread
 from instructions.dmi_handler import dmi_handler
 
+import utility
+
 class upload_thread(QObject):
     update = pyqtSignal(str) # signal data ready to be appended to th board
     start = pyqtSignal(int) # signal data ready to be appended to th board
@@ -33,6 +35,15 @@ class upload_thread(QObject):
         self.log.logInfo(str(self.thread_id) + ": Running JSON Script...")
         time.sleep(1)
         
+        try:
+            utility.validate_json_script(self.script_s)
+        except json.decoder.JSONDecodeError as err:
+            err_msg = "Failed Sending Document(s) To Database.\nBuild Interrupted With Error:\n" + str(err)
+            self.update.emit(err_msg)
+            self.log.logError(err_msg)
+            self.thrd_done.emit(str(self.thread_id) + ": Run failed. See log for details.")
+            return False
+
         if isinstance(self.script_s, str):
             self.__run_script(self.script_s)
 
@@ -46,8 +57,8 @@ class upload_thread(QObject):
         time.sleep(1)
 
     def __run_script(self, script):
-        
-        data = json.loads(script)
+        data = script
+
         i = 0
         while i < len(data):
             self.start.emit(len(data))
@@ -63,6 +74,7 @@ class upload_thread(QObject):
                 i += 1
             else:
                 continue
+        return True
 
     def setStopFlag(self):
         self.log.logInfo(str(self.thread_id) + ": Run Terminated Before Completion")
