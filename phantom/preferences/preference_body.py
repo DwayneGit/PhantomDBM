@@ -5,18 +5,19 @@ import json
 from phantom.phtm_widgets import PhtmPushButton
 from phantom.phtm_widgets import PhtmTabWidget
 
+import phantom.settings as settings
+
 from .tabs.database_tab import database_tab
 from .tabs.dmi_tab import dmi_tab
 from .tabs.schema_tab import schema_tab
 from .tabs.theme_tab import theme_tab
 
 class preference_body(QDialog):
-    def __init__(self, user, log, parent):
+    def __init__(self, user, parent):
         super(preference_body, self).__init__()
 
         self.user = user
         self.svd = False
-        self.log = log
         self.parent = parent
 
         self.prefs = self.parent.parent.get_editor_widget().get_cluster().get_settings()
@@ -25,7 +26,7 @@ class preference_body(QDialog):
         self.dmiTab = dmi_tab(self.parent.parent)
         self.schemaTab = schema_tab(self.parent.parent.get_editor_widget().get_cluster().get_phm_scripts()["__schema__"],
                                         self.parent.parent.get_editor_widget().get_cluster().get_phm_scripts()["__reference_schemas__"])
-        self.databaseTab = database_tab(self.prefs, self.instancesPrefDict, self.parent.parent.log)
+        self.databaseTab = database_tab(self.prefs, self.instancesPrefDict)
         self.themeTab = theme_tab()
 
         self.initUI()

@@ -4,8 +4,8 @@ import logging
 import logging.config
 
 import yaml
-print(os.getcwd())
-class phtm_logger():
+
+class PhtmLogger():
     def __init__(self):
         with open('phantom/logging_stuff/log_config.yml', 'r') as f:
             config = yaml.safe_load(f.read())

@@ -10,12 +10,11 @@ from phantom.phtm_widgets import PhtmPlainTextEdit
 from phantom.file_stuff import file_ctrl as f_ctrl
 from phantom.utility import text_style, validate_json_script
 
-from phantom.logging_stuff import phtm_logger
+import phantom.settings as settings
 
 class schema_tab(QWidget):
     def __init__(self, schema, ref_schemas):
         super().__init__()
-        self.log = phtm_logger()
 
         self.__schema = schema
         self.__ref_schemas = ref_schemas
@@ -131,7 +130,8 @@ class schema_tab(QWidget):
             self.schema_box.addItem(name)
             self.schema_box.setCurrentIndex(self.schema_box.count()-1)
         else:
-            print("Please enter the name of the collection the schema represents.")
+            reply = QMessageBox.warning(None, "Enter Name", "Please enter the name of the collection the schema represents.",
+                                QMessageBox.Ok)
 
     def save_schemas(self):
         return self.__save_schema(self.__curr_item)
@@ -144,7 +144,7 @@ class schema_tab(QWidget):
         try:
             validate_json_script(self, self.__schema_editor.toPlainText())
         except (ValueError, json.decoder.JSONDecodeError) as err:
-            self.log.logError(str(err))
+            settings.__LOG__.logError("SCHEMA_ERR:" + str(err))
             return False
 
         if schema == "Main":

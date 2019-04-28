@@ -4,6 +4,8 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import QSize, QPoint, Qt
 from PyQt5.QtWidgets import QToolBar, QToolButton, QWidget, QAction, QLabel, QSizePolicy
 
+import phantom.settings as settings
+
 class PhtmTitleBar(QToolBar):
     def __init__(self, window, is_main_window=False, style="ghost"):
         super().__init__()
@@ -24,11 +26,11 @@ class PhtmTitleBar(QToolBar):
         self.setIconSize(QSize(19, 19))
 
         exit_bttn = QToolButton()
-        exit_bttn.setDefaultAction(QAction(QIcon("icons/window_icons/icons8-close-window-96.png"), "", self))
+        exit_bttn.setDefaultAction(QAction(QIcon(settings.__ICONS__.close), "", self))
 
         if self.is_main_window:
             logo_bttn = QToolButton()
-            logo_bttn.setDefaultAction(QAction(QIcon("icons/phantom.png"), "phantom", self))
+            logo_bttn.setDefaultAction(QAction(QIcon(settings.__ICONS__.app_icon), "phantom", self))
             logo_bttn.setObjectName("logo")
             self.addWidget(logo_bttn)
 
@@ -40,13 +42,13 @@ class PhtmTitleBar(QToolBar):
             self.addWidget(spacer)
 
             min_bttn = QToolButton()
-            min_bttn.setDefaultAction(QAction(QIcon("icons/window_icons/icons8-minimize-window-48.png"), "", self))
+            min_bttn.setDefaultAction(QAction(QIcon(settings.__ICONS__.minimze), "", self))
             min_bttn.defaultAction().triggered.connect(self.window.showMinimized)
             self.addWidget(min_bttn)
 
             screen_bttn = QToolButton()
-            screen_bttn.setDefaultAction(QAction(QIcon("icons/window_icons/icons8-maximize-window-48.png"), "", self))
-            screen_bttn.triggered.connect(lambda x : self.screen_toggle(screen_bttn))
+            screen_bttn.setDefaultAction(QAction(QIcon(settings.__ICONS__.maximize), "", self))
+            screen_bttn.triggered.connect(lambda x: self.screen_toggle(screen_bttn))
             self.addWidget(screen_bttn)
 
             exit_bttn.defaultAction().triggered.connect(sys.exit)
@@ -69,10 +71,10 @@ class PhtmTitleBar(QToolBar):
     def screen_toggle(self, tool_button):
         if not self.is_max:
             self.window.showMaximized()
-            tool_button.setDefaultAction(QAction(QIcon("icons/window_icons/icons8-restore-window-100.png"), "", self))
+            tool_button.setDefaultAction(QAction(QIcon(settings.__ICONS__.restore), "", self))
         elif self.is_max:
             self.window.showNormal()
-            tool_button.setDefaultAction(QAction(QIcon("icons/window_icons/icons8-maximize-window-48.png"), "", self))
+            tool_button.setDefaultAction(QAction(QIcon(settings.__ICONS__.maximize), "", self))
 
         self.is_max = not self.is_max
 

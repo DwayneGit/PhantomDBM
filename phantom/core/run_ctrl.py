@@ -11,6 +11,8 @@ from phantom.database import database_handler
 
 from phantom.file_stuff import file_ctrl as f_ctrl
 
+import phantom.settings as settings
+
 '''
 run_cript:
 run script to load files into the database
@@ -23,28 +25,28 @@ class run_ctrl():
     def __run_script(self, script_s):
         self.parent.get_main_toolbar().setRunState(True)
         self.parent.runs += 1
-        self.parent.log.logInfo("Checking Database Connection...")
+        settings.__LOG__.logInfo("Checking Database Connection...")
 
         try:
-            db_handler = database_handler(self.parent.dbData, self.parent.log)
+            db_handler = database_handler(self.parent.dbData)
             # json.loads(self.parent.get_editor_widget().get_cluster().get_phm_scripts()["__schema__"].get_script())
             db_handler.set_schema(self.parent.get_editor_widget().get_cluster().get_phm_scripts()["__schema__"].get_script(), self.parent.get_editor_widget().get_cluster().get_phm_scripts()["__reference_schemas__"])
 
         except (Exception, KeyError, AttributeError, json.decoder.JSONDecodeError) as err:
-            self.parent.log.logError(err)
+            settings.__LOG__.logError("RUN_ERR:" + str(err))
             self.parent.get_main_toolbar().setRunState(False)
             return False
 
-        self.parent.log.logInfo("Connected to Database. " + self.parent.dbData['dbname'] + " collection " + self.parent.dbData['collection'])
+        settings.__LOG__.logInfo("Connected to Database. " + self.parent.dbData['dbname'] + " collection " + self.parent.dbData['collection'])
         
-        self.__upld_thrd = upload_thread(script_s, db_handler, self.parent.log, self.parent.get_editor_widget().get_cluster().get_phm_scripts()["__dmi_instr__"]["instr"]) # instanciate the Q object
+        self.__upld_thrd = upload_thread(script_s, db_handler, self.parent.get_editor_widget().get_cluster().get_phm_scripts()["__dmi_instr__"]["instr"]) # instanciate the Q object
 
         thread = QThread(self.parent) # create a thread
 
         try:
             self.__upld_thrd.moveToThread(thread) # send object to its own thread
         except:
-            self.parent.log.logError("error moving to thread")
+            settings.__LOG__.logError("RUN_ERR: error moving to thread")
             self.parent.get_main_toolbar().setRunState(False)
             return False
 

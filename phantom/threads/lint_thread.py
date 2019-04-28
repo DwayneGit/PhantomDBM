@@ -2,18 +2,19 @@ import time
 
 from PyQt5.QtCore import pyqtSlot, pyqtSignal, QObject, QThread
 
+import phantom.settings as settings
+
 class lint_thread(QObject):
 
     update = pyqtSignal(str) # signal data ready to be appended to th board
     done = pyqtSignal(str) # done signal
 
-    def __init__(self, filePath, dbHandler, log):
+    def __init__(self, filePath, dbHandler):
         QObject.__init__(self)
         self.filePath = filePath
         self.dbHandler = dbHandler
         self.pauseFlag = False
         self.stopFlag = False
-        self.log = log
 
     @pyqtSlot()
     def addToDatabase(self):
@@ -22,7 +23,7 @@ class lint_thread(QObject):
         self.thread_id = int(QThread.currentThreadId())  # cast to int() is necessary
 
         # print("Opening Child FIFO...")
-        self.log.logInfo(str(self.thread_id) + ": Running JSON Script...")
+        settings.__LOG__.logInfo(str(self.thread_id) + ": Running JSON Script...")
         time.sleep(1)
 
         # self.update.emit("Finished")
@@ -32,7 +33,7 @@ class lint_thread(QObject):
     # def updateSignal(self, msg):
     #     self.update.emit(msg)
     def setStopFlag(self):
-        self.log.logInfo(str(self.thread_id) + ": Run Terminated Before Completion")
+        settings.__LOG__.logInfo(str(self.thread_id) + ": Run Terminated Before Completion")
         self.done.emit(str(self.thread_id) + ": Run Terminated Before Completion")
         self.stopFlag = True
 

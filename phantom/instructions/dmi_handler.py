@@ -2,19 +2,17 @@
 
 import re
 import copy
-from pprint import pprint
 
 import untangle
 
-# from phtm_logger import phtm_logger
+import phantom.settings as settings
 
 class dmi_handler():
-    def __init__(self, db_handler, dmi_instr, log):
-        self.log = log
+    def __init__(self, db_handler, dmi_instr):
         try:
             self.xml_object = untangle.parse(dmi_instr)
-        except:
-            print("Error untangleing xml document")
+        except Exception as err:
+            settings.__LOG__.logError("DMI_ERR: Error untangleing xml document.\n" + str(err))
             return
         self.db_handler = db_handler
         self.root = self.xml_object.root
@@ -53,7 +51,7 @@ class dmi_handler():
             for lkup in srch.look_up:
 
                 if not isinstance(lkup.from_key.cdata, str):
-                    print("value to look up is not a string")
+                    settings.__LOG__.logError("DMI_ERR: Value to look up is not a string")
                     return
 
                 elif not lkup.from_key.cdata in data:
@@ -71,7 +69,6 @@ class dmi_handler():
                     if not direct_queue:
                         direct_queue = {}
                     direct_queue[lkup.in_key.cdata] = lkup.from_key.cdata
-                    pprint(direct_queue)
 
             search_data['store'] = link['store']
 

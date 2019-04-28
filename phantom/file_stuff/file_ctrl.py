@@ -15,7 +15,7 @@ import os
 
 from time import gmtime, strftime
 
-from PyQt5.QtWidgets import QFileDialog
+from PyQt5.QtWidgets import QFileDialog, QMessageBox
 
 from phantom.utility import cleanTmpScripts
 
@@ -75,17 +75,20 @@ def load_phm(main_window):
 def save_script(editor, editor_widget):
     fp = editor_widget.get_cluster().get_file_path()
     if not fp:
-        print("Cluster file not saved. would you liket to save?")
-        x = export_phm(editor_widget)
-        if x: 
-            editor_widget.get_cluster().set_file_path(x)
+        reply = QMessageBox.warning(None, "Save Script", "Cluster file not saved. would you liket to save?",
+                            QMessageBox.Yes|QMessageBox.Cancel)
+        if reply == QMessageBox.Yes:    
+            x = export_phm(editor_widget)
+            if x: 
+                editor_widget.get_cluster().set_file_path(x)
+            else: return False
         else: return False
 
     # main_window.statusBar().showMessage("Saving File ...")
 
     editor.save_script()
     save_phm(editor_widget, fp)
-    editor.is_changed = False 
+    editor.is_changed = False
 
     return True
 
@@ -112,10 +115,13 @@ def save_phm(editor_widget, file_path=None):
     if not file_path:
         file_path = editor_widget.get_cluster().get_file_path()
         if not file_path:
-            print("Cluster file not saved. would you liket to save?")
-            file_path = export_phm(editor_widget)
-            if not file_path:
-                return
+            reply = QMessageBox.warning(None, "Save PHM", "Cluster file not saved. would you liket to save?",
+                                QMessageBox.Yes|QMessageBox.Cancel)
+            if reply == QMessageBox.Yes: 
+                file_path = export_phm(editor_widget)
+                if not file_path:
+                    return
+            else: return 
 
     editor_widget.save_phm(file_path)
 
@@ -130,5 +136,5 @@ def tmpScript(main_window, curr_tab, temp = None):
     return tmpfilePath
 
 def tmpScriptCleaner(main_window):
-    main_window.cleanScripts = cleanTmpScripts(main_window.log, 0) # for now deletes all previous temp files on startup
+    main_window.cleanScripts = cleanTmpScripts(0) # for now deletes all previous temp files on startup
     main_window.cleanScripts.start()

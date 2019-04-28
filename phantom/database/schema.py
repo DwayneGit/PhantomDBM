@@ -1,10 +1,10 @@
 import json
 
 import mongoengine as mEngine
+import phantom.settings as settings
 
 class schema():
     def __init__(self, db_name, coll_name, schema_json, ref_schemas):
-        super()
         self.__schema_json = schema_json
         self.__ref_schemas = ref_schemas
 
@@ -49,7 +49,7 @@ class schema():
         try:
             return type(collection, (super_cls, ), self.__mk_attribute_dict(json.loads(schema_json)))
         except json.decoder.JSONDecodeError as err:
-            print(err)
+            settings.__LOG__.logError("JSON_ERR: " + str(err))
             return False
 
     def set_schema_json(self, new_schema):
@@ -147,7 +147,7 @@ class schema():
 
     def get_field(self, field_str, doc_type=None):
         if (field_str == "EmbeddedDocument" or field_str == "Reference") and not doc_type:
-            print("No document type given for given field")
+            settings.__LOG__.logWarning("No document type given for given field")
         elif field_str == "EmbeddedDocument":
             return self.embedded_document_field(self.__ref_schemas[doc_type])
         elif field_str == "Reference":

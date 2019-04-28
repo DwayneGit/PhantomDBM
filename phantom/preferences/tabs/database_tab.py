@@ -5,12 +5,13 @@ from phantom.phtm_widgets import PhtmPushButton
 
 from phantom.database import database_handler
 
+import phantom.settings as settings
+
 class database_tab(QWidget):
-    def __init__(self, prefs, instancesPrefDict, log):
+    def __init__(self, prefs, instancesPrefDict):
         super().__init__()
         self.prefs = prefs
         self.instancesPrefDict = instancesPrefDict
-        self.log = log
 
         self.__colList = self.__getListOfCollections()
 
@@ -54,7 +55,7 @@ class database_tab(QWidget):
 
         dbNameLabel = QLabel("Database Name: ")
         dbNameBox = PhtmComboBox()
-        dbNameBox.addItems(database_handler.getDatabaseList(self.prefs['mongodb']['host'],self.prefs['mongodb']['port'], self.log))
+        dbNameBox.addItems(database_handler.getDatabaseList(self.prefs['mongodb']['host'],self.prefs['mongodb']['port']))
 
         index = dbNameBox.findText(self.prefs['mongodb']['dbname'])
         dbNameBox.setCurrentIndex(index)

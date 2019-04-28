@@ -5,36 +5,36 @@ import mongoengine as mEngine
 from pymongo import MongoClient
 from pymongo import errors as pyErrs
 
+import phantom.settings as settings
+
 from . import schema
 
 class database_handler():
 
     @staticmethod
-    def getDatabaseList(host, port, log):
+    def getDatabaseList(host, port):
         client = MongoClient(host, port)
         dbn = []
         try:
             dbn = [""] + client.database_names()
         except pyErrs.ServerSelectionTimeoutError as err:
-            log.logError("Connection refused @ " + host + ":" + str(port) +".\n"+str(err))
-        finally:
-            return dbn
+            settings.__LOG__.logError("DB_ERR: Connection refused @ " + host + ":" + str(port) + ".\n" + str(err))
+
+        return dbn
 
     @staticmethod
     def getCollectionList(host, port, dbname):
         coln = []
         client = MongoClient(host=host, port=port, document_class=OrderedDict)
         try:
-            db = client[dbname]
-            coln = [""] + db.list_collection_names()
+            db_client = client[dbname]
+            coln = [""] + db_client.list_collection_names()
         except pyErrs.ServerSelectionTimeoutError as err:
-            print("Connection refused @ " + host + ":" + str(port) + " Database: " + dbname)
-            raise err
-        finally:
-            return coln
+            settings.__LOG__.logError("DB_ERR: Connection refused @ " + host + ":" + str(port) + " Database: " + dbname + ".\n" + str(err))
 
-    def __init__(self, db_data, log, authentication=None):
-        self.log = log
+        return coln
+
+    def __init__(self, db_data, authentication=None):
 
         self.__db_name = db_data['dbname']
         self.__db_port_number = db_data['port']
@@ -101,7 +101,7 @@ class database_handler():
                 self.client.server_info()
                 return True
             except pyErrs.ServerSelectionTimeoutError as err:
-                self.log.logError(str(err))
+                settings.__LOG__.logError("DB_ERR: " + str(err))
                 raise
 
         else:
@@ -112,7 +112,7 @@ class database_handler():
                 self.client.server_info()
                 return True
             except pyErrs.ServerSelectionTimeoutError as err:
-                self.log.logError(str(err))
+                settings.__LOG__.logError("DB_ERR: " + str(err))
                 raise
 
         return False
@@ -125,8 +125,8 @@ class database_handler():
             self.db = self.client[self.__db_name]
 
         except Exception as err:
-            raise Exception(err)
-            self.log.logError(err)
+            settings.__LOG__.logError("DB_ERR: " + str(err))
+            raise
 
         for col in self.db.list_collections():
             self.collects.append(col["name"])
@@ -146,14 +146,14 @@ class database_handler():
                 new_doc.save()
                 return True
             except mEngine.ValidationError as err:
-                self.log.logError(str(err))
+                settings.__LOG__.logError("DB_ERR: " + str(err))
                 raise
             except mEngine.connection.MongoEngineConnectionError as err:
-                self.log.logError(str(err))
+                settings.__LOG__.logError("DB_ERR: " + str(err))
                 raise
 
     def findDoc(self, **search_data):
-        self.log.logInfo("Info to find " + search_data['criteria'])
+        settings.__LOG__.logInfo("Info to find " + search_data['criteria'])
         if search_data['db_name']:
             temp_sechma = schema(search_data['db_name'], search_data['collection_name'], search_data['schema'], {})
         elif not search_data['db_name'] and search_data['collection_name']:

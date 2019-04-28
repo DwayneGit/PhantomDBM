@@ -12,11 +12,12 @@ from phantom.phtm_widgets import PhtmPlainTextEdit
 
 from phantom.file_stuff import file_ctrl as f_ctrl
 
+import phantom.settings as settings
+
 class main_tool_bar():
     """ application toolbars class """
-    def __init__(self, parent, icon_set):
+    def __init__(self, parent):
         self.parent = parent
-        self.icon_set = icon_set
 
         self.instr_filepath = None
         self.instr_filename = None
@@ -28,15 +29,15 @@ class main_tool_bar():
         #------------------ Top Toolbar ----------------------------
         topTBar = PhtmToolBar()
 
-        tbfile = QAction(QIcon(self.icon_set.import_file),"import",self.parent)
+        tbfile = QAction(QIcon(settings.__ICONS__.import_file), "import", self.parent)
         tbfile.triggered.connect(self.parent.get_editor_widget().load_script)
         topTBar.addAction(tbfile)
 
-        tbsave = QAction(QIcon(self.icon_set.save),"save",self.parent)
+        tbsave = QAction(QIcon(settings.__ICONS__.save), "save", self.parent)
         tbsave.triggered.connect(lambda: f_ctrl.save_script(self.parent.get_editor_widget().get_editor_tabs().currentWidget(), self.parent.get_editor_widget()))
         topTBar.addAction(tbsave)
 
-        tbfiles = QAction(QIcon(self.icon_set.export_file),"export",self.parent)
+        tbfiles = QAction(QIcon(settings.__ICONS__.export_file), "export", self.parent)
         tbfiles.triggered.connect(lambda: f_ctrl.export_script(self.parent.get_editor_widget().get_editor_tabs().currentWidget().toPlainText()))
         topTBar.addAction(tbfiles)
 
@@ -44,7 +45,7 @@ class main_tool_bar():
         self.setRunBtnAction(False)
         topTBar.addAction(self.tbrun)
 
-        tbstop = QAction(QIcon(self.icon_set.stop),"stop",self.parent)
+        tbstop = QAction(QIcon(settings.__ICONS__.stop), "stop", self.parent)
         tbstop.triggered.connect(lambda: self.setIsRunning(self.parent.r_ctrl.stopRun(self.isRunning)))
         topTBar.addAction(tbstop)
 
@@ -60,15 +61,15 @@ class main_tool_bar():
 
         # ----------------- Side Toolbar ---------------------------
         sideTBar = PhtmToolBar()
-        tbload = QAction(QIcon(self.icon_set.load_file), "load", self.parent)
+        tbload = QAction(QIcon(settings.__ICONS__.load_file), "load", self.parent)
         # tbload.triggered.connect()
         sideTBar.addAction(tbload)
 
-        tbedit = QAction(QIcon(self.icon_set.edit), "edit", self.parent)
+        tbedit = QAction(QIcon(settings.__ICONS__.edit), "edit", self.parent)
         # tbedit.triggered.connect()
         sideTBar.addAction(tbedit)
 
-        tbsettings = QAction(QIcon(self.icon_set.settings), "settings", self.parent)
+        tbsettings = QAction(QIcon(settings.__ICONS__.settings), "settings", self.parent)
         tbsettings.triggered.connect(self.parent.showPref)
         sideTBar.addAction(tbsettings)
 
@@ -77,7 +78,7 @@ class main_tool_bar():
         # toolBar is a pointer to an existing toolbar
         sideTBar.addWidget(spacer)
 
-        tbreload = QAction(QIcon(self.icon_set.reload), "reload", self.parent)
+        tbreload = QAction(QIcon(settings.__ICONS__.reload), "reload", self.parent)
         tbreload.triggered.connect(self.parent.reloadDbNames)
         sideTBar.addAction(tbreload)
 
@@ -85,7 +86,7 @@ class main_tool_bar():
 
         self.dbnameMenu = PhtmComboBox()
         self.dbnameMenu.setFixedSize(dropdownSize)
-        self.dbnameMenu.addItems(database_handler.getDatabaseList(self.parent.dbData['host'], self.parent.dbData['port'], self.parent.log))
+        self.dbnameMenu.addItems(database_handler.getDatabaseList(self.parent.dbData['host'], self.parent.dbData['port']))
 
         index = self.dbnameMenu.findText(self.parent.prefs['mongodb']['dbname'])
         self.dbnameMenu.setCurrentIndex(index)
@@ -98,7 +99,7 @@ class main_tool_bar():
         try:
             self.collnameMenu.addItems(database_handler.getCollectionList(self.parent.dbData['host'], self.parent.dbData['port'], self.parent.dbData['dbname']))
         except:
-            self.parent.log.logError("No collections found in database")
+            settings.__LOG__.logError("No collections found in database")
 
         index = self.collnameMenu.findText(self.parent.prefs['mongodb']['collection'])
         self.collnameMenu.setCurrentIndex(index)
@@ -111,7 +112,6 @@ class main_tool_bar():
 
     def set_instructions(self):
         self.instr_filename, self.instr_filepath = f_ctrl.load_instructions()
-        # print(self.instr_filepath)
         # self.dmi_selected.setDisabled(False)
         self.curr_dmi.setPlainText(self.instr_filename)
 
@@ -133,14 +133,14 @@ class main_tool_bar():
 
     def setRunBtnAction(self, state):
         if not state:
-            self.setRunBtnIcon(QIcon(self.icon_set.play))
+            self.setRunBtnIcon(QIcon(settings.__ICONS__.play))
             self.tbrun.setIconText("run")
             # if self.parent.runs > 0:
             #     self.tbrun.triggered.disconnect()
             self.tbrun.triggered.connect(self.__run)
 
         elif state:
-            self.setRunBtnIcon(QIcon(self.icon_set.reload))
+            self.setRunBtnIcon(QIcon(settings.__ICONS__.reload))
             self.tbrun.setIconText("pause")
             self.tbrun.triggered.disconnect()
     #         self.tbrun.triggered.connect(self.pauseRun)

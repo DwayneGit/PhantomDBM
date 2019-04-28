@@ -46,7 +46,7 @@ class user_tab(QWidget):
             usrDropMenu = PhtmComboBox()
             acsDropMenu = PhtmComboBox()
             users = Users.getUserList(self.prefs['mongodb']['dbname'])
-            #print(users)
+            
             def getAccesses():
                 acsDropMenu.clear()
                 for acs in ["Admin","ReadWrite","Monitor"]:
@@ -87,7 +87,7 @@ class user_tab(QWidget):
             acsDropMenu = PhtmComboBox()
             users = Users.getUserList()
             usersdb = Users.getUserList(self.prefs['mongodb']['dbname'])
-            #print(users)
+            
             def getUsers():
                 ret = []
                 for acs in users.keys():

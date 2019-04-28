@@ -1,7 +1,8 @@
 import os
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QSplitter, QHBoxLayout, QWidget, QVBoxLayout, QAbstractItemView, QMenu, QAction, QTreeWidgetItem
+from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import QPlainTextEdit, QSplitter, QHBoxLayout, QWidget, QVBoxLayout, QAbstractItemView, QMenu, QAction, QTreeWidgetItem
 
 import phantom.utility.text_style as text_style
 from phantom.phtm_widgets import PhtmTreeWidget
@@ -9,6 +10,8 @@ from phantom.phtm_widgets import PhtmPlainTextEdit
 from phantom.phtm_widgets import PhtmTabWidget as tab_widget
 
 from phantom.file_stuff import load_script, PhmFileHandler
+
+import phantom.settings as settings
 
 class PhtmEditorWidget(QWidget):
     def __init__(self, parent=None):
@@ -84,7 +87,7 @@ class PhtmEditorWidget(QWidget):
         try:
             new_script = self.__cluster.add_script("[\n    {\n        \"\": \"\"\n    }\n]", item.text(col), "Default")
         except Exception as err:
-            self.parent.log.logError(err)
+            settings.__LOG__.logError("EDIT_WIDG_ERR:" + str(err))
             return
 
         if self.__editor_tabs.isHidden():
@@ -104,7 +107,7 @@ class PhtmEditorWidget(QWidget):
         try:
             new_script = self.__cluster.add_script(text_style.read_text(file_path), file_name, "Dwayne W")
         except Exception as err:
-            self.parent.log.logError(err)
+            settings.__LOG__.logError("EDIT_WIDG_ERR:" + str(err))
             return
 
         item = self.add_script_child(self.__tree_root, file_name)
@@ -130,6 +133,7 @@ class PhtmEditorWidget(QWidget):
 
         self.__script_tree_details_box = PhtmPlainTextEdit()
         self.__script_tree_details_box.setReadOnly(True)
+        self.__script_tree_details_box.setLineWrapMode(QPlainTextEdit.WidgetWidth)
 
         self.__script_tree_layout = QVBoxLayout()
         self.__script_tree_layout.addWidget(self.__script_tree)
@@ -240,7 +244,7 @@ class PhtmEditorWidget(QWidget):
                 menu.addSeparator()
 
                 runAction = QAction("Run", self)
-                runAction.triggered.connect(lambda: self.self.parent.r_ctrl.run(0))
+                runAction.triggered.connect(lambda: self.parent.r_ctrl.run(0))
 
                 runBelow = QAction("Run + Scripts Below", self)
                 runBelow.triggered.connect(lambda: self.parent.r_ctrl.run(2, index))
@@ -256,7 +260,7 @@ class PhtmEditorWidget(QWidget):
                 menu.addSeparator()
 
                 runAllAction = QAction("Run All", self)
-                runAllAction.triggered.connect(lambda: self.self.parent.r_ctrl.run(1))
+                runAllAction.triggered.connect(lambda: self.parent.r_ctrl.run(1))
                 menu.addAction(runAllAction)
 
             menu.popup(self.__script_tree.viewport().mapToGlobal(pos))
@@ -267,11 +271,13 @@ class PhtmEditorWidget(QWidget):
     def add_script_root(self, name="New Cluster"):
         tree_item = QTreeWidgetItem(self.__script_tree)
         tree_item.setText(0, name)
+        tree_item.setIcon(0, QIcon(settings.__ICONS__.app_icon))
         return tree_item
 
     def add_script_child(self, root, name):
         tree_item = QTreeWidgetItem(root)
         tree_item.setText(0, name)
+        tree_item.setIcon(0, QIcon(settings.__ICONS__.app_icon))
         tree_item.setFlags(tree_item.flags() | Qt.ItemIsEditable)
         root.addChild(tree_item)
         return tree_item

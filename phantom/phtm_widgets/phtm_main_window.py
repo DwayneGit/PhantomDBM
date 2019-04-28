@@ -7,7 +7,9 @@ from PyQt5.QtWidgets import QMainWindow
 
 from phantom.utility import center_window
 
+import phantom.settings as settings
 from phantom.core import main_window
+
 from . import PhtmTitleBar
 
 class PhtmMainWindow(QMainWindow):
@@ -19,8 +21,7 @@ class PhtmMainWindow(QMainWindow):
         self.__program_title = "Phantom DBM"
         self.window_title = ''
 
-        script_dir = os.path.dirname(os.path.realpath(__file__))
-        self.setWindowIcon(QIcon(script_dir + os.path.sep + 'icons/phantom.png'))
+        self.setWindowIcon(QIcon(settings.__ICONS__.app_icon))
 
         self.oldPos = self.pos()
 

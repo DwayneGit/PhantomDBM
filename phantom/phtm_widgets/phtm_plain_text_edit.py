@@ -21,6 +21,8 @@ class PhtmPlainTextEdit(QPlainTextEdit):
         metrics = QFontMetrics(font)
         self.setTabStopWidth(tabStop * metrics.width(' '))
 
+        self.setLineWrapMode(QPlainTextEdit.NoWrap)
+
         self.scroll_bar = QScrollBar()
         self.addScrollBarWidget(self.scroll_bar, Qt.AlignRight)
 

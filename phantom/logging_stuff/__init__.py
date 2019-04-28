@@ -1,1 +1,1 @@
-from .phtm_logger import phtm_logger
+from .phtm_logger import PhtmLogger

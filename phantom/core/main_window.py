@@ -1,4 +1,3 @@
-from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import QRect, Qt, QCoreApplication, pyqtSlot
 from PyQt5.QtWidgets import QMainWindow, QSplitter, QProgressBar, QMessageBox
 
@@ -6,11 +5,9 @@ from phantom.users import loginScreen
 from phantom.database import database_handler
 
 import phantom.preferences as prefs
+import phantom.settings as settings
 
-from phantom.logging_stuff import phtm_logger
-from phantom.phtm_widgets import PhtmIcons
-from phantom.phtm_widgets import PhtmDialog
-from phantom.phtm_widgets import PhtmPlainTextEdit
+from phantom.phtm_widgets import PhtmDialog, PhtmPlainTextEdit
 
 from phantom.file_stuff import file_ctrl as f_ctrl
 
@@ -27,8 +24,7 @@ class main_window(QMainWindow):
     def __init__(self, parent=None):
         super().__init__()
         self.parent = parent
-        self.log = phtm_logger()
-        self.log.logInfo("Program Started.")
+        settings.__LOG__.logInfo("Program Started.")
         self.dmi_settings = None
         self.prefs = None
         self.dbData = None
@@ -36,7 +32,6 @@ class main_window(QMainWindow):
         self.r_ctrl = run_ctrl(self)
 
         self.user = None
-        self.icon_set = PhtmIcons()
 
         f_ctrl.tmpScriptCleaner(self)
         login = PhtmDialog("Login", QRect(10, 10, 260, 160), self)
@@ -45,11 +40,11 @@ class main_window(QMainWindow):
         self.initUI()
 
         # if login.exec_():
-        #     self.log.logInfo("Successfully Logged In.")
+        #     settings.__LOG__.logInfo("Successfully Logged In.")
         #     self.user = login.get_central_dialog().user
         #     self.initUI()
         # else:
-        #     self.log.logInfo("No login program exited.")
+        #     settings.__LOG__.logInfo("No login program exited.")
         #     sys.exit()
 
     def initUI(self):
@@ -57,8 +52,6 @@ class main_window(QMainWindow):
         initiates application UI
 		'''
         self.currTitle = self.parent.window_title
-
-        self.parent.setWindowIcon(QIcon('icons/phantom.png'))
 
         self.__splitter1 = QSplitter(Qt.Horizontal)
 
@@ -93,7 +86,7 @@ class main_window(QMainWindow):
         self.statusBar().addPermanentWidget(self.progressBar)
         self.progressBar.setFixedWidth(200)
 
-        self.main_tool_bar = main_tool_bar(self, self.icon_set)
+        self.main_tool_bar = main_tool_bar(self)
         self.main_tool_bar.setUpToolBar()
 
         self.menu_bar = phtm_menu_bar(self)
@@ -118,7 +111,7 @@ class main_window(QMainWindow):
     #create custom signal to ubdate UI
     @pyqtSlot(str)
     def appendToBoard(self, message, msg_type = 0):
-        # self.log.logInfo(message)
+        # settings.__LOG__.logInfo(message)
         self.brd.appendHtml(message)
         QCoreApplication.processEvents()
 
@@ -133,11 +126,11 @@ class main_window(QMainWindow):
             else:
                 event.ignore()
         else:
-            self.log.logInfo("Program Ended")
+            settings.__LOG__.logInfo("Program Ended")
 
     def showPref(self, index=0):
         p = PhtmDialog("Preferences", QRect(10, 10, 350, 475), self)
-        p.set_central_dialog(prefs.preference_body(self.user, self.log, p))
+        p.set_central_dialog(prefs.preference_body(self.user, p))
         p.get_central_dialog().tabW.setCurrentIndex(index)
 
         if p.exec_():
@@ -153,7 +146,7 @@ class main_window(QMainWindow):
         self.main_tool_bar.dbnameMenu.currentTextChanged.disconnect()
         self.main_tool_bar.dbnameMenu.clear()
         
-        self.main_tool_bar.dbnameMenu.addItems(database_handler.getDatabaseList(self.dbData['host'], self.dbData['port'], self.log))
+        self.main_tool_bar.dbnameMenu.addItems(database_handler.getDatabaseList(self.dbData['host'], self.dbData['port']))
         self.main_tool_bar.dbnameMenu.currentTextChanged.connect(lambda: databaseNameChanged(self.main_tool_bar, self))
 
         index = self.main_tool_bar.dbnameMenu.findText(self.prefs['mongodb']['dbname'])

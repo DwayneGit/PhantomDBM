@@ -2,9 +2,10 @@ import sys
 import os.path
 import json
 
+import phantom.settings as settings
+
 class Preferences():
-    def __init__(self, configFileName, log, prefDict = None):
-        self.log = log
+    def __init__(self, configFileName, prefDict = None):
         self.configFile = configFileName + '.json'
         self.prefDict = prefDict
 
@@ -19,7 +20,7 @@ class Preferences():
             if not self.prefDict == None:
                 self.saveConfig()
             else:
-                self.log.logError("Preferences does not exist")
+                settings.__LOG__.logError("PREF_ERR: Preferences does not exist")
 
     def saveConfig( self, **kwargs ):
         """
