@@ -1,10 +1,10 @@
 
-add signal to edit ui to get rid of error:  
+- add signal to edit ui to get rid of error:  
     "Gdk-Message: 23:23:23.985: python3: Fatal IO error 11 (Resource temporarily unavailable) on X server :0."  
     - Help:  
-        https://stackoverflow.com/questions/46693355/pyqt5-typeerror-signal-has-0-arguments-but-1-provided  
+        https://stackoverflow.com/questions/46693355/pyqt5-typeerror-signal-has-0-arguments-but-1-provided 
 
-next:  
+backlog:  
     - integrate mongodb authentication  
     - db authentication <- duplicate  
 
@@ -18,19 +18,22 @@ next:
             - add comboxbox  
             - add setting button  (or have as option in combobox)  
 
+next:  
+    - themes   
 in progress:  
+    - Error checking Reorganization and code clean up  
+testing:   
     - automated instruction scripts  
-
        - scripts that will help with handling other operations when sending data  
           such as updateding other data entries if the one being inserted requires that  
           (standard alterations occur naturally) in xml format  
         - start off with xml then create own markup language  
-        + validation element    
-testing:  
+        + validation element
+
     - automated instruction scripts  
         - link element ✓  
 
-    - themes   
+done:  
     - script grouping (clustering)  
         - branch: "Add_file_grouping"  
         - grouping scripts into a folder for data compiled over time rather than updating  
@@ -43,8 +46,6 @@ testing:
             - have more secure remote option service  
             - pickle  
  
-
-done:  
     - run scripts from program with out saving ✓  
     - tabbed script edit window  
         - https://stackoverflow.com/questions/19975137/how-can-i-add-a-new-tab-button-next-to-the-tabs-of-a-qmdiarea-in-tabbed-view-m  
