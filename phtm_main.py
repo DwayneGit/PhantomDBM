@@ -1,19 +1,16 @@
-import os
-import re
 import sys
+import os
 
 from PyQt5.QtWidgets import QApplication
 
-from main_window import main_window
-from phtm_widgets.phtm_main_window import phtm_main_window
+from phantom import PhtmMainWindow, settings
 
 if __name__ == '__main__':
-    
+    settings.init()
+
     APP = QApplication(sys.argv)
 
-    MANAGER = phtm_main_window()
-    MANAGER.setCentralWidget(main_window(MANAGER))
+    MANAGER = PhtmMainWindow()
 
     MANAGER.show()
     sys.exit(APP.exec_())
-
