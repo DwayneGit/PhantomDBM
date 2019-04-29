@@ -5,7 +5,7 @@ import json
 from phantom.phtm_widgets import PhtmPushButton
 from phantom.phtm_widgets import PhtmTabWidget
 
-import phantom.settings as settings
+from phantom.application_settings import settings
 
 from .tabs.database_tab import database_tab
 from .tabs.dmi_tab import dmi_tab

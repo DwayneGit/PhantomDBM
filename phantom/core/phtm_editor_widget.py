@@ -11,7 +11,7 @@ from phantom.phtm_widgets import PhtmTabWidget as tab_widget
 
 from phantom.file_stuff import load_script, PhmFileHandler
 
-import phantom.settings as settings
+from phantom.application_settings import settings
 
 class PhtmEditorWidget(QWidget):
     def __init__(self, parent=None):

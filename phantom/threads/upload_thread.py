@@ -8,7 +8,7 @@ from phantom.instructions import dmi_handler
 
 from phantom.utility import validate_json_script
 
-import phantom.settings as settings
+from phantom.application_settings import settings
 
 class upload_thread(QObject):
     update = pyqtSignal(str) # signal data ready to be appended to th board

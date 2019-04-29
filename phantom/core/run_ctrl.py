@@ -11,7 +11,7 @@ from phantom.database import database_handler
 
 from phantom.file_stuff import file_ctrl as f_ctrl
 
-import phantom.settings as settings
+from phantom.application_settings import settings
 
 '''
 run_cript:

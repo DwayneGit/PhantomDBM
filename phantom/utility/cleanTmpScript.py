@@ -4,7 +4,7 @@ import re
 from datetime import datetime
 
 from PyQt5.QtCore import QObject, QThread
-import phantom.settings as settings
+from phantom.application_settings import settings
 
 class cleanTmpScripts(QThread):
     def __init__(self, length_days=0):

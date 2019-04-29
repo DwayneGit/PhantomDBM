@@ -2,7 +2,7 @@ import time
 
 from PyQt5.QtCore import pyqtSlot, pyqtSignal, QObject, QThread
 
-import phantom.settings as settings
+from phantom.application_settings import settings
 
 class lint_thread(QObject):
 

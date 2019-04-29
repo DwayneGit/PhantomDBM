@@ -10,7 +10,7 @@ from phantom.phtm_widgets import PhtmPlainTextEdit
 from phantom.file_stuff import file_ctrl as f_ctrl
 from phantom.utility import text_style, validate_json_script
 
-import phantom.settings as settings
+from phantom.application_settings import settings
 
 class schema_tab(QWidget):
     def __init__(self, schema, ref_schemas):

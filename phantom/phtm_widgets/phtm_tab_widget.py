@@ -15,9 +15,6 @@ class PhtmTabWidget(QTabWidget):
         self.default_tab_count = 1
         self.tab_data = {}
         self.script_set = {}
-
-        self.set_style()
-
         self.tabCloseRequested.connect(self.close_tab)
 
     def tab_by_text(self, text):
@@ -88,39 +85,6 @@ class PhtmTabWidget(QTabWidget):
         if self.tabText(index)[0:2] == "* ":
             return self.tabText(index)[2:]
         else: return self.tabText(index)
-
-    def set_style(self):
-        self.setStyleSheet('''
-            QTabWidget::pane {
-                background-color: rgb(46, 51, 58);
-                border-style: outset;
-                border-width: 1px;
-                border-color: rgb(39, 44, 51);
-                color: rgb(217, 217, 217);
-            }
-            QTabBar::tab {
-                background: rgb(39, 44, 51);
-                border-style: outset;
-                border-width: 1px;
-                border-color: rgb(39, 44, 51);
-                color: rgb(217, 217, 217);
-                min-width: 8ex;
-                padding: 2px;
-            }
-            QToolButton#tab_button {
-                background-color: rgb(46, 51, 58);
-                color: rgb(217, 217, 217);
-                border-style: none;
-                border-width: 1px;
-                border-color: rgb(46, 51, 58);
-                font: bold 14px;
-                padding: 6px;
-            }
-            QToolButton#tab_button:pressed {
-                background-color: rgb(39, 44, 51);
-                border-style: inset;
-            }
-        ''')
 
 class _LineNumberArea(QWidget):
     def __init__(self, editor):

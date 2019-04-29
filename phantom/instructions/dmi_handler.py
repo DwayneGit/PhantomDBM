@@ -5,7 +5,7 @@ import copy
 
 import untangle
 
-import phantom.settings as settings
+from phantom.application_settings import settings
 
 class dmi_handler():
     def __init__(self, db_handler, dmi_instr):

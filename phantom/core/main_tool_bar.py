@@ -12,7 +12,7 @@ from phantom.phtm_widgets import PhtmPlainTextEdit
 
 from phantom.file_stuff import file_ctrl as f_ctrl
 
-import phantom.settings as settings
+from phantom.application_settings import settings
 
 class main_tool_bar():
     """ application toolbars class """

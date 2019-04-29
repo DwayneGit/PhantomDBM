@@ -5,7 +5,7 @@ from phantom.phtm_widgets import PhtmPushButton
 
 from phantom.database import database_handler
 
-import phantom.settings as settings
+from phantom.application_settings import settings
 
 class database_tab(QWidget):
     def __init__(self, prefs, instancesPrefDict):

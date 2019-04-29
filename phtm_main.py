@@ -9,6 +9,7 @@ if __name__ == '__main__':
     settings.init()
 
     APP = QApplication(sys.argv)
+    APP.setStyleSheet(settings.__THEME__)
 
     MANAGER = PhtmMainWindow()
 

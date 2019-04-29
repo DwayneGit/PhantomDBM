@@ -4,7 +4,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import QSize, QPoint, Qt
 from PyQt5.QtWidgets import QToolBar, QToolButton, QWidget, QAction, QLabel, QSizePolicy
 
-import phantom.settings as settings
+from phantom.application_settings import settings
 
 class PhtmTitleBar(QToolBar):
     def __init__(self, window, is_main_window=False, style="ghost"):
@@ -14,7 +14,6 @@ class PhtmTitleBar(QToolBar):
         self.window_title = ""
         self.is_max = False
         self.is_main_window = is_main_window
-        self.set_style()
         self.window_title = ""
 
         self.setContextMenuPolicy(Qt.PreventContextMenu)
@@ -89,35 +88,3 @@ class PhtmTitleBar(QToolBar):
 
     def set_window_title(self, title):
         self.window_title.setText(title)
-
-    def set_style(self):
-        if self.style == "ghost":
-            self.setStyleSheet("""
-                QToolBar {
-                    background-color: rgb(92, 0, 153);
-                    color: rgb(217, 217, 217);
-                    border-style: outset;
-                    border-radius: 0px;
-                    border: 0px;
-                }
-                QToolButton {
-                    background-color: rgb(92, 0, 153);
-                    border-width: 0px;
-                }
-                QToolButton:hover {
-                    background-color: rgb(81, 0, 135);
-                    border-width: 0px;
-                    border-style: outset;
-                    border-radius: 0px;
-                    border: 0px;
-                }
-                QToolButton#logo:hover  {
-                    background-color: rgb(92, 0, 153);
-                    border: 0px;
-                }
-                QToolButton#exit:hover  {
-                    background-color: red;
-                    border: 0px;
-                }
-            """)
-            

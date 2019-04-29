@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import QMainWindow
 
 from phantom.utility import center_window
 
-import phantom.settings as settings
+from phantom.application_settings import settings
 from phantom.core import main_window
 
 from . import PhtmTitleBar
@@ -37,8 +37,6 @@ class PhtmMainWindow(QMainWindow):
         self.setGeometry(geometry) # set screen size (left, top, width, height
         self.move(center_window(self))
         self.style = style
-        self.set_style()
-
         self.setCentralWidget(main_window(self))
 
     def getPermanentTitle(self):
@@ -50,54 +48,3 @@ class PhtmMainWindow(QMainWindow):
     def set_window_title(self, text):
         self.title_bar.set_window_title(text)
         self.setWindowTitle(text)
-
-    def set_style(self):
-        if self.style == "ghost":
-            self.setStyleSheet("""
-                QMainWindow {
-                    background-color: rgb(46, 51, 58);
-                    padding : 0px;
-                }
-                QMenuBar {
-                    background-color: rgb(36, 143, 36);
-                    color: rgb(217, 217, 217);
-                }
-                QMenuBar::item:selected {
-                    background: rgb(17, 89, 17);
-                }
-                QMenu {
-                    background: rgb(36, 143, 36);
-                    color: rgb(217, 217, 217);
-                }
-                QMenu::item:selected {
-                    background: rgb(17, 89, 17);
-                }
-                QStatusBar {
-                    background-color: rgb(92, 0, 153);
-                    color: rgb(217, 217, 217);
-                }
-                QProgressBar {
-                    background-color: rgb(92, 0, 153);
-                }
-
-                QProgressBar::chunk {
-                    background-color: #05B8CC;
-                    width: 10px;
-                }
-                QTabWidget::pane {
-                    background-color: rgb(46, 51, 58);
-                    border-style: outset;
-                    border-width: 1px;
-                    border-color: rgb(39, 44, 51);
-                    color: rgb(217, 217, 217);
-                }
-                QTabBar::tab {
-                    background: rgb(39, 44, 51);
-                    border-style: outset;
-                    border-width: 1px;
-                    border-color: rgb(39, 44, 51);
-                    color: rgb(217, 217, 217);
-                    min-width: 8ex;
-                    padding: 2px;
-                }
-            """)

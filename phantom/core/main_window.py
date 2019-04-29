@@ -5,7 +5,7 @@ from phantom.users import loginScreen
 from phantom.database import database_handler
 
 import phantom.preferences as prefs
-import phantom.settings as settings
+from phantom.application_settings import settings
 
 from phantom.phtm_widgets import PhtmDialog, PhtmPlainTextEdit
 
