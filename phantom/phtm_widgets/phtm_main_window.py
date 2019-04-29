@@ -3,7 +3,7 @@ import os
 
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt, QRect
-from PyQt5.QtWidgets import QMainWindow
+from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout
 
 from phantom.utility import center_window
 
@@ -36,7 +36,7 @@ class PhtmMainWindow(QMainWindow):
 
         self.setGeometry(geometry) # set screen size (left, top, width, height
         self.move(center_window(self))
-        self.style = style
+
         self.setCentralWidget(main_window(self))
 
     def getPermanentTitle(self):

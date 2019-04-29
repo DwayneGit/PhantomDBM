@@ -15,6 +15,7 @@ class PhtmTitleBar(QToolBar):
         self.is_max = False
         self.is_main_window = is_main_window
         self.window_title = ""
+        self.setObjectName("title_bar")
 
         self.setContextMenuPolicy(Qt.PreventContextMenu)
 
@@ -41,11 +42,13 @@ class PhtmTitleBar(QToolBar):
             self.addWidget(spacer)
 
             min_bttn = QToolButton()
+            min_bttn.setObjectName("title_button")
             min_bttn.setDefaultAction(QAction(QIcon(settings.__ICONS__.minimze), "", self))
             min_bttn.defaultAction().triggered.connect(self.window.showMinimized)
             self.addWidget(min_bttn)
 
             screen_bttn = QToolButton()
+            screen_bttn.setObjectName("title_button")
             screen_bttn.setDefaultAction(QAction(QIcon(settings.__ICONS__.maximize), "", self))
             screen_bttn.triggered.connect(lambda x: self.screen_toggle(screen_bttn))
             self.addWidget(screen_bttn)

@@ -28,6 +28,7 @@ class main_tool_bar():
     def setUpToolBar(self):
         #------------------ Top Toolbar ----------------------------
         topTBar = PhtmToolBar()
+        topTBar.setMovable(False)
 
         tbfile = QAction(QIcon(settings.__ICONS__.import_file), "import", self.parent)
         tbfile.triggered.connect(self.parent.get_editor_widget().load_script)
@@ -41,37 +42,39 @@ class main_tool_bar():
         tbfiles.triggered.connect(lambda: f_ctrl.export_script(self.parent.get_editor_widget().get_editor_tabs().currentWidget().toPlainText()))
         topTBar.addAction(tbfiles)
 
+        tbsettings = QAction(QIcon(settings.__ICONS__.settings), "settings", self.parent)
+        tbsettings.triggered.connect(self.parent.showPref)
+        topTBar.addAction(tbsettings)
+
+        # ----------------- Side Toolbar ---------------------------
+        sideTBar = PhtmToolBar()
+        sideTBar.setMovable(False)
+
         self.tbrun = QAction()
         self.setRunBtnAction(False)
-        topTBar.addAction(self.tbrun)
+        sideTBar.addAction(self.tbrun)
 
         tbstop = QAction(QIcon(settings.__ICONS__.stop), "stop", self.parent)
         tbstop.triggered.connect(lambda: self.setIsRunning(self.parent.r_ctrl.stopRun(self.isRunning)))
-        topTBar.addAction(tbstop)
+        sideTBar.addAction(tbstop)
 
-        spacer = QWidget()
-        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        topTBar.addWidget(spacer)
+        # spacer = QWidget()
+        # spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        # sideTBar.addWidget(spacer)
 
         self.curr_dmi = PhtmPlainTextEdit(self.parent.get_editor_widget().get_cluster().get_phm_scripts()["__dmi_instr__"]["name"])
         self.curr_dmi.setFixedSize(QSize(175, 31))
         self.curr_dmi.setReadOnly(True)
         self.curr_dmi.mouseDoubleClickEvent = self.__open_dmi_prefs
-        topTBar.addWidget(self.curr_dmi)
+        sideTBar.addWidget(self.curr_dmi)
 
-        # ----------------- Side Toolbar ---------------------------
-        sideTBar = PhtmToolBar()
-        tbload = QAction(QIcon(settings.__ICONS__.load_file), "load", self.parent)
-        # tbload.triggered.connect()
-        sideTBar.addAction(tbload)
+        # tbload = QAction(QIcon(settings.__ICONS__.load_file), "load", self.parent)
+        # # tbload.triggered.connect()
+        # sideTBar.addAction(tbload)
 
-        tbedit = QAction(QIcon(settings.__ICONS__.edit), "edit", self.parent)
-        # tbedit.triggered.connect()
-        sideTBar.addAction(tbedit)
-
-        tbsettings = QAction(QIcon(settings.__ICONS__.settings), "settings", self.parent)
-        tbsettings.triggered.connect(self.parent.showPref)
-        sideTBar.addAction(tbsettings)
+        # tbedit = QAction(QIcon(settings.__ICONS__.edit), "edit", self.parent)
+        # # tbedit.triggered.connect()
+        # sideTBar.addAction(tbedit)
 
         spacer = QWidget()
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -106,9 +109,8 @@ class main_tool_bar():
         self.collnameMenu.currentTextChanged.connect(lambda: collectionNameChanged(self, self.parent))
         sideTBar.addWidget(self.collnameMenu)
 
-        self.parent.addToolBar(Qt.TopToolBarArea, topTBar)
-        self.parent.addToolBarBreak(Qt.TopToolBarArea)
         self.parent.addToolBar(Qt.TopToolBarArea, sideTBar)
+        self.parent.addToolBar(Qt.LeftToolBarArea, topTBar)
 
     def set_instructions(self):
         self.instr_filename, self.instr_filepath = f_ctrl.load_instructions()

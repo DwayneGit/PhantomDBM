@@ -1,41 +1,41 @@
 QComboBox {
-    background-color: rgb(41, 41, 41);
+    background-color: rgb(46, 51, 58);
     color: rgb(217, 217, 217);
-    border-style: none;
+    border-style: outset;
     border-width: 1px;
-    border-color: rgb(41, 41, 41);
+    border-color: rgb(39, 44, 51);
     font: bold 14px;
     min-width: 10em;
     padding: 6px;
 }
 QComboBox::drop-down{
-    border-style: none;
+    border-style: outset;
     border-width: 0px;
-    border-color: rgb(41, 41, 41);
-    color: rgb(41, 41, 41);
+    border-color: rgb(39, 44, 51);
+    color: rgb(46, 51, 58);
     padding: 0px;
 }
 QComboBox::item{
-    background-color: rgb(41, 41, 41);
+    background-color: rgb(46, 51, 58);
     color: rgb(217, 217, 217);
 }
 QComboBox::item::selected{
-    background-color: rgb(41, 41, 41);
+    background-color: rgb(39, 44, 51);
 }
 
 
 QDialog {
-    background-color: rgb(51, 51, 51);
+    background-color: rgb(46, 51, 58);
     padding : 0px;
     margin : 0px;
 }
 
 
 QLineEdit {
-    background-color: rgb(51, 51, 51);
-    border-style: none;
+    background-color: rgb(46, 51, 58);
+    border-style: outset;
     border-width: 1px;
-    border-color: rgb(51, 51, 51);
+    border-color: rgb(39, 44, 51);
     color: white;
 }
 
@@ -75,15 +75,10 @@ QStatusBar {
 
 
 QMainWindow {
-    background-color: rgb(51, 51, 51);
-}
-QMainWindow#main {
-    background-color: rgb(92, 0, 153);
+    background-color: rgb(46, 51, 58);
+    padding : 0px;
 }
 
-QWidget#mid {
-    background-color: rgb(92, 0, 153);
-}
 
 QProgressBar {
     background-color: rgb(92, 0, 153);
@@ -95,19 +90,19 @@ QProgressBar::chunk {
 
 
 QTabWidget::pane {
-    background-color: rgb(51, 51, 51);
-    border-style: none;
+    background-color: rgb(46, 51, 58);
+    border-style: outset;
     border-width: 1px;
-    border-color: rgb(51, 51, 51);
+    border-color: rgb(39, 44, 51);
     color: rgb(217, 217, 217);
 }
 
 
 QTabBar::tab {
-    background: rgb(51, 51, 51);
-    border-style: none;
+    background: rgb(39, 44, 51);
+    border-style: outset;
     border-width: 1px;
-    border-color: rgb(51, 51, 51);
+    border-color: rgb(39, 44, 51);
     color: rgb(217, 217, 217);
     min-width: 8ex;
     padding: 2px;
@@ -115,17 +110,17 @@ QTabBar::tab {
 
 
 QPlainTextEdit {
-    background-color: rgb(51, 51, 51);
-    border-style: none;
+    background-color: rgb(46, 51, 58);
+    border-style: outset;
     border-width: 1px;
-    border-color: rgb(51, 51, 51);
+    border-color: rgb(39, 44, 51);
     color: white;
 }
 
 
 QScrollBar:vertical {
     width: 10px;
-    background: rgb(51, 51, 51);
+    background: rgb(46, 51, 58);
 }
 QScrollBar::handle:vertical {
     min-height: 5px;
@@ -147,16 +142,16 @@ QScrollBar::down-arrow:vertical {
 
 
 QPushButton {
-    background-color: rgb(51, 51, 51);
+    background-color: rgb(46, 51, 58);
     color: rgb(217, 217, 217);
-    border-style: none;
+    border-style: outset;
     border-width: 1px;
-    border-color: rgb(51, 51, 51);
+    border-color: rgb(39, 44, 51);
     font: bold 14px;
     padding: 6px;
 }
 QPushButton:pressed {
-    background-color: rgb(51, 51, 51);
+    background-color: rgb(39, 44, 51);
     border-style: inset;
 }
 
@@ -174,22 +169,22 @@ QToolButton#logo {
     border-width: 0px;
 }
 QToolButton#tab_button {
-    background-color: rgb(40, 40, 40);
+    background-color: rgb(46, 51, 58);
     color: rgb(217, 217, 217);
     border-style: none;
     border-width: 1px;
-    border-color: rgb(51, 51, 51);
+    border-color: rgb(46, 51, 58);
     font: bold 14px;
     padding: 6px;
 }
 QToolButton#tab_button:pressed {
-    background-color: rgb(40, 40, 40);
+    background-color: rgb(39, 44, 51);
     border-style: inset;
 }
 QToolButton#logo:hover {
     background-color: rgb(81, 0, 135);
     border-width: 0px;
-    border-style: none;
+    border-style: outset;
     border-radius: 0px;
     border: 0px;
 }
@@ -203,42 +198,43 @@ QToolButton#exit:hover  {
 }
 QToolButton {
     border-width: 0px;
-    background-color: rgb(40, 40, 40);
+    background-color: rgb(46, 51, 58);
 }
+
 
 QToolBar#tool_bar {
     border-width: 0px;
-    background-color: rgb(40, 40, 40);
+    background-color: rgb(46, 51, 58);
 }
 QToolBar#title_bar {
     background-color: rgb(92, 0, 153);
     color: rgb(217, 217, 217);
-    border-style: none;
+    border-style: outset;
     border-radius: 0px;
     border: 0px;
 }
 
 
 QTextEdit {
-    background-color: rgb(51, 51, 51);
-    border-style: none;
+    background-color: rgb(46, 51, 58);
+    border-style: outset;
     border-width: 1px;
-    border-color: rgb(51, 51, 51);
+    border-color: rgb(39, 44, 51);
     color: white;
 }
 
 
 QTreeWidget {
-    background-color: rgb(51, 51, 51);
-    border-style: none;
+    background-color: rgb(46, 51, 58);
+    border-style: outset;
     border-width: 1px;
-    border-color: rgb(51, 51, 51);
+    border-color: rgb(39, 44, 51);
     color: rgb(217, 217, 217);
 }
 
 
 QHeaderView::section {
-    background-color: rgb(51, 51, 51);
+    background-color: rgb(46, 51, 58);
     color: rgb(217, 217, 217);
     padding-left: 4px;
     border: none;

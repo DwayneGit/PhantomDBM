@@ -5,4 +5,5 @@ class PhtmToolBar(QToolBar):
     def __init__(self, style="ghost"):
         super().__init__()
         self.setContextMenuPolicy(Qt.PreventContextMenu)
+        self.setObjectName("tool_bar")
             
