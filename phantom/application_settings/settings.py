@@ -6,7 +6,7 @@ from phantom.logging_stuff import PhtmLogger
 def init():
     global __LOG__, __ICONS__, __THEME__
     __LOG__ = PhtmLogger()
-    __ICONS__ = PhtmIcons()
+    __ICONS__ = PhtmIcons("std_white")
 
     style_sheet = "phantom/application_settings/themes/dark_theme.qss"
     with open(style_sheet, "r") as style_fp:
