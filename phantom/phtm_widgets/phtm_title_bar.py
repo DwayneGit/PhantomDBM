@@ -7,9 +7,9 @@ from PyQt5.QtWidgets import QToolBar, QToolButton, QWidget, QAction, QLabel, QSi
 from phantom.application_settings import settings
 
 class PhtmTitleBar(QToolBar):
-    def __init__(self, window, is_main_window=False, style="ghost"):
+    def __init__(self, window, is_main_window=False):
         super().__init__()
-        self.style = style
+        
         self.window = window
         self.window_title = ""
         self.is_max = False

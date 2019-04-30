@@ -1,12 +1,13 @@
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QDialog, QVBoxLayout
+from PyQt5.QtWidgets import QDialog, QVBoxLayout, QGraphicsDropShadowEffect
+from PyQt5.QtGui import QColor
 
 from phantom.utility import center_window
 
 from . import PhtmTitleBar
 
 class PhtmDialog(QDialog):
-    def __init__(self, title, geometry, parent, central_dialog=None, style="ghost"):
+    def __init__(self, title, geometry, parent, central_dialog=None):
         super().__init__() # set screen size (left, top, width, height
 
         # if not isinstance(central_dialog, QDialog):
@@ -39,6 +40,12 @@ class PhtmDialog(QDialog):
 
         self.setGeometry(geometry)
         self.move(center_window(self))
+
+        self.shadow = QGraphicsDropShadowEffect(self)
+        self.shadow.setColor(QColor(30, 30, 30))
+        self.shadow.setBlurRadius(10)
+        self.shadow.setOffset(3)
+        self.setGraphicsEffect(self.shadow)
 
         self.set_window_title(self.window_title)
 

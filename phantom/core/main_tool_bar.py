@@ -63,6 +63,7 @@ class main_tool_bar():
         # sideTBar.addWidget(spacer)
 
         self.curr_dmi = PhtmPlainTextEdit(self.parent.get_editor_widget().get_cluster().get_phm_scripts()["__dmi_instr__"]["name"])
+        self.curr_dmi.setObjectName("dmi_edit")
         self.curr_dmi.setFixedSize(QSize(175, 31))
         self.curr_dmi.setReadOnly(True)
         self.curr_dmi.mouseDoubleClickEvent = self.__open_dmi_prefs

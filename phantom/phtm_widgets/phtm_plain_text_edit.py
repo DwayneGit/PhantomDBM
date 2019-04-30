@@ -5,7 +5,7 @@ from PyQt5.QtWidgets import QPlainTextEdit, QScrollBar
 __all__ = ['PhtmPlainTextEdit']
 
 class PhtmPlainTextEdit(QPlainTextEdit):
-    def __init__(self, text=None, style="ghost"):
+    def __init__(self, text=None):
         super().__init__()
 
         font = QFont()

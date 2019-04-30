@@ -13,10 +13,11 @@ from phantom.core import main_window
 from . import PhtmTitleBar
 
 class PhtmMainWindow(QMainWindow):
-    def __init__(self, style="ghost", geometry=QRect(10, 10, 1100, 620)):
+    def __init__(self, geometry=QRect(10, 10, 1100, 620)):
         super().__init__() # set screen size (left, top, width, height
 
         self.setWindowFlags(Qt.FramelessWindowHint)
+        self.setObjectName("pmainwind")
 
         self.__program_title = "Phantom DBM"
         self.window_title = ''
@@ -25,7 +26,7 @@ class PhtmMainWindow(QMainWindow):
 
         self.oldPos = self.pos()
 
-        self.layout().setSpacing(0) 
+        self.layout().setSpacing(0)
 
         self.title_bar = PhtmTitleBar(self, True)
         self.title_bar.generate_title_bar()

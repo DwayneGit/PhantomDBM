@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QComboBox
 
 class PhtmComboBox(QComboBox):
-    def __init__(self, style="ghost"):
+    def __init__(self):
         super().__init__()
-        self.style = style
+        

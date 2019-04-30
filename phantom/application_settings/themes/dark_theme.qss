@@ -1,7 +1,7 @@
 QComboBox {
     background-color: rgb(41, 41, 41);
     color: rgb(217, 217, 217);
-    border-style: none;
+    border-style: outset;
     border-width: 1px;
     border-color: rgb(41, 41, 41);
     font: bold 14px;
@@ -20,6 +20,9 @@ QComboBox::item{
     color: rgb(217, 217, 217);
 }
 QComboBox::item::selected{
+    background-color: rgb(41, 41, 41);
+}
+QComboBox > QMenu {
     background-color: rgb(41, 41, 41);
 }
 
@@ -41,11 +44,11 @@ QLineEdit {
 
 
 QMenuBar {
-    background-color: rgb(36, 143, 36);
+    background-color: rgb(72, 0, 119);
     color: rgb(217, 217, 217);
 }
 QMenuBar::item:selected {
-    background: rgb(17, 89, 17);
+    background: rgb(49, 0, 81);
 }
 
 QLabel{
@@ -61,11 +64,11 @@ QRadioButton::indicator {
 
 
 QMenu {
-    background: rgb(36, 143, 36);
+    background: rgb(72, 0, 119);
     color: rgb(217, 217, 217);
 }
 QMenu::item:selected {
-    background: rgb(17, 89, 17);
+    background: rgb(49, 0, 81);
 }
 
 QStatusBar {
@@ -76,13 +79,6 @@ QStatusBar {
 
 QMainWindow {
     background-color: rgb(51, 51, 51);
-}
-QMainWindow#main {
-    background-color: rgb(92, 0, 153);
-}
-
-QWidget#mid {
-    background-color: rgb(92, 0, 153);
 }
 
 QProgressBar {
@@ -105,26 +101,53 @@ QTabWidget::pane {
 
 QTabBar::tab {
     background: rgb(51, 51, 51);
-    border-style: none;
-    border-width: 1px;
     border-color: rgb(51, 51, 51);
     color: rgb(217, 217, 217);
+    border-style: none;
+    border-width: 1px;
     min-width: 8ex;
-    padding: 2px;
+    padding: 5px;
+}
+QTabBar::close-button {
+    image: none
+}
+QTabBar::close-button:hover {
+    image: url(icons/close.png)
+}
+QTabBar::tab:hover {
+    border-color: rgb(40, 40, 40);
+    background: rgb(40, 40, 40);
+}
+QTabBar::tab:selected {
+    border-color: rgb(40, 40, 40);
+    background: rgb(40, 40, 40);
 }
 
 
 QPlainTextEdit {
     background-color: rgb(51, 51, 51);
     border-style: none;
-    border-width: 1px;
+    color: white;
+}
+QPlainTextEdit#brd {
+    background-color: rgb(51, 51, 51);
+    border-style: solid;
+    border-width: 2px;
     border-color: rgb(51, 51, 51);
+    border-right-color: rgb(40, 40, 40);
+    color: white;
+}
+QPlainTextEdit#dmi_edit {
+    background-color: rgb(41, 41, 41);
+    border-style: outset;
+    border-width: 1px;
+    border-color: rgb(41, 41, 41);
     color: white;
 }
 
 
 QScrollBar:vertical {
-    width: 10px;
+    width: 13px;
     background: rgb(51, 51, 51);
 }
 QScrollBar::handle:vertical {
@@ -146,6 +169,29 @@ QScrollBar::down-arrow:vertical {
 }
 
 
+QScrollBar:horizontal {
+    width: 13px;
+    background: rgb(51, 51, 51);
+}
+QScrollBar::handle:horizontal {
+    min-width: 5px;
+}
+QScrollBar::add-line:horizontal {
+    background: none;
+    width: 45px;
+    subcontrol-position: right;
+    subcontrol-origin: margin;
+} 
+QScrollBar::up-arrow:horizontal { 
+    height: 3px; 
+    width: 3px 
+}
+QScrollBar::down-arrow:horizontal {
+    height: 3px; 
+    width: 3px 
+}
+
+
 QPushButton {
     background-color: rgb(51, 51, 51);
     color: rgb(217, 217, 217);
@@ -162,15 +208,15 @@ QPushButton:pressed {
 
 
 QToolButton#title_button {
-    background-color: rgb(92, 0, 153);
+    background-color: rgb(49, 0, 81);
     border-width: 0px;
 }
 QToolButton#exit {
-    background-color: rgb(92, 0, 153);
+    background-color: rgb(49, 0, 81);
     border-width: 0px;
 }
 QToolButton#logo {
-    background-color: rgb(92, 0, 153);
+    background-color: rgb(49, 0, 81);
     border-width: 0px;
 }
 QToolButton#tab_button {
@@ -194,7 +240,7 @@ QToolButton#logo:hover {
     border: 0px;
 }
 QToolButton#logo:hover  {
-    background-color: rgb(92, 0, 153);
+    background-color: rgb(49, 0, 81);
     border: 0px;
 }
 QToolButton#exit:hover  {
@@ -211,7 +257,7 @@ QToolBar#tool_bar {
     background-color: rgb(40, 40, 40);
 }
 QToolBar#title_bar {
-    background-color: rgb(92, 0, 153);
+    background-color: rgb(49, 0, 81);
     color: rgb(217, 217, 217);
     border-style: none;
     border-radius: 0px;
@@ -234,6 +280,7 @@ QTreeWidget {
     border-width: 1px;
     border-color: rgb(51, 51, 51);
     color: rgb(217, 217, 217);
+    selection-background-color: rgb(123, 37, 178);
 }
 
 

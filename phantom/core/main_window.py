@@ -67,6 +67,7 @@ class main_window(QMainWindow):
         self.__brd_widget_lay.setContentsMargins(0, 0, 0, 0)
 
         self.__brd_widget.setLayout(self.__brd_widget_lay)
+        self.__brd.setObjectName("brd")
 
         self.fileLoaded = True
         self.filePath = None
@@ -79,6 +80,7 @@ class main_window(QMainWindow):
         # check if file is loaded and set flag to use to ask if save necessary before running or closing
         self.__splitter1.addWidget(self.__brd_widget)
         self.__splitter1.addWidget(self.__editor_widget)
+        self.__splitter1.setHandleWidth(1)
 
         self.setCentralWidget(self.__splitter1)
 
