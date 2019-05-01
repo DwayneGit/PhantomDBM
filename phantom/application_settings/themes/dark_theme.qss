@@ -112,7 +112,7 @@ QTabBar::close-button {
     image: none
 }
 QTabBar::close-button:hover {
-    image: url(icons/close.png)
+    image: url(icons/std_light/close.png)
 }
 QTabBar::tab:hover {
     border-color: rgb(40, 40, 40);

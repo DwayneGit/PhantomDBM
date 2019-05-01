@@ -76,6 +76,7 @@ class PhtmEditorWidget(QWidget):
 
         self.__tree_root = self.add_script_root(filename)
         self.__script_tree.expandItem(self.__tree_root)
+        self.__script_tree.expandItem(self.__tree_root)
 
         self.__editor_tabs.hide()
 
@@ -144,9 +145,10 @@ class PhtmEditorWidget(QWidget):
         self.__script_tree_layout.setContentsMargins(0, 26, 0, 0)
 
         self.__script_tree.itemDoubleClicked.connect(self.__open_script)
-        self.__script_tree.itemClicked.connect(self.__show_details)
+        self.__script_tree.itemSelectionChanged.connect(self.__show_details)
 
         self.__tree_root = self.add_script_root()
+        self.__script_tree.setCurrentItem(self.__tree_root)
 
         self.__script_tree.setHeaderLabels(["Script Cluster"])
         self.__script_tree.expandItem(self.__tree_root)
@@ -180,7 +182,8 @@ class PhtmEditorWidget(QWidget):
         else:
             self.__tree_root.removeChild(item)
 
-    def __show_details(self, item):
+    def __show_details(self):
+        item = self.__script_tree.currentItem()
         if not item:
             return
 

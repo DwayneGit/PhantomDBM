@@ -28,27 +28,27 @@ QComboBox > QMenu {
 
 
 QDialog {
-    background-color: rgb(244, 244, 244);
+    background-color: rgb(232, 232, 232);
     padding : 0px;
     margin : 0px;
 }
 
 
 QLineEdit {
-    background-color: rgb(244, 244, 244);
+    background-color: rgb(232, 232, 232);
     border-style: none;
     border-width: 1px;
-    border-color: rgb(244, 244, 244);
+    border-color: rgb(232, 232, 232);
     color: black;
 }
 
 
 QMenuBar {
-    background-color: rgb(72, 0, 119);
+    background-color: rgb(0, 173, 17);
     color: black;
 }
 QMenuBar::item:selected {
-    background: rgb(49, 0, 81);
+    background: rgb(0, 122, 12);
 }
 
 QLabel{
@@ -64,25 +64,25 @@ QRadioButton::indicator {
 
 
 QMenu {
-    background: rgb(72, 0, 119);
+    background: rgb(0, 173, 17);
     color: black;
 }
 QMenu::item:selected {
-    background: rgb(49, 0, 81);
+    background: rgb(0, 122, 12);
 }
 
 QStatusBar {
-    background-color: rgb(92, 0, 153);
+    background-color: rgb(17, 153, 0);
     color: black;
 }
 
 
 QMainWindow {
-    background-color: rgb(244, 244, 244);
+    background-color: rgb(232, 232, 232);
 }
 
 QProgressBar {
-    background-color: rgb(92, 0, 153);
+    background-color: rgb(17, 153, 0);
 }
 QProgressBar::chunk {
     background-color: #05B8CC;
@@ -91,17 +91,17 @@ QProgressBar::chunk {
 
 
 QTabWidget::pane {
-    background-color: rgb(244, 244, 244);
+    background-color: rgb(232, 232, 232);
     border-style: none;
     border-width: 1px;
-    border-color: rgb(244, 244, 244);
+    border-color: rgb(232, 232, 232);
     color: black;
 }
 
 
 QTabBar::tab {
-    background: rgb(244, 244, 244);
-    border-color: rgb(244, 244, 244);
+    background: rgb(232, 232, 232);
+    border-color: rgb(232, 232, 232);
     color: black;
     border-style: none;
     border-width: 1px;
@@ -112,7 +112,7 @@ QTabBar::close-button {
     image: none
 }
 QTabBar::close-button:hover {
-    image: url(icons/close.png)
+    image: url(icons/std_black/close.png)
 }
 QTabBar::tab:hover {
     border-color: rgb(188, 188, 188);
@@ -125,15 +125,15 @@ QTabBar::tab:selected {
 
 
 QPlainTextEdit {
-    background-color: rgb(244, 244, 244);
+    background-color: rgb(232, 232, 232);
     border-style: none;
     color: black;
 }
 QPlainTextEdit#brd {
-    background-color: rgb(244, 244, 244);
+    background-color: rgb(232, 232, 232);
     border-style: solid;
     border-width: 2px;
-    border-color: rgb(244, 244, 244);
+    border-color: rgb(232, 232, 232);
     border-right-color: rgb(188, 188, 188);
     color: black;
 }
@@ -148,7 +148,7 @@ QPlainTextEdit#dmi_edit {
 
 QScrollBar:vertical {
     width: 13px;
-    background: rgb(244, 244, 244);
+    background: rgb(232, 232, 232);
 }
 QScrollBar::handle:vertical {
     min-height: 5px;
@@ -171,7 +171,7 @@ QScrollBar::down-arrow:vertical {
 
 QScrollBar:horizontal {
     width: 13px;
-    background: rgb(244, 244, 244);
+    background: rgb(232, 232, 232);
 }
 QScrollBar::handle:horizontal {
     min-width: 5px;
@@ -193,30 +193,30 @@ QScrollBar::down-arrow:horizontal {
 
 
 QPushButton {
-    background-color: rgb(244, 244, 244);
+    background-color: rgb(232, 232, 232);
     color: black;
     border-style: none;
     border-width: 1px;
-    border-color: rgb(244, 244, 244);
+    border-color: rgb(232, 232, 232);
     font: bold 14px;
     padding: 6px;
 }
 QPushButton:pressed {
-    background-color: rgb(244, 244, 244);
+    background-color: rgb(232, 232, 232);
     border-style: inset;
 }
 
 
 QToolButton#title_button {
-    background-color: rgb(49, 0, 81);
+    background-color: rgb(0, 122, 12);
     border-width: 0px;
 }
 QToolButton#exit {
-    background-color: rgb(49, 0, 81);
+    background-color: rgb(0, 122, 12);
     border-width: 0px;
 }
 QToolButton#logo {
-    background-color: rgb(49, 0, 81);
+    background-color: rgb(0, 122, 12);
     border-width: 0px;
 }
 QToolButton#tab_button {
@@ -224,7 +224,7 @@ QToolButton#tab_button {
     color: black;
     border-style: none;
     border-width: 1px;
-    border-color: rgb(244, 244, 244);
+    border-color: rgb(232, 232, 232);
     font: bold 14px;
     padding: 6px;
 }
@@ -240,7 +240,7 @@ QToolButton#logo:hover {
     border: 0px;
 }
 QToolButton#logo:hover  {
-    background-color: rgb(49, 0, 81);
+    background-color: rgb(0, 122, 12);
     border: 0px;
 }
 QToolButton#exit:hover  {
@@ -257,7 +257,7 @@ QToolBar#tool_bar {
     background-color: rgb(188, 188, 188);
 }
 QToolBar#title_bar {
-    background-color: rgb(49, 0, 81);
+    background-color: rgb(0, 122, 12);
     color: black;
     border-style: none;
     border-radius: 0px;
@@ -266,26 +266,26 @@ QToolBar#title_bar {
 
 
 QTextEdit {
-    background-color: rgb(244, 244, 244);
+    background-color: rgb(232, 232, 232);
     border-style: none;
     border-width: 1px;
-    border-color: rgb(244, 244, 244);
+    border-color: rgb(232, 232, 232);
     color: black;
 }
 
 
 QTreeWidget {
-    background-color: rgb(244, 244, 244);
+    background-color: rgb(232, 232, 232);
     border-style: none;
     border-width: 1px;
-    border-color: rgb(244, 244, 244);
+    border-color: rgb(232, 232, 232);
     color: black;
-    selection-background-color: rgb(123, 37, 178);
+    selection-background-color: rgb(36, 178, 55);
 }
 
 
 QHeaderView::section {
-    background-color: rgb(244, 244, 244);
+    background-color: rgb(232, 232, 232);
     color: black;
     padding-left: 4px;
     border: none;

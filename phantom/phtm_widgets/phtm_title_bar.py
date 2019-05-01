@@ -29,10 +29,10 @@ class PhtmTitleBar(QToolBar):
         exit_bttn.setDefaultAction(QAction(QIcon(settings.__ICONS__.close), "", self))
 
         if self.is_main_window:
-            logo_bttn = QToolButton()
-            logo_bttn.setDefaultAction(QAction(QIcon(settings.__ICONS__.app_icon), "phantom", self))
-            logo_bttn.setObjectName("logo")
-            self.addWidget(logo_bttn)
+            # logo_bttn = QToolButton()
+            # logo_bttn.setDefaultAction(QAction(QIcon(settings.__ICONS__.app_icon), "phantom", self))
+            # logo_bttn.setObjectName("logo")
+            # self.addWidget(logo_bttn)
 
             self.window_title = QLabel()
             self.addWidget(self.window_title)
