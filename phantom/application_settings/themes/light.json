@@ -1,0 +1,13 @@
+{ 
+    "name" : "Spektor",
+    "color_scheme" : {  
+        "main1" : "#cccccc",
+        "main2" : "#e8e8e8",
+        "menu_bar" : "#00ad11",
+        "title_bar" : "#007a0c",
+        "progress_bar" : "#119900",
+        "highlight" : "#24b237",
+        "text" : "#000000"
+    },
+    "icon_set" : "std_black"
+}
