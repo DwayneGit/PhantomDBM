@@ -1,29 +1,78 @@
 import os
 
 class PhtmIcons():
-    def __init__(self, ui_icons):
-        self.ui_icons = ui_icons
-        self.get_icons()
-        self.get_window_icons()
+    def __init__(self, icon_set=None):
+        self.icon_set = icon_set
+        if self.icon_set:
+            self.set_icons()
 
-    def get_icons(self):
-        self.app_icon = ("icons/" + self.ui_icons + "/phantom.png")
-        self.play = ("icons/" + self.ui_icons +"/play.png")
-        self.pause = ("icons/" + self.ui_icons +"/pause.png")
-        self.save = ("icons/" + self.ui_icons +"/save.png")
-        self.stop = ("icons/" + self.ui_icons +"/stop.png")
-        self.edit = ("icons/" + self.ui_icons +"/edit.png")
-        self.sync = ("icons/" + self.ui_icons +"/sync.png")
-        self.info = ("icons/" + self.ui_icons +"/info.png")
-        self.close = ("icons/" + self.ui_icons +"/close.png")
-        self.add = ("icons/" + self.ui_icons +"/add.png")
-        self.settings = ("icons/" + self.ui_icons +"/settings.png")
-        self.load_file = ("icons/" + self.ui_icons +"/load-file.png")
-        self.import_file = ("icons/" + self.ui_icons +"/import_file.png")
-        self.export = ("icons/" + self.ui_icons +"/export.png")
+    def set_icons_set(self, icon_set):
+        self.icon_set = icon_set
+        self.set_icons()
 
-    def get_window_icons(self):
-        self.maximize = ("icons/window_icons/icons8-maximize-window-48.png")
-        self.minimze = ("icons/window_icons/icons8-minimize-window-48.png")
-        self.restore = ("icons/window_icons/icons8-restore-window-100.png")
-        self.close = ("icons/window_icons/icons8-close-window-96.png")
+    def set_icons(self):
+        self.app_icon = "icons/" + self.icon_set + "/phantom.png"
+        self.play = "icons/" + self.icon_set +"/play.png"
+        self.pause = "icons/" + self.icon_set +"/pause.png"
+        self.save = "icons/" + self.icon_set +"/save.png"
+        self.stop = "icons/" + self.icon_set +"/stop.png"
+        self.edit = "icons/" + self.icon_set +"/edit.png"
+        self.sync = "icons/" + self.icon_set +"/sync.png"
+        self.info = "icons/" + self.icon_set +"/info.png"
+        self.close = "icons/" + self.icon_set +"/close.png"
+        self.add = "icons/" + self.icon_set +"/add.png"
+        self.settings = "icons/" + self.icon_set +"/settings.png"
+        self.load_file = "icons/" + self.icon_set +"/load-file.png"
+        self.import_file = "icons/" + self.icon_set +"/import_file.png"
+        self.export = "icons/" + self.icon_set +"/export.png"
+        self.close_tab = "icons/" + self.icon_set + "/close.png"
+
+        self.maximize = "icons/window_icons/icons8-maximize-window-48.png"
+        self.minimze = "icons/window_icons/icons8-minimize-window-48.png"
+        self.restore = "icons/window_icons/icons8-restore-window-100.png"
+        self.close = "icons/window_icons/icons8-close-window-96.png"
+
+    def get_play(self):
+        return self.play
+
+    def get_pause(self):
+        return self.pause
+
+    def get_save(self):
+        return self.save
+
+    def get_app_icon(self):
+        return self.app_icon
+
+    def get_stop(self):
+        return self.stop
+
+    def get_edit(self):
+        return self.edit
+
+    def get_sync(self):
+        return self.sync
+
+    def get_info(self):
+        return self.info
+
+    def get_close(self):
+        return self.close
+
+    def get_close_tab(self):
+        return self.close_tab
+
+    def get_add(self):
+        return self.add
+
+    def get_settings(self):
+        return self.settings
+
+    def get_load_file(self):
+        return self.load_file
+
+    def get_import_file(self):
+        return self.import_file
+
+    def get_export(self):
+        return self.export

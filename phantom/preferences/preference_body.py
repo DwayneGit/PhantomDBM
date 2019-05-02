@@ -27,7 +27,7 @@ class preference_body(QDialog):
         self.schemaTab = schema_tab(self.parent.parent.get_editor_widget().get_cluster().get_phm_scripts()["__schema__"],
                                         self.parent.parent.get_editor_widget().get_cluster().get_phm_scripts()["__reference_schemas__"])
         self.databaseTab = database_tab(self.prefs, self.instancesPrefDict)
-        self.themeTab = theme_tab()
+        self.themeTab = theme_tab(self.parent.parent)
 
         self.initUI()
 
@@ -76,6 +76,13 @@ class preference_body(QDialog):
         if not self.schemaTab.save_schemas():
             return False
         self.svd = True
+
+        if self.themeTab.selected_theme and settings.__THEME__["file"] != self.themeTab.selected_theme:
+            settings.style_signal.style_change.emit(self.themeTab.selected_theme)
+            a_s = json.load(open(settings.__APPLICATION_SETTINGS__))
+            a_s["theme"] = self.themeTab.selected_theme
+            json.dump(a_s, open(settings.__APPLICATION_SETTINGS__, "w"))
+
         return True
 
     def submitPreferences(self):
