@@ -1,0 +1,22 @@
+{
+    "db": "mongodb",
+    "login": {
+        "password": "Admin",
+        "username": "Admin"
+    },
+    "mongodb": {
+        "collection": "test",
+        "dbname": "test",
+        "host": "localhost",
+        "port": 27017,
+        "tableSize": 100
+    },
+    "mysql": {
+        "host": "",
+        "password": "Admin",
+        "user": "Admin"
+    },
+    "searchTags": [],
+    "searchWebsites": [],
+    "style": {}
+}

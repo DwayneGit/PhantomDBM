@@ -8,8 +8,7 @@ tmp/
 *.log
 
 # ignore files used for testing new addtions
-# test.py
-file_test.py
+test.py
 instructions/test.xml
 breezess
 

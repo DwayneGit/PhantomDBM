@@ -1,7 +1,0 @@
-untangle
-regex
-PyQt5>=5.12
-pymongo>=3.7
-mongoengine
-PyYaml
-freeze

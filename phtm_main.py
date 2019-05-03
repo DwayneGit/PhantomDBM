@@ -1,18 +1,20 @@
-import sys
 import os
-import json
+import re
+import sys
 
 from PyQt5.QtWidgets import QApplication
 
-from phantom import PhtmMainWindow, settings
+from main_window import main_window
+from style.phtm_main_window import phtm_main_window
+
 
 if __name__ == '__main__':
+    
     APP = QApplication(sys.argv)
 
-    settings.init(APP, "phantom/application_settings/app_settings.json")
-    APP.setStyleSheet(settings.__STYLESHEET__)
-
-    MANAGER = PhtmMainWindow()
+    MANAGER = phtm_main_window()
+    MANAGER.setCentralWidget(main_window(MANAGER))
 
     MANAGER.show()
     sys.exit(APP.exec_())
+
