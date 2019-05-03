@@ -1,6 +1,6 @@
-from PyQt5.QtWidgets import QMessageBox, QDialog, QVBoxLayout, QTabWidget, QWidget, QHBoxLayout
-
 import json
+
+from PyQt5.QtWidgets import QMessageBox, QDialog, QVBoxLayout, QTabWidget, QWidget, QHBoxLayout
 
 from phantom.phtm_widgets import PhtmPushButton
 from phantom.phtm_widgets import PhtmTabWidget
@@ -27,7 +27,7 @@ class preference_body(QDialog):
         self.schemaTab = schema_tab(self.parent.parent.get_editor_widget().get_cluster().get_phm_scripts()["__schema__"],
                                         self.parent.parent.get_editor_widget().get_cluster().get_phm_scripts()["__reference_schemas__"])
         self.databaseTab = database_tab(self.prefs, self.instancesPrefDict)
-        self.themeTab = theme_tab(self.parent.parent)
+        self.themeTab = theme_tab()
 
         self.initUI()
 

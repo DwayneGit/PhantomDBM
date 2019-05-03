@@ -274,13 +274,12 @@ class PhtmEditorWidget(QWidget):
     def add_script_root(self, name="New Cluster"):
         tree_item = QTreeWidgetItem(self.__script_tree)
         tree_item.setText(0, name)
-        tree_item.setIcon(0, QIcon(settings.__ICONS__.app_icon))
+        tree_item.setIcon(0, QIcon(settings.__ICONS__.white_dot))
         return tree_item
 
     def add_script_child(self, root, name):
         tree_item = QTreeWidgetItem(root)
         tree_item.setText(0, name)
-        tree_item.setIcon(0, QIcon(settings.__ICONS__.app_icon))
         tree_item.setFlags(tree_item.flags() | Qt.ItemIsEditable)
         root.addChild(tree_item)
         return tree_item

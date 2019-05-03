@@ -27,6 +27,7 @@ class PhtmIcons():
         self.export = "icons/" + self.icon_set +"/export.png"
         self.close_tab = "icons/" + self.icon_set + "/close.png"
 
+        self.white_dot = "icons/white.png"
         self.maximize = "icons/window_icons/icons8-maximize-window-48.png"
         self.minimze = "icons/window_icons/icons8-minimize-window-48.png"
         self.restore = "icons/window_icons/icons8-restore-window-100.png"

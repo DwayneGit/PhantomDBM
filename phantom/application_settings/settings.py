@@ -48,7 +48,7 @@ def build_theme(fp):
                     style_sheet += line.replace(key, theme["color_scheme"][key[1:]])
             else:
                 style_sheet += line
-                
+
     return style_sheet, theme
 
 class _StyleChanged(QObject):
