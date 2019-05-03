@@ -1,3 +1,4 @@
+styleSheetTemplate = """
 QComboBox {
     background-color: @main2;
     color: @text;
@@ -279,4 +280,4 @@ QHeaderView::section {
     padding-left: 4px;
     border: none;
 }
-  
+"""

@@ -8,6 +8,7 @@ from PyQt5.QtWidgets import QApplication
 
 from phantom.logging_stuff import PhtmLogger
 from .phtm_icons import PhtmIcons
+from .themes.template import style_sheet_template as sst
 
 def init( app, stngs_file):
     stngs_json = json.load(open(stngs_file))
@@ -37,17 +38,17 @@ def build_theme(fp):
 
     __ICONS__.set_icons_set(theme["icon_set"])
 
-    with fileinput.input(files=("phantom/application_settings/themes/theme_template.qss")) as f:
-        p = re.compile('@\w+')
-        for line in f:
-            if p.search(line):
-                if p.search(line).group() == "@close_icon":
-                    style_sheet += line.replace("@close_icon", __ICONS__.get_close_tab())
-                else:
-                    key = p.search(line).group()
-                    style_sheet += line.replace(key, theme["color_scheme"][key[1:]])
+    p = re.compile('@\w+')
+
+    for line in sst.styleSheetTemplate.splitlines():
+        if p.search(line):
+            if p.search(line).group() == "@close_icon":
+                style_sheet += line.replace("@close_icon", __ICONS__.get_close_tab())
             else:
-                style_sheet += line
+                key = p.search(line).group()
+                style_sheet += line.replace(key, theme["color_scheme"][key[1:]])
+        else:
+            style_sheet += line
 
     return style_sheet, theme
 

@@ -6,6 +6,8 @@ from PyQt5.QtWidgets import QWidget, QTextEdit, QTabWidget, QMessageBox
 
 from phantom.phtm_widgets import PhtmPlainTextEdit
 
+from phantom.application_settings import settings
+
 class PhtmTabWidget(QTabWidget):
     clearTabsRequested = pyqtSignal(bool)
     def __init__(self, parent=None):
@@ -194,7 +196,7 @@ class _PhtmEditor(PhtmPlainTextEdit):
         if not self.isReadOnly():
             selection = QTextEdit.ExtraSelection()
 
-            lineColor = QColor(92, 0, 153).lighter(160)
+            lineColor = QColor(settings.__THEME__["color_scheme"]["highlight"])
 
             selection.format.setBackground(lineColor)
             selection.format.setProperty(QTextFormat.FullWidthSelection, True)
