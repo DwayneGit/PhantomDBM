@@ -1,11 +1,11 @@
-from PyQt5.QtWidgets import QMessageBox, QDialog, QVBoxLayout, QTabWidget, QWidget, QHBoxLayout
-
 import json
+
+from PyQt5.QtWidgets import QMessageBox, QDialog, QVBoxLayout, QTabWidget, QWidget, QHBoxLayout
 
 from phantom.phtm_widgets import PhtmPushButton
 from phantom.phtm_widgets import PhtmTabWidget
 
-import phantom.settings as settings
+from phantom.application_settings import settings
 
 from .tabs.database_tab import database_tab
 from .tabs.dmi_tab import dmi_tab
@@ -76,6 +76,13 @@ class preference_body(QDialog):
         if not self.schemaTab.save_schemas():
             return False
         self.svd = True
+
+        if self.themeTab.selected_theme and settings.__THEME__["file"] != self.themeTab.selected_theme:
+            settings.style_signal.style_change.emit(self.themeTab.selected_theme)
+            a_s = json.load(open(settings.__APPLICATION_SETTINGS__))
+            a_s["theme"] = self.themeTab.selected_theme
+            json.dump(a_s, open(settings.__APPLICATION_SETTINGS__, "w"))
+
         return True
 
     def submitPreferences(self):

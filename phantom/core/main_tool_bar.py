@@ -1,18 +1,16 @@
 """-*- coding: utf-8 -*- """
 
 from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtCore import Qt, QSize, pyqtSlot
 from PyQt5.QtWidgets import QAction, QWidget, QSizePolicy
 
 from phantom.database import database_handler
 
-from phantom.phtm_widgets import PhtmToolBar
-from phantom.phtm_widgets import PhtmComboBox
-from phantom.phtm_widgets import PhtmPlainTextEdit
+from phantom.phtm_widgets import PhtmToolBar, PhtmComboBox, PhtmPlainTextEdit, PhtmAction
 
 from phantom.file_stuff import file_ctrl as f_ctrl
 
-import phantom.settings as settings
+from phantom.application_settings import settings
 
 class main_tool_bar():
     """ application toolbars class """
@@ -28,57 +26,74 @@ class main_tool_bar():
     def setUpToolBar(self):
         #------------------ Top Toolbar ----------------------------
         topTBar = PhtmToolBar()
+        topTBar.setMovable(False)
 
-        tbfile = QAction(QIcon(settings.__ICONS__.import_file), "import", self.parent)
-        tbfile.triggered.connect(self.parent.get_editor_widget().load_script)
-        topTBar.addAction(tbfile)
+        tbadd = PhtmAction(settings.style_signal.icon_signal, settings.__ICONS__.get_add, "Add Script", self.parent)
+        tbadd.triggered.connect(self.parent.get_editor_widget().add_new_script)
+        topTBar.addAction(tbadd)
 
-        tbsave = QAction(QIcon(settings.__ICONS__.save), "save", self.parent)
+        tbsave = PhtmAction(settings.style_signal.icon_signal, settings.__ICONS__.get_save, "Save", self.parent)
         tbsave.triggered.connect(lambda: f_ctrl.save_script(self.parent.get_editor_widget().get_editor_tabs().currentWidget(), self.parent.get_editor_widget()))
         topTBar.addAction(tbsave)
 
-        tbfiles = QAction(QIcon(settings.__ICONS__.export_file), "export", self.parent)
+        tbphm = PhtmAction(settings.style_signal.icon_signal, settings.__ICONS__.get_import_file, "Open PHM", self.parent)
+        tbphm.triggered.connect(f_ctrl.load_phm)
+        topTBar.addAction(tbphm)
+
+        tbfiles = PhtmAction(settings.style_signal.icon_signal, settings.__ICONS__.get_export, "Export Script", self.parent)
         tbfiles.triggered.connect(lambda: f_ctrl.export_script(self.parent.get_editor_widget().get_editor_tabs().currentWidget().toPlainText()))
         topTBar.addAction(tbfiles)
 
-        self.tbrun = QAction()
-        self.setRunBtnAction(False)
-        topTBar.addAction(self.tbrun)
-
-        tbstop = QAction(QIcon(settings.__ICONS__.stop), "stop", self.parent)
-        tbstop.triggered.connect(lambda: self.setIsRunning(self.parent.r_ctrl.stopRun(self.isRunning)))
-        topTBar.addAction(tbstop)
+        tbsettings = PhtmAction(settings.style_signal.icon_signal, settings.__ICONS__.get_settings, "sSettings", self.parent)
+        tbsettings.triggered.connect(self.parent.showPref)
+        topTBar.addAction(tbsettings)
 
         spacer = QWidget()
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         topTBar.addWidget(spacer)
 
-        self.curr_dmi = PhtmPlainTextEdit(self.parent.get_editor_widget().get_cluster().get_phm_scripts()["__dmi_instr__"]["name"])
-        self.curr_dmi.setFixedSize(QSize(175, 31))
-        self.curr_dmi.setReadOnly(True)
-        self.curr_dmi.mouseDoubleClickEvent = self.__open_dmi_prefs
-        topTBar.addWidget(self.curr_dmi)
+        tbinfo = PhtmAction(settings.style_signal.icon_signal, settings.__ICONS__.get_info, "Info", self.parent)
+        tbinfo.triggered.connect(lambda: self.parent.showPref())
+        topTBar.addAction(tbinfo)
 
         # ----------------- Side Toolbar ---------------------------
         sideTBar = PhtmToolBar()
-        tbload = QAction(QIcon(settings.__ICONS__.load_file), "load", self.parent)
-        # tbload.triggered.connect()
-        sideTBar.addAction(tbload)
+        sideTBar.setMovable(False)
 
-        tbedit = QAction(QIcon(settings.__ICONS__.edit), "edit", self.parent)
-        # tbedit.triggered.connect()
-        sideTBar.addAction(tbedit)
+        blank = PhtmAction(settings.style_signal.icon_signal, settings.__ICONS__.get_app_icon, "", self.parent)
+        sideTBar.addAction(blank)
 
-        tbsettings = QAction(QIcon(settings.__ICONS__.settings), "settings", self.parent)
-        tbsettings.triggered.connect(self.parent.showPref)
-        sideTBar.addAction(tbsettings)
+        self.tbrun = QAction()
+        self.setRunBtnAction(False)
+        sideTBar.addAction(self.tbrun)
+
+        settings.style_signal.icon_signal.connect(lambda: self.setRunBtnAction(self.isRunning))
+
+        tbstop = PhtmAction(settings.style_signal.icon_signal, settings.__ICONS__.get_stop, "Stop Run", self.parent)
+        tbstop.triggered.connect(lambda: self.setIsRunning(self.parent.r_ctrl.stopRun(self.isRunning)))
+        sideTBar.addAction(tbstop)
+
+        self.curr_dmi = PhtmPlainTextEdit(self.parent.get_editor_widget().get_cluster().get_phm_scripts()["__dmi_instr__"]["name"])
+        self.curr_dmi.setObjectName("dmi_edit")
+        self.curr_dmi.setFixedSize(QSize(175, 31))
+        self.curr_dmi.setReadOnly(True)
+        self.curr_dmi.mouseDoubleClickEvent = self.__open_dmi_prefs
+        sideTBar.addWidget(self.curr_dmi)
+
+        # tbload = PhtmAction(settings.style_signal.icon_signal, settings.__ICONS__.get_load_file), "load", self.parent)
+        # # tbload.triggered.connect()
+        # sideTBar.addAction(tbload)
+
+        # tbedit = PhtmAction(settings.style_signal.icon_signal, settings.__ICONS__.get_edit), "edit", self.parent)
+        # # tbedit.triggered.connect()
+        # sideTBar.addAction(tbedit)
 
         spacer = QWidget()
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         # toolBar is a pointer to an existing toolbar
         sideTBar.addWidget(spacer)
 
-        tbreload = QAction(QIcon(settings.__ICONS__.reload), "reload", self.parent)
+        tbreload = PhtmAction(settings.style_signal.icon_signal, settings.__ICONS__.get_sync, "Sync To Client", self.parent)
         tbreload.triggered.connect(self.parent.reloadDbNames)
         sideTBar.addAction(tbreload)
 
@@ -106,9 +121,8 @@ class main_tool_bar():
         self.collnameMenu.currentTextChanged.connect(lambda: collectionNameChanged(self, self.parent))
         sideTBar.addWidget(self.collnameMenu)
 
-        self.parent.addToolBar(Qt.TopToolBarArea, topTBar)
-        self.parent.addToolBarBreak(Qt.TopToolBarArea)
         self.parent.addToolBar(Qt.TopToolBarArea, sideTBar)
+        self.parent.addToolBar(Qt.LeftToolBarArea, topTBar)
 
     def set_instructions(self):
         self.instr_filename, self.instr_filepath = f_ctrl.load_instructions()
@@ -131,16 +145,17 @@ class main_tool_bar():
     def setRunBtnIcon(self, icon):
         self.tbrun.setIcon(icon)
 
+    @pyqtSlot()
     def setRunBtnAction(self, state):
         if not state:
-            self.setRunBtnIcon(QIcon(settings.__ICONS__.play))
+            self.setRunBtnIcon(QIcon(settings.__ICONS__.get_play()))
             self.tbrun.setIconText("run")
             # if self.parent.runs > 0:
             #     self.tbrun.triggered.disconnect()
             self.tbrun.triggered.connect(self.__run)
 
         elif state:
-            self.setRunBtnIcon(QIcon(settings.__ICONS__.reload))
+            self.setRunBtnIcon(QIcon(settings.__ICONS__.get_pause()))
             self.tbrun.setIconText("pause")
             self.tbrun.triggered.disconnect()
     #         self.tbrun.triggered.connect(self.pauseRun)

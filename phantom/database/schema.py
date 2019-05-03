@@ -1,7 +1,7 @@
 import json
 
 import mongoengine as mEngine
-import phantom.settings as settings
+from phantom.application_settings import settings
 
 class schema():
     def __init__(self, db_name, coll_name, schema_json, ref_schemas):

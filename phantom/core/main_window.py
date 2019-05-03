@@ -1,11 +1,11 @@
 from PyQt5.QtCore import QRect, Qt, QCoreApplication, pyqtSlot
-from PyQt5.QtWidgets import QMainWindow, QSplitter, QProgressBar, QMessageBox
+from PyQt5.QtWidgets import QMainWindow, QSplitter, QProgressBar, QMessageBox, QWidget, QHBoxLayout
 
 from phantom.users import loginScreen
 from phantom.database import database_handler
 
 import phantom.preferences as prefs
-import phantom.settings as settings
+from phantom.application_settings import settings
 
 from phantom.phtm_widgets import PhtmDialog, PhtmPlainTextEdit
 
@@ -55,11 +55,19 @@ class main_window(QMainWindow):
 
         self.__splitter1 = QSplitter(Qt.Horizontal)
 
-
         # Add text field
-        self.brd = PhtmPlainTextEdit()
-        self.brd.setReadOnly(True)
-        self.brd.insertPlainText("Welcome to Phantom Database Manager (DBM).")
+        self.__brd_widget = QWidget()
+        self.__brd_widget_lay = QHBoxLayout()
+
+        self.__brd = PhtmPlainTextEdit()
+        self.__brd.setReadOnly(True)
+        self.__brd.insertPlainText("Welcome to Phantom Database Manager (DBM).")
+
+        self.__brd_widget_lay.addWidget(self.__brd)
+        self.__brd_widget_lay.setContentsMargins(0, 0, 0, 0)
+
+        self.__brd_widget.setLayout(self.__brd_widget_lay)
+        self.__brd.setObjectName("brd")
 
         self.fileLoaded = True
         self.filePath = None
@@ -70,8 +78,9 @@ class main_window(QMainWindow):
 
         self.changed = False
         # check if file is loaded and set flag to use to ask if save necessary before running or closing
-        self.__splitter1.addWidget(self.brd)
+        self.__splitter1.addWidget(self.__brd_widget)
         self.__splitter1.addWidget(self.__editor_widget)
+        self.__splitter1.setHandleWidth(1)
 
         self.setCentralWidget(self.__splitter1)
 
@@ -112,7 +121,7 @@ class main_window(QMainWindow):
     @pyqtSlot(str)
     def appendToBoard(self, message, msg_type = 0):
         # settings.__LOG__.logInfo(message)
-        self.brd.appendHtml(message)
+        self.__brd.appendHtml(message)
         QCoreApplication.processEvents()
 
     def closeEvent(self, event):

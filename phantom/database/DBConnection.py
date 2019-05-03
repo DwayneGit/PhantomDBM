@@ -5,7 +5,7 @@ import mongoengine as mEngine
 from pymongo import MongoClient
 from pymongo import errors as pyErrs
 
-import phantom.settings as settings
+from phantom.application_settings import settings
 
 from . import schema
 

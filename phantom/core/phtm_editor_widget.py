@@ -11,7 +11,7 @@ from phantom.phtm_widgets import PhtmTabWidget as tab_widget
 
 from phantom.file_stuff import load_script, PhmFileHandler
 
-import phantom.settings as settings
+from phantom.application_settings import settings
 
 class PhtmEditorWidget(QWidget):
     def __init__(self, parent=None):
@@ -75,6 +75,7 @@ class PhtmEditorWidget(QWidget):
         self.__script_tree.clear()
 
         self.__tree_root = self.add_script_root(filename)
+        self.__script_tree.expandItem(self.__tree_root)
         self.__script_tree.expandItem(self.__tree_root)
 
         self.__editor_tabs.hide()
@@ -144,9 +145,10 @@ class PhtmEditorWidget(QWidget):
         self.__script_tree_layout.setContentsMargins(0, 26, 0, 0)
 
         self.__script_tree.itemDoubleClicked.connect(self.__open_script)
-        self.__script_tree.itemClicked.connect(self.__show_details)
+        self.__script_tree.itemSelectionChanged.connect(self.__show_details)
 
         self.__tree_root = self.add_script_root()
+        self.__script_tree.setCurrentItem(self.__tree_root)
 
         self.__script_tree.setHeaderLabels(["Script Cluster"])
         self.__script_tree.expandItem(self.__tree_root)
@@ -180,7 +182,8 @@ class PhtmEditorWidget(QWidget):
         else:
             self.__tree_root.removeChild(item)
 
-    def __show_details(self, item):
+    def __show_details(self):
+        item = self.__script_tree.currentItem()
         if not item:
             return
 
@@ -271,13 +274,12 @@ class PhtmEditorWidget(QWidget):
     def add_script_root(self, name="New Cluster"):
         tree_item = QTreeWidgetItem(self.__script_tree)
         tree_item.setText(0, name)
-        tree_item.setIcon(0, QIcon(settings.__ICONS__.app_icon))
+        tree_item.setIcon(0, QIcon(settings.__ICONS__.white_dot))
         return tree_item
 
     def add_script_child(self, root, name):
         tree_item = QTreeWidgetItem(root)
         tree_item.setText(0, name)
-        tree_item.setIcon(0, QIcon(settings.__ICONS__.app_icon))
         tree_item.setFlags(tree_item.flags() | Qt.ItemIsEditable)
         root.addChild(tree_item)
         return tree_item

@@ -18,11 +18,14 @@ backlog:
             - add comboxbox  
             - add setting button  (or have as option in combobox)  
 
-next:  
-    - themes   
-in progress:  
-    - Error checking Reorganization and code clean up  
+next:   
+    - add simple load screen
+    - them name and radio button
+    - move on
+in progress:
+    - themes    
 testing:   
+    - Error checking Reorganization and code clean up  
     - automated instruction scripts  
        - scripts that will help with handling other operations when sending data  
           such as updateding other data entries if the one being inserted requires that  

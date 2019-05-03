@@ -4,18 +4,18 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import QSize, QPoint, Qt
 from PyQt5.QtWidgets import QToolBar, QToolButton, QWidget, QAction, QLabel, QSizePolicy
 
-import phantom.settings as settings
+from phantom.application_settings import settings
 
 class PhtmTitleBar(QToolBar):
-    def __init__(self, window, is_main_window=False, style="ghost"):
+    def __init__(self, window, is_main_window=False):
         super().__init__()
-        self.style = style
+        
         self.window = window
         self.window_title = ""
         self.is_max = False
         self.is_main_window = is_main_window
-        self.set_style()
         self.window_title = ""
+        self.setObjectName("title_bar")
 
         self.setContextMenuPolicy(Qt.PreventContextMenu)
 
@@ -29,10 +29,10 @@ class PhtmTitleBar(QToolBar):
         exit_bttn.setDefaultAction(QAction(QIcon(settings.__ICONS__.close), "", self))
 
         if self.is_main_window:
-            logo_bttn = QToolButton()
-            logo_bttn.setDefaultAction(QAction(QIcon(settings.__ICONS__.app_icon), "phantom", self))
-            logo_bttn.setObjectName("logo")
-            self.addWidget(logo_bttn)
+            # logo_bttn = QToolButton()
+            # logo_bttn.setDefaultAction(QAction(QIcon(settings.__ICONS__.app_icon), "phantom", self))
+            # logo_bttn.setObjectName("logo")
+            # self.addWidget(logo_bttn)
 
             self.window_title = QLabel()
             self.addWidget(self.window_title)
@@ -42,11 +42,13 @@ class PhtmTitleBar(QToolBar):
             self.addWidget(spacer)
 
             min_bttn = QToolButton()
+            min_bttn.setObjectName("title_button")
             min_bttn.setDefaultAction(QAction(QIcon(settings.__ICONS__.minimze), "", self))
             min_bttn.defaultAction().triggered.connect(self.window.showMinimized)
             self.addWidget(min_bttn)
 
             screen_bttn = QToolButton()
+            screen_bttn.setObjectName("title_button")
             screen_bttn.setDefaultAction(QAction(QIcon(settings.__ICONS__.maximize), "", self))
             screen_bttn.triggered.connect(lambda x: self.screen_toggle(screen_bttn))
             self.addWidget(screen_bttn)
@@ -89,35 +91,3 @@ class PhtmTitleBar(QToolBar):
 
     def set_window_title(self, title):
         self.window_title.setText(title)
-
-    def set_style(self):
-        if self.style == "ghost":
-            self.setStyleSheet("""
-                QToolBar {
-                    background-color: rgb(92, 0, 153);
-                    color: rgb(217, 217, 217);
-                    border-style: outset;
-                    border-radius: 0px;
-                    border: 0px;
-                }
-                QToolButton {
-                    background-color: rgb(92, 0, 153);
-                    border-width: 0px;
-                }
-                QToolButton:hover {
-                    background-color: rgb(81, 0, 135);
-                    border-width: 0px;
-                    border-style: outset;
-                    border-radius: 0px;
-                    border: 0px;
-                }
-                QToolButton#logo:hover  {
-                    background-color: rgb(92, 0, 153);
-                    border: 0px;
-                }
-                QToolButton#exit:hover  {
-                    background-color: red;
-                    border: 0px;
-                }
-            """)
-            

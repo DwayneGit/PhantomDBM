@@ -1,0 +1,12 @@
+{ 
+    "name" : "Spektor",
+    "color_scheme" : {  
+        "main1" : "rgb(51, 51, 51)",
+        "main2" : "rgb(40, 40, 40)",
+        "menu_bar" : "rgb(72, 0, 119)",
+        "title_bar" : "rgb(49, 0, 81)",
+        "progress_bar" : "rgb(92, 0, 153)",
+        "text" : "rgb(217, 217, 217)"
+    },
+    "icon_set" : "std_white"
+}

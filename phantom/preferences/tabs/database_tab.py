@@ -5,7 +5,7 @@ from phantom.phtm_widgets import PhtmPushButton
 
 from phantom.database import database_handler
 
-import phantom.settings as settings
+from phantom.application_settings import settings
 
 class database_tab(QWidget):
     def __init__(self, prefs, instancesPrefDict):
@@ -22,20 +22,20 @@ class database_tab(QWidget):
         self.__dbBtnGroup = QButtonGroup()
 
         mgButton = QRadioButton("MongoDB")
-        sqlButton = QRadioButton("SQL")
+        otherButton = QRadioButton("Other")
 
         if self.instancesPrefDict['db'] == 'mongodb':
             mgButton.setChecked(True)
 
-        elif self.instancesPrefDict['db'] == 'sql':
-            sqlButton.setChecked(True)
+        elif self.instancesPrefDict['db'] == 'other':
+            otherButton.setChecked(True)
 
         self.__dbBtnGroup.addButton(mgButton)
-        self.__dbBtnGroup.addButton(sqlButton)
+        self.__dbBtnGroup.addButton(otherButton)
         self.__dbBtnGroup.buttonReleased.connect(lambda x: self.__changeDb(self.__dbBtnGroup.checkedButton().text().lower()))
 
         dbHBox.addWidget(mgButton)
-        dbHBox.addWidget(sqlButton)
+        dbHBox.addWidget(otherButton)
 
         dbLabel = QLabel("Database: ")
         dbW.setLayout(dbHBox)
@@ -164,7 +164,7 @@ class database_tab(QWidget):
             prefs['mongodb']['port'] = int(self.__dbForm.itemAt(7).widget().text())
             prefs['mongodb']['tableSize'] = int(self.__dbForm.itemAt(9).widget().text())
 
-        elif prefs['db'] == "sql":
+        elif prefs['db'] == "other":
             pass
 
         return prefs
