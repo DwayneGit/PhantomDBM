@@ -2,7 +2,7 @@ import os
 import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from phantom.database import database_handler
+from phantom.database import DatabaseHandler
 
 pref_dict = {
     'db' : 'mongodb',
@@ -35,5 +35,5 @@ attrs = {
     }
 }
 
-test_val = database_handler(pref_dict)
+test_val = DatabaseHandler(pref_dict)
 # test_val.generate_schema("test",attrs)

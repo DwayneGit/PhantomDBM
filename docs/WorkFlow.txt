@@ -5,6 +5,7 @@
         https://stackoverflow.com/questions/46693355/pyqt5-typeerror-signal-has-0-arguments-but-1-provided 
 
 backlog:  
+    - create global instance of database handler in seperate thread
     - integrate mongodb authentication  
     - db authentication <- duplicate  
 

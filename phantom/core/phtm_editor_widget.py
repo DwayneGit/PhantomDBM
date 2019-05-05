@@ -5,10 +5,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QPlainTextEdit, QSplitter, QHBoxLayout, QWidget, QVBoxLayout, QAbstractItemView, QMenu, QAction, QTreeWidgetItem
 
 import phantom.utility.text_style as text_style
-from phantom.phtm_widgets import PhtmTreeWidget
-from phantom.phtm_widgets import PhtmPlainTextEdit
-from phantom.phtm_widgets import PhtmTabWidget as tab_widget
-
+from phantom.phtm_widgets import PhtmTreeWidget, PhtmPlainTextEdit, PhtmTabWidget
 from phantom.file_stuff import load_script, PhmFileHandler
 
 from phantom.application_settings import settings
@@ -37,13 +34,22 @@ class PhtmEditorWidget(QWidget):
         self.setLayout(self.__layout)
 
     def __init_editor(self):
-        self.__editor_tabs = tab_widget(self)
+        self.__editor_tabs = PhtmTabWidget(self)
 
         self.__editor_tabs.setMovable(True)
         self.__editor_tabs.setTabsClosable(True)
 
         self.__splitter.addWidget(self.__editor_tabs)
         self.__editor_tabs.hide()
+
+        self.__editor_tabs.currentChanged.connect(self.tab_changed)
+
+    def tab_changed(self, index):
+        scrpt = self.__editor_tabs.tabText(index)
+
+        for i in range(self.__tree_root.childCount()):
+            if self.__tree_root.child(i).text(0) == scrpt:
+                self.__script_tree.setCurrentItem(self.__tree_root.child(i))
 
     def clear_tabs(self):
         self.__editor_tabs.clear()
@@ -61,10 +67,22 @@ class PhtmEditorWidget(QWidget):
 
             self.__editor_tabs.setTabText(self.__editor_tabs.currentIndex(), item.text(0))
             self.__editor_tabs.currentWidget().is_changed = False
+
             self.__editor_tabs.currentWidget().textChanged.connect(lambda: self.__editor_tabs.isChanged(self.__editor_tabs.currentIndex()))
 
         elif self.__editor_tabs.currentWidget().is_changed:
             self.__open_script_in_tab(item)
+
+        else:
+            self.__editor_tabs.currentWidget().textChanged.disconnect()
+            
+            self.__editor_tabs.currentWidget().set_curr_script(self.__cluster.get_phm_scripts()[item.text(0)])
+            self.__editor_tabs.currentWidget().set_tree_item(item)
+
+            self.__editor_tabs.setTabText(self.__editor_tabs.currentIndex(), item.text(0))
+
+            self.__editor_tabs.currentWidget().textChanged.connect(lambda: self.__editor_tabs.isChanged(self.__editor_tabs.currentIndex()))
+
 
     def __open_script_in_tab(self, tree_item):
         index = self.__editor_tabs.add_editor(self.__cluster.get_phm_scripts()[tree_item.text(0)])
@@ -184,7 +202,7 @@ class PhtmEditorWidget(QWidget):
 
     def __show_details(self):
         item = self.__script_tree.currentItem()
-        if not item:
+        if not item or not item.text(0):
             return
 
         if item != self.__tree_root:

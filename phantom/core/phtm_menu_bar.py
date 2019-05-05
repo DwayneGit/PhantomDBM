@@ -1,8 +1,10 @@
 import sys
 
 from PyQt5.QtWidgets import QAction, QMenuBar
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QUrl
+from PyQt5.QtGui import QDesktopServices
 
+from phantom.utility import validate_json_script
 from phantom.file_stuff import file_ctrl as f_ctrl
 
 class phtm_menu_bar(QMenuBar):
@@ -64,13 +66,13 @@ class phtm_menu_bar(QMenuBar):
         # openRAction.triggered.connect(self.parent.getfile)
         fileMenu.addSeparator()
 
-        savePAction = QAction("Save Script", self.parent)
-        savePAction.setShortcut("Ctrl+S")
-        savePAction.setStatusTip('Save Script File')
-        savePAction.triggered.connect(lambda: f_ctrl.save_script(self.parent.get_editor_widget().get_editor_tabs().currentWidget(), self.parent.get_editor_widget()))
-        fileMenu.addAction(savePAction)
+        saveAction = QAction("Save Script", self.parent)
+        saveAction.setStatusTip('Save Script File')
+        saveAction.triggered.connect(lambda: f_ctrl.save_script(self.parent.get_editor_widget().get_editor_tabs().currentWidget(), self.parent.get_editor_widget()))
+        fileMenu.addAction(saveAction)
 
         savePAction = QAction("Save PHM", self.parent)
+        savePAction.setShortcut("Ctrl+S")
         savePAction.setStatusTip('Save Cluster File')
         savePAction.triggered.connect(lambda: f_ctrl.save_phm(self.parent.get_editor_widget()))
         fileMenu.addAction(savePAction)
@@ -88,7 +90,7 @@ class phtm_menu_bar(QMenuBar):
 
         exportAction = QAction("Export JSON File", self.parent)
         exportAction.setStatusTip('Save Script File')
-        exportAction.triggered.connect(lambda: f_ctrl.export_script(self.parent.get_editor_widget().get_editor_tabs().currentWidget().toPlainText()))
+        exportAction.triggered.connect(lambda: f_ctrl.export_script(self.parent.get_editor_widget().get_editor_tabs().currentWidget()))
         fileMenu.addAction(exportAction)
 
         exittAction = QAction("Exit", self.parent)
@@ -161,6 +163,7 @@ class phtm_menu_bar(QMenuBar):
         runMenu = self.main_menu.addMenu("Run")
 
         runAction = QAction("Run", self.parent)
+        runAction.setShortcut("Ctrl+R")
         runAction.triggered.connect(lambda: self.parent.r_ctrl.run(0)) 
 
         runAllAction = QAction("Run All", self.parent)
@@ -177,29 +180,38 @@ class phtm_menu_bar(QMenuBar):
         runMenu.addSeparator()
 
         validateAction = QAction("Validate", self.parent)
+        validateAction.setShortcut("Ctrl+D")
+        validateAction.triggered.connect(self.validate_script)
         runMenu.addAction(validateAction)
 
-
+    def validate_script(self):
+        try:
+            validate_json_script(self, self.parent.get_editor_widget().get_editor_tabs().currentWidget().toPlainText())
+        except Exception as err:
+            print(str(err))
+    
     def helpMenu(self):
+        helpMenu = self.main_menu.addMenu('Help')
 
         docAction = QAction("Documentation", self.parent)
-        # docAction.triggered.connect(self.parent.fileContents.paste)
+        docAction.triggered.connect(lambda: QDesktopServices.openUrl(QUrl("https://github.com/DwayneGit/PhantomDBM")))
 
         notesAction = QAction("Release Notes", self.parent)
-        # notesAction.triggered.connect(self.parent.fileContents.paste)
+        notesAction.triggered.connect(lambda: QDesktopServices.openUrl(QUrl("https://github.com/DwayneGit/PhantomDBM")))
 
         updateAction = QAction("Check For Updates...", self.parent)
-        # pasteAction.triggered.connect(self.parent.fileContents.paste)
+        updateAction.triggered.connect(lambda: QDesktopServices.openUrl(QUrl("https://github.com/DwayneGit/PhantomDBM")))
 
         aboutAction = QAction("About", self.parent)
-        # aboutAction.triggered.connect(self.parent.fileContents.paste)
+        aboutAction.triggered.connect(lambda: QDesktopServices.openUrl(QUrl("https://github.com/DwayneGit/PhantomDBM")))
 
-        helpMenu = self.main_menu.addMenu('Help')
         helpMenu.addAction(docAction)
         helpMenu.addAction(notesAction)
         helpMenu.addSeparator()
+
         helpMenu.addAction(updateAction)
         helpMenu.addSeparator()
+
         helpMenu.addAction(aboutAction)
 
     def loadRecentFiles(self):

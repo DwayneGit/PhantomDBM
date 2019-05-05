@@ -140,7 +140,7 @@ class loginScreen(QDialog):
         passwordLabel = QLabel("Password")
 
         self.dbDropdown = QComboBox()
-        # self.dbDropdown.addItems(database_handler.getDatabaseList('localhost',27017))
+        # self.dbDropdown.addItems(DatabaseHandler.getDatabaseList('localhost',27017))
 
         submitBtn = PhtmPushButton("Submit")
         submitBtn.clicked.connect(self.login)

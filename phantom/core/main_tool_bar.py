@@ -1,10 +1,10 @@
 """-*- coding: utf-8 -*- """
 
-from PyQt5.QtGui import QIcon
-from PyQt5.QtCore import Qt, QSize, pyqtSlot
+from PyQt5.QtGui import QIcon, QDesktopServices
+from PyQt5.QtCore import Qt, QSize, pyqtSlot, QUrl
 from PyQt5.QtWidgets import QAction, QWidget, QSizePolicy
 
-from phantom.database import database_handler
+from phantom.database import DatabaseHandler
 
 from phantom.phtm_widgets import PhtmToolBar, PhtmComboBox, PhtmPlainTextEdit, PhtmAction
 
@@ -37,11 +37,11 @@ class main_tool_bar():
         topTBar.addAction(tbsave)
 
         tbphm = PhtmAction(settings.style_signal.icon_signal, settings.__ICONS__.get_import_file, "Open PHM", self.parent)
-        tbphm.triggered.connect(f_ctrl.load_phm)
+        tbphm.triggered.connect(lambda:f_ctrl.load_phm(self.parent))
         topTBar.addAction(tbphm)
 
         tbfiles = PhtmAction(settings.style_signal.icon_signal, settings.__ICONS__.get_export, "Export Script", self.parent)
-        tbfiles.triggered.connect(lambda: f_ctrl.export_script(self.parent.get_editor_widget().get_editor_tabs().currentWidget().toPlainText()))
+        tbfiles.triggered.connect(lambda: f_ctrl.export_script(self.parent.get_editor_widget().get_editor_tabs().currentWidget()))
         topTBar.addAction(tbfiles)
 
         tbsettings = PhtmAction(settings.style_signal.icon_signal, settings.__ICONS__.get_settings, "sSettings", self.parent)
@@ -53,7 +53,7 @@ class main_tool_bar():
         topTBar.addWidget(spacer)
 
         tbinfo = PhtmAction(settings.style_signal.icon_signal, settings.__ICONS__.get_info, "Info", self.parent)
-        tbinfo.triggered.connect(lambda: self.parent.showPref())
+        tbinfo.triggered.connect(lambda: QDesktopServices.openUrl(QUrl("https://github.com/DwayneGit/PhantomDBM")))
         topTBar.addAction(tbinfo)
 
         # ----------------- Side Toolbar ---------------------------
@@ -101,7 +101,7 @@ class main_tool_bar():
 
         self.dbnameMenu = PhtmComboBox()
         self.dbnameMenu.setFixedSize(dropdownSize)
-        self.dbnameMenu.addItems(database_handler.getDatabaseList(self.parent.dbData['host'], self.parent.dbData['port']))
+        self.dbnameMenu.addItems(DatabaseHandler.getDatabaseList(self.parent.dbData['host'], self.parent.dbData['port']))
 
         index = self.dbnameMenu.findText(self.parent.prefs['mongodb']['dbname'])
         self.dbnameMenu.setCurrentIndex(index)
@@ -112,7 +112,7 @@ class main_tool_bar():
         self.collnameMenu = PhtmComboBox()
         self.collnameMenu.setFixedSize(dropdownSize)
         try:
-            self.collnameMenu.addItems(database_handler.getCollectionList(self.parent.dbData['host'], self.parent.dbData['port'], self.parent.dbData['dbname']))
+            self.collnameMenu.addItems(DatabaseHandler.getCollectionList(self.parent.dbData['host'], self.parent.dbData['port'], self.parent.dbData['dbname']))
         except:
             settings.__LOG__.logError("No collections found in database")
 
@@ -177,7 +177,7 @@ def reloadCollectionNames(ptoolbar, main_window, edit_widget=0, db_data=0):
     ptoolbar.collnameMenu.currentTextChanged.disconnect()
     ptoolbar.collnameMenu.clear()
 
-    ptoolbar.collnameMenu.addItems(database_handler.getCollectionList(main_window.dbData['host'], main_window.dbData['port'], ptoolbar.dbnameMenu.currentText()))
+    ptoolbar.collnameMenu.addItems(DatabaseHandler.getCollectionList(main_window.dbData['host'], main_window.dbData['port'], ptoolbar.dbnameMenu.currentText()))
     ptoolbar.collnameMenu.currentTextChanged.connect(lambda: collectionNameChanged(ptoolbar, main_window))
 
     index = ptoolbar.collnameMenu.findText(main_window.prefs['mongodb']['collection'])

@@ -1,5 +1,6 @@
 #add option for direct db connection or api connection
 from collections import OrderedDict
+from PyQt5.QtCore import QThread
 
 import mongoengine as mEngine
 from pymongo import MongoClient
@@ -9,7 +10,7 @@ from phantom.application_settings import settings
 
 from . import schema
 
-class database_handler():
+class DatabaseHandler(QThread):
 
     @staticmethod
     def getDatabaseList(host, port):
@@ -31,7 +32,8 @@ class database_handler():
             coln = [""] + db_client.list_collection_names()
         except pyErrs.ServerSelectionTimeoutError as err:
             settings.__LOG__.logError("DB_ERR: Connection refused @ " + host + ":" + str(port) + " Database: " + dbname + ".\n" + str(err))
-
+        except pyErrs.InvalidName as err:
+            settings.__LOG__.logError("DB_ERR: Invalid database " + dbname +".\n" + str(err))
         return coln
 
     def __init__(self, db_data, authentication=None):
