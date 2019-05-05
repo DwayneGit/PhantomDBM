@@ -7,18 +7,23 @@ from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot
 from PyQt5.QtWidgets import QApplication
 
 from phantom.logging_stuff import PhtmLogger
+from phantom.database import DatabaseHandler
+
 from .phtm_icons import PhtmIcons
 from .themes.template import style_sheet_template as sst
 
 def init( app, stngs_file):
     stngs_json = json.load(open(stngs_file))
 
-    global __LOG__, __ICONS__, __THEME__, __STYLESHEET__, __APPLICATION_SETTINGS__, style_signal
+    global __LOG__, __ICONS__, __THEME__
+    global __STYLESHEET__, __APPLICATION_SETTINGS__, style_signal
+    global __DATABASE__
 
     __LOG__ = PhtmLogger()
     __ICONS__ = PhtmIcons()
     __APPLICATION_SETTINGS__ = stngs_file
     __STYLESHEET__, __THEME__ = build_theme(stngs_json["theme"])
+    __DATABASE__ = None
 
     style_signal = _StyleChanged(app)
 
@@ -33,7 +38,13 @@ def init( app, stngs_file):
 def build_theme(fp):
     style_sheet = ""
 
-    theme = json.load(open(fp))
+    try:
+        theme = json.load(open(fp))
+    except FileNotFoundError as err:
+        __LOG__.logError(str(err))
+        __ICONS__.set_icons_set("std_black")
+        return "", {"file":"", "color_scheme": ""}
+
     theme["file"] = fp
 
     __ICONS__.set_icons_set(theme["icon_set"])

@@ -1,0 +1,13 @@
+{ 
+    "name" : "Rave",
+    "color_scheme" : {  
+        "main1" : "#414236",
+        "main2" : "#335356",
+        "menu_bar" : "#37ff28",
+        "title_bar" : "#d1c727",
+        "progress_bar" : "#c466ff",
+        "highlight" : "#478dff",
+        "text" : "#ff3de1"
+    },
+    "icon_set" : "std_white"
+}

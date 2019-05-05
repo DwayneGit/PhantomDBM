@@ -100,7 +100,7 @@ def export_script(curr_script):
     fileName, _ = QFileDialog.getSaveFileName(None, "Save File", "", "JSON files (*.json)")
     if fileName:
         with open(fileName, "w") as write_file:
-            write_file.write(eval(json.dumps(curr_script, indent=4)))
+            write_file.write(eval(json.dumps(curr_script.toPlainText(), indent=4)))
 
 def export_phm(editor_widget):
     options = QFileDialog.Options()
@@ -120,10 +120,16 @@ def save_phm(editor_widget, file_path=None):
             if reply == QMessageBox.Yes: 
                 file_path = export_phm(editor_widget)
                 if not file_path:
-                    return
-            else: return 
+                    return False
+            else: return False
+
+    if editor_widget.get_editor_tabs().currentWidget():
+        for i in range(editor_widget.get_editor_tabs().count()):
+            if editor_widget.get_editor_tabs().widget(i).is_changed:
+                editor_widget.get_editor_tabs().save_editor(i)
 
     editor_widget.save_phm(file_path)
+    return True
 
 def tmpScript(main_window, curr_tab, temp = None):
     fileName = "tmp/script_"+ strftime("%w%d%m%y_%H%M%S", gmtime()) +".json"

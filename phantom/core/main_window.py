@@ -2,7 +2,7 @@ from PyQt5.QtCore import QRect, Qt, QCoreApplication, pyqtSlot
 from PyQt5.QtWidgets import QMainWindow, QSplitter, QProgressBar, QMessageBox, QWidget, QHBoxLayout
 
 from phantom.users import loginScreen
-from phantom.database import database_handler
+from phantom.database import DatabaseHandler
 
 import phantom.preferences as prefs
 from phantom.application_settings import settings
@@ -37,7 +37,7 @@ class main_window(QMainWindow):
         login = PhtmDialog("Login", QRect(10, 10, 260, 160), self)
         login.set_central_dialog(loginScreen(login))
         self.__editor_widget = None
-        self.initUI()
+        self.__initUI()
 
         # if login.exec_():
         #     settings.__LOG__.logInfo("Successfully Logged In.")
@@ -47,7 +47,7 @@ class main_window(QMainWindow):
         #     settings.__LOG__.logInfo("No login program exited.")
         #     sys.exit()
 
-    def initUI(self):
+    def __initUI(self):
         '''
         initiates application UI
 		'''
@@ -75,6 +75,8 @@ class main_window(QMainWindow):
         self.__editor_widget = PhtmEditorWidget(self)
 
         self.load_settings()
+
+        # settings.__DATABASE__ = DatabaseHandler(self.dbData)
 
         self.changed = False
         # check if file is loaded and set flag to use to ask if save necessary before running or closing
@@ -155,7 +157,7 @@ class main_window(QMainWindow):
         self.main_tool_bar.dbnameMenu.currentTextChanged.disconnect()
         self.main_tool_bar.dbnameMenu.clear()
         
-        self.main_tool_bar.dbnameMenu.addItems(database_handler.getDatabaseList(self.dbData['host'], self.dbData['port']))
+        self.main_tool_bar.dbnameMenu.addItems(DatabaseHandler.getDatabaseList(self.dbData['host'], self.dbData['port']))
         self.main_tool_bar.dbnameMenu.currentTextChanged.connect(lambda: databaseNameChanged(self.main_tool_bar, self))
 
         index = self.main_tool_bar.dbnameMenu.findText(self.prefs['mongodb']['dbname'])
@@ -172,7 +174,8 @@ class main_window(QMainWindow):
         return self.__editor_widget
 
     def new_editor_widget(self):
-        new_ew = PhtmEditorWidget(self)
-        self.__splitter1.replaceWidget(self.__splitter1.indexOf(self.__editor_widget), new_ew)
-        self.__editor_widget = new_ew
-        self.main_tool_bar.dbnameMenu.setCurrentIndex(0)
+        if f_ctrl.save_phm(self.__editor_widget):
+            new_ew = PhtmEditorWidget(self)
+            self.__splitter1.replaceWidget(self.__splitter1.indexOf(self.__editor_widget), new_ew)
+            self.__editor_widget = new_ew
+            self.main_tool_bar.dbnameMenu.setCurrentIndex(0)

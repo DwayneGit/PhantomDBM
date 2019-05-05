@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QWidget, QFormLayout, QHBoxLayout, QRadioButton, QLa
 from phantom.phtm_widgets import PhtmComboBox
 from phantom.phtm_widgets import PhtmPushButton
 
-from phantom.database import database_handler
+from phantom.database import DatabaseHandler
 
 from phantom.application_settings import settings
 
@@ -55,7 +55,7 @@ class database_tab(QWidget):
 
         dbNameLabel = QLabel("Database Name: ")
         dbNameBox = PhtmComboBox()
-        dbNameBox.addItems(database_handler.getDatabaseList(self.prefs['mongodb']['host'],self.prefs['mongodb']['port']))
+        dbNameBox.addItems(DatabaseHandler.getDatabaseList(self.prefs['mongodb']['host'],self.prefs['mongodb']['port']))
 
         index = dbNameBox.findText(self.prefs['mongodb']['dbname'])
         dbNameBox.setCurrentIndex(index)
@@ -135,7 +135,7 @@ class database_tab(QWidget):
         if not self.prefs['mongodb']['dbname'] or self.prefs['mongodb']['dbname']=="":
             return []
 
-        return database_handler.getCollectionList(self.prefs['mongodb']['host'], self.prefs['mongodb']['port'], self.prefs['mongodb']['dbname'])
+        return DatabaseHandler.getCollectionList(self.prefs['mongodb']['host'], self.prefs['mongodb']['port'], self.prefs['mongodb']['dbname'])
 
     def __reloadSettings(self):
         print(self.instancesPrefDict)

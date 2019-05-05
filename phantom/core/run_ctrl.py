@@ -7,7 +7,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import QThread
 
 from phantom.threads import upload_thread
-from phantom.database import database_handler
+from phantom.database import DatabaseHandler
 
 from phantom.file_stuff import file_ctrl as f_ctrl
 
@@ -28,7 +28,7 @@ class run_ctrl():
         settings.__LOG__.logInfo("Checking Database Connection...")
 
         try:
-            db_handler = database_handler(self.parent.dbData)
+            db_handler = DatabaseHandler(self.parent.dbData)
             # json.loads(self.parent.get_editor_widget().get_cluster().get_phm_scripts()["__schema__"].get_script())
             db_handler.set_schema(self.parent.get_editor_widget().get_cluster().get_phm_scripts()["__schema__"].get_script(), self.parent.get_editor_widget().get_cluster().get_phm_scripts()["__reference_schemas__"])
 

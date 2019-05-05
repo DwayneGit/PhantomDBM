@@ -1,0 +1,13 @@
+{ 
+    "name" : "Heaven",
+    "color_scheme" : {  
+        "main1" : "#eaebed",
+        "main2" : "#e0dfce",
+        "menu_bar" : "#a09a31",
+        "title_bar" : "#d1c727",
+        "progress_bar" : "#6ba3ff",
+        "highlight" : "#478dff",
+        "text" : "#000000"
+    },
+    "icon_set" : "std_black"
+}
