@@ -11,7 +11,8 @@ from phantom.utility import validate_json_script
 from phantom.application_settings import settings
 
 class upload_thread(QObject):
-    update = pyqtSignal(str) # signal data ready to be appended to th board
+    update_s = pyqtSignal(str) # signal data ready to be appended to th board
+    update_b = pyqtSignal(str) # signal data ready to be appended to th board
     start = pyqtSignal(int) # signal data ready to be appended to th board
     done = pyqtSignal(str)
 
@@ -48,10 +49,11 @@ class upload_thread(QObject):
 
         except json.decoder.JSONDecodeError as err:
             err_msg = "UPLD_ERR: Failed Sending Document(s) To Database.\nBuild Interrupted With Error:\n" + str(err)
-            self.update.emit(err_msg)
+            self.update_b.emit(str(self.thread_id) + "UPLD_ERR: Failed Sending Document To Database.\nBuild Interrupted With Error:\n" + str(err))
             settings.__LOG__.logError("RUN_ERR:" + str(err_msg))
             self.thrd_done.emit(str(self.thread_id) + ": Run failed. See log for details.")
             return False
+
         self.thrd_done.emit(str(self.thread_id) + ": Run Complete.")
         time.sleep(1)
 
@@ -68,7 +70,7 @@ class upload_thread(QObject):
                 if self.dmi:
                     send_data = self.dmi.manipulate(data[i])
                 self.dbHandler.insertDoc(send_data)
-                self.update.emit("Sending Objects to Database... %d/%d" %(i+1, len(data)))
+                self.update_s.emit("Sending Objects to Database... %d/%d" %(i+1, len(data)))
                 time.sleep(1)
                 i += 1
             else:

@@ -38,6 +38,7 @@ class run_ctrl():
             return False
 
         settings.__LOG__.logInfo("Connected to Database. " + self.parent.dbData['dbname'] + " collection " + self.parent.dbData['collection'])
+        self.parent.appendToBoard("Connected to Database. " + self.parent.dbData['dbname'] + " collection " + self.parent.dbData['collection'])
         
         self.__upld_thrd = upload_thread(script_s, db_handler, self.parent.get_editor_widget().get_cluster().get_phm_scripts()["__dmi_instr__"]["instr"]) # instanciate the Q object
 
@@ -51,7 +52,8 @@ class run_ctrl():
             return False
 
         self.__upld_thrd.start.connect(self.set_progress_max)
-        self.__upld_thrd.update.connect(self.update_progress) # link signals to functions
+        self.__upld_thrd.update_s.connect(self.update_status) # link signals to functions
+        self.__upld_thrd.update_b.connect(self.update_board) # link signals to functions
         self.__upld_thrd.done.connect(self.script_done)
         self.__upld_thrd.thrd_done.connect(lambda msg:self.thread_done(thread, msg))
 
@@ -99,6 +101,9 @@ class run_ctrl():
     def set_progress_max(self, mx):
         self.parent.progressBar.setMaximum(mx)
 
-    def update_progress(self, status):
+    def update_status(self, status):
         self.parent.progressBar.setValue(self.parent.progressBar.value()+1)
         self.parent.statusBar().showMessage(status)
+
+    def update_board(self, status):
+        self.parent.appendToBoard(status)

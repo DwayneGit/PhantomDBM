@@ -30,7 +30,7 @@ class phtm_menu_bar(QMenuBar):
     def fileMenu(self):
         fileMenu = self.main_menu.addMenu('File')
 
-        newJsonAction = QAction("New JSON", self.parent)
+        newJsonAction = QAction("New Script", self.parent)
         newJsonAction.setShortcut("Ctrl+N")
         newJsonAction.triggered.connect(self.parent.get_editor_widget().add_new_script)
         fileMenu.addAction(newJsonAction)
@@ -42,7 +42,7 @@ class phtm_menu_bar(QMenuBar):
         
         fileMenu.addSeparator()
 
-        openJsonAction = QAction("Open JSON", self.parent)
+        openJsonAction = QAction("Open Script", self.parent)
         openJsonAction.setShortcut("Ctrl+O")
         openJsonAction.setStatusTip('Open a Script File')
         openJsonAction.triggered.connect(self.parent.get_editor_widget().load_script)
@@ -83,12 +83,12 @@ class phtm_menu_bar(QMenuBar):
         fileMenu.addAction(savePAsAction)
         fileMenu.addSeparator()
 
-        importAction = QAction("Import JSON File", self.parent)
+        importAction = QAction("Import Script", self.parent)
         importAction.setStatusTip('Save Script File')
         importAction.triggered.connect(self.parent.get_editor_widget().load_script)
         fileMenu.addAction(importAction)
 
-        exportAction = QAction("Export JSON File", self.parent)
+        exportAction = QAction("Export Script", self.parent)
         exportAction.setStatusTip('Save Script File')
         exportAction.triggered.connect(lambda: f_ctrl.export_script(self.parent.get_editor_widget().get_editor_tabs().currentWidget()))
         fileMenu.addAction(exportAction)
