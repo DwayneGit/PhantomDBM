@@ -78,7 +78,7 @@ class schema():
             elif attr_set[key]["type"] == "Dict":
                 attribute_dict[key] = self.dict_field(attr_set[key])
             elif attr_set[key]["type"] == "EmbeddedDocument":
-                attribute_dict[key] = self.embedded_document_field(attr_set[key])
+                attribute_dict[key] = self.embedded_document_field(attr_set[key], key)
             elif attr_set[key]["type"] == "Reference":
                 attribute_dict[key] = self.reference_field(attr_set[key])
 
@@ -114,20 +114,21 @@ class schema():
                             validation=attrs_dict.get("validation"), choices=attrs_dict.get("choices"), null=attrs_dict.get("null"),
                             sparse=attrs_dict.get("sparse"))
 
-    def embedded_document_field(self, attrs_dict):
-        if not self.__ref_schemas.get(attrs_dict["document_type"]):
-            return "no schema for given document type"
-        if not self.__ref_schema_cls_dict.get(attrs_dict["document_type"]):
-            self.__ref_schema_cls_dict[attrs_dict["document_type"]] = self.__mk_schema_cls(attrs_dict["document_type"], mEngine.EmbeddedDocument, self.__ref_schemas.get(attrs_dict["document_type"]))
+    def embedded_document_field(self, attrs_dict, key):
+        if not self.__ref_schemas.get(attrs_dict.get("document_type")):
+            setattr(attrs_dict, "document_type", key)
+            # raise Exception("no schema for given document type " + str(attrs_dict.get("document_type")))
+        if not self.__ref_schema_cls_dict.get(attrs_dict.get("document_type")):
+            self.__ref_schema_cls_dict[attrs_dict.get("document_type")] = self.__mk_schema_cls(attrs_dict.get("document_type"), mEngine.EmbeddedDocument, self.__ref_schemas.get(attrs_dict.get("document_type")))
         
-        return mEngine.EmbeddedDocumentField(document_type=self.__ref_schema_cls_dict[attrs_dict["document_type"]], db_field=attrs_dict.get("db_field"), required=attrs_dict.get("required"),
+        return mEngine.EmbeddedDocumentField(document_type=self.__ref_schema_cls_dict[attrs_dict.get("document_type")], db_field=attrs_dict.get("db_field"), required=attrs_dict.get("required"),
                                     default=attrs_dict.get("default"), unique=attrs_dict.get("unique"), unique_with=attrs_dict.get("unique_with"),
                                     primary_key=string_to_bool(attrs_dict.get("primary_key")), validation=attrs_dict.get("validation"), choices=attrs_dict.get("choices"),
                                     null=attrs_dict.get("null"))
 
     def reference_field(self, attrs_dict):
-        if not self.__ref_schemas.get(attrs_dict["document_type"]):
-            return "no schema for given document type"
+        if not self.__ref_schemas.get(attrs_dict.get("document_type")):
+            raise Exception("no schema for given document type")
 
         db_ref = False
         rd_rule = 0
@@ -137,10 +138,10 @@ class schema():
         if attrs_dict.get("reverse_delete_rule"):
             rd_rule = attrs_dict["reverse_delete_rule"]
 
-        if not self.__ref_schema_cls_dict.get(attrs_dict["document_type"]):
-            self.__ref_schema_cls_dict[attrs_dict["document_type"]] = self.__mk_schema_cls(attrs_dict["document_type"], mEngine.Document, self.__ref_schemas.get(attrs_dict["document_type"]))
+        if not self.__ref_schema_cls_dict.get(attrs_dict.get("document_type")):
+            self.__ref_schema_cls_dict[attrs_dict.get("document_type")] = self.__mk_schema_cls(attrs_dict.get("document_type"), mEngine.Document, self.__ref_schemas.get(attrs_dict.get("document_type")))
 
-        return mEngine.ReferenceField(document_type=self.__ref_schema_cls_dict[attrs_dict["document_type"]], dbref=db_ref, reverse_delete_rule=rd_rule,
+        return mEngine.ReferenceField(document_type=self.__ref_schema_cls_dict[attrs_dict.get("document_type")], dbref=db_ref, reverse_delete_rule=rd_rule,
                             db_field=attrs_dict.get("db_field"), required=attrs_dict.get("required"), default=attrs_dict.get("default"),
                             unique=attrs_dict.get("unique"), unique_with=attrs_dict.get("unique_with"), primary_key=string_to_bool(attrs_dict.get("primary_key")),
                             validation=attrs_dict.get("validation"), choices=attrs_dict.get("choices"), null=attrs_dict.get("null"))

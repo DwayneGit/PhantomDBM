@@ -141,7 +141,11 @@ class DatabaseHandler(QThread):
     returns -1 if ther is an error or 0 if it does not follow the model
     '''
     def insertDoc(self, document):
-        new_doc = self.__schema.build_document(document)
+        try:
+            new_doc = self.__schema.build_document(document)
+        except Exception as err:
+            settings.__LOG__.logError("VLD_ERR: " + str(err))
+            raise
 
         if new_doc:
             try:
@@ -151,6 +155,12 @@ class DatabaseHandler(QThread):
                 settings.__LOG__.logError("DB_ERR: " + str(err))
                 raise
             except mEngine.connection.MongoEngineConnectionError as err:
+                settings.__LOG__.logError("DB_ERR: " + str(err))
+                raise
+            except pyErrs.DuplicateKeyError as err:
+                settings.__LOG__.logError("DB_ERR: " + str(err))
+                raise
+            except mEngine.errors.NotUniqueError as err:
                 settings.__LOG__.logError("DB_ERR: " + str(err))
                 raise
 

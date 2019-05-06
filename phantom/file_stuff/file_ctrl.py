@@ -70,7 +70,7 @@ def load_phm(main_window):
         main_window.reloadDbNames()
 
         return True
-    raise Exception("Error loading cluster file")
+    return False
 
 def save_script(editor, editor_widget):
     fp = editor_widget.get_cluster().get_file_path()

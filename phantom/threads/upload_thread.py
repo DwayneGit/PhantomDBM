@@ -54,14 +54,14 @@ class upload_thread(QObject):
             self.thrd_done.emit(str(self.thread_id) + ": Run failed. See log for details.")
             return False
 
-        self.thrd_done.emit(str(self.thread_id) + ": Run Complete.")
+        if not self.stopFlag:
+            self.thrd_done.emit(str(self.thread_id) + ": Run Complete.")
         time.sleep(1)
 
     def __run_script(self, script):
         data = script
 
-        i = 0
-        while i < len(data):
+        for i in range(0, len(data)):
             self.start.emit(len(data))
             if self.stopFlag:
                 return
@@ -69,10 +69,14 @@ class upload_thread(QObject):
                 send_data = data[i]
                 if self.dmi:
                     send_data = self.dmi.manipulate(data[i])
-                self.dbHandler.insertDoc(send_data)
-                self.update_s.emit("Sending Objects to Database... %d/%d" %(i+1, len(data)))
-                time.sleep(1)
-                i += 1
+                try:
+                    self.dbHandler.insertDoc(send_data)
+                except Exception as err:
+                    self.update_b.emit("Failed to upload document %d/%d" %(i+1, len(data)) + "\n" + str(err))
+                    continue
+                finally:
+                    self.update_s.emit("Sending Objects to Database... %d/%d" %(i+1, len(data)))
+                    time.sleep(1)
             else:
                 continue
         return True
