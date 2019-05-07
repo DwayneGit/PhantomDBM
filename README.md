@@ -30,14 +30,14 @@ Install $project by running:
 
 To start program run the build.sh file:  
   
-$ chmod 770 build.sh  
-$ ./build.sh  
+    chmod 770 build.sh  
+    ./build.sh  
 
 Contribute
 ----------
 
-- Issue Tracker: github.com/$project/$project/issues
-- Source Code: github.com/$project/$project
+- Issue Tracker: https://github.com/DwayneGit/PhantomDBM/issues
+- Source Code: https://github.com/DwayneGit/PhantomDBM
 
 Support
 -------
