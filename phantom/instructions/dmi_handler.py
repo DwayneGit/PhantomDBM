@@ -2,6 +2,7 @@
 
 import re
 import copy
+import pprint
 
 import untangle
 
@@ -30,26 +31,29 @@ class dmi_handler():
     def manipulate(self, data):
         temp_data = copy.deepcopy(data) # deep copy data to be manipulated
         for link in self.root.link:
+            # print("hello")
             self.__handle_link(link, temp_data)
+        # pprint.pprint(temp_data)
         return temp_data
 
     def __handle_link(self, link, data):
         direct_queue = None
         pattern_queue = None
         pattern_lkup_key = None
-        criteria = {}
         search_data = {}
 
-        if not link.from_db:
+        try:
             search_data['db_name'] = link.from_db.cdata
+        except:
+            pass
 
-        if not link.from_collection:
+        try:
             search_data['collection_name'] = link.from_collection.cdata
+        except:
+            pass
 
-        for srch in link.search:
-
-            for lkup in srch.look_up:
-
+        for srch in getattr(link, 'search', []):
+            for lkup in getattr(srch, 'look_up', []):
                 if not isinstance(lkup.from_key.cdata, str):
                     settings.__LOG__.logError("DMI_ERR: Value to look up is not a string")
                     return
@@ -64,11 +68,13 @@ class dmi_handler():
                         pattern_queue = list(data[lkup.from_key.cdata])
                     else:
                         pattern_queue = re.split(lkup['pattern'], lkup.from_key.cdata)
+                    # pprint.pprint(pattern_queue)
 
                 elif lkup['method'] == "direct":
                     if not direct_queue:
                         direct_queue = {}
                     direct_queue[lkup.in_key.cdata] = lkup.from_key.cdata
+                    print(str(direct_queue)+"57")
 
             search_data['store'] = link['store']
 
@@ -83,6 +89,7 @@ class dmi_handler():
                         if more than one keys to search in follow the formate in the following link:
                         https://stackoverflow.com/questions/8859874/pymongo-search-dict-or-operation
                     '''
+                    criteria = {}
                     if isinstance(pattern_lkup_key.in_key, list):
                         criteria['$or'] = []
                         for key in pattern_lkup_key.in_key:
@@ -95,11 +102,21 @@ class dmi_handler():
                             criteria['$or'].append(temp)
                     elif isinstance(pattern_lkup_key.in_key, untangle.Element):
                         criteria[pattern_lkup_key.in_key.cdata] = item
+
+                    for filt in getattr(lkup, 'filter', []):
+                        temp = {}
+                        temp['$and'] = []
+                        temp['$and'].append(criteria)
+                        temp['$and'].append({filt.in_key.cdata : filt.from_key.cdata})
+                        criteria = temp
+                        # pprint.pprint(criteria)
+
                     if direct_queue:
                         search_data['criteria'] = criteria.copy()
                         search_data['criteria'].update(direct_queue)
                     else:
                         search_data['criteria'] = criteria
+                        
                     self.__search_db(search_data, data, link, srch)
 
 
