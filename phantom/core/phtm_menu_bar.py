@@ -188,6 +188,8 @@ class phtm_menu_bar(QMenuBar):
         try:
             validate_json_script(self, self.parent.get_editor_widget().get_editor_tabs().currentWidget().toPlainText())
         except Exception as err:
+            QMessageBox.warning(self, "Invalid Json Error",
+                            "Invalid Json Format\n" + str(err))            
             print(str(err))
     
     def helpMenu(self):

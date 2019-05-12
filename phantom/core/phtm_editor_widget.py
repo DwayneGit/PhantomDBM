@@ -90,10 +90,12 @@ class PhtmEditorWidget(QWidget):
 
     def load_cluster(self, file_path, filename):
         self.__cluster.load(file_path)
+        
+        self.__script_tree.itemSelectionChanged.disconnect()
         self.__script_tree.clear()
+        self.__script_tree.itemSelectionChanged.connect(lambda: self.__show_details(self.__script_tree.currentItem()))
 
         self.__tree_root = self.add_script_root(filename)
-        self.__script_tree.expandItem(self.__tree_root)
         self.__script_tree.expandItem(self.__tree_root)
 
         self.__editor_tabs.hide()
@@ -163,7 +165,7 @@ class PhtmEditorWidget(QWidget):
         self.__script_tree_layout.setContentsMargins(0, 26, 0, 0)
 
         self.__script_tree.itemDoubleClicked.connect(self.__open_script)
-        self.__script_tree.itemSelectionChanged.connect(self.__show_details)
+        self.__script_tree.itemSelectionChanged.connect(lambda: self.__show_details(self.__script_tree.currentItem()))
 
         self.__tree_root = self.add_script_root()
         self.__script_tree.setCurrentItem(self.__tree_root)
@@ -200,8 +202,7 @@ class PhtmEditorWidget(QWidget):
         else:
             self.__tree_root.removeChild(item)
 
-    def __show_details(self):
-        item = self.__script_tree.currentItem()
+    def __show_details(self, item):
         if not item or not item.text(0):
             return
 
@@ -226,6 +227,7 @@ class PhtmEditorWidget(QWidget):
 
     def delete_script(self, index):
         item = self.__tree_root.child(index)
+        self.__editor_tabs.close_tab(self.__editor_tabs.tab_by_text(item.text(0)))
         del self.__cluster.get_phm_scripts()[item.text(0)]
         self.__tree_root.removeChild(item)
 

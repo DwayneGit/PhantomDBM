@@ -2,6 +2,8 @@ import pickle
 import json
 from copy import deepcopy
 
+from PyQt5.QtWidgets import QMessageBox
+
 from phantom.preferences import default_general_settings as dgs
 
 from phantom.utility import validate_json_script
@@ -51,7 +53,9 @@ class PhmFileHandler():
             validate_json_script(None, script)
             new_script = JsonScript(script, title, creator)
             self.get_phm_scripts()[title] = new_script
-        except (KeyError, ValueError, json.decoder.JSONDecodeError):
+        except (KeyError, ValueError, json.decoder.JSONDecodeError) as err:
+            QMessageBox.warning(None, "Invalid Json Error",
+                            "Invalid Json Format\n" + str(err))
             raise
 
         return new_script

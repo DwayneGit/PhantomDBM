@@ -144,7 +144,9 @@ class schema_tab(QWidget):
         try:
             validate_json_script(self, self.__schema_editor.toPlainText())
         except (ValueError, json.decoder.JSONDecodeError) as err:
-            settings.__LOG__.logError("SCHEMA_ERR:" + str(err))
+            settings.__LOG__.logError("SCHEMA_ERR:" + str(err))        
+            QMessageBox.warning(self, "Invalid Json Error",
+                            "Invalid Json Format\n" + str(err))
             return False
 
         if schema == "Main":

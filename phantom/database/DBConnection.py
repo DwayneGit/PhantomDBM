@@ -89,8 +89,8 @@ class DatabaseHandler(QThread):
             self.__db_collection = db_coll
         self.__ref_schemas = ref_schemas
         self.__schema_json = schema_json
-        self.__schema = schema(self.__db_name, self.__db_collection, schema_json, ref_schemas)
-        self.__schema.set_connection(self.__db_host, self.__db_port_number)
+        self.__schema = schema(self.__db_collection, schema_json, ref_schemas)
+        self.__schema.set_connection(self.__db_name, self.__db_host, self.__db_port_number)
 
     def serverStatus(self, max_sev_sel_delay=2):
         if self.auth and (not self.auth.user or not self.auth.password):
@@ -175,13 +175,13 @@ class DatabaseHandler(QThread):
         # pprint.pprint(search_data.get('criteria'))
         try:
             if search_data.get('db_name'):
-                temp_sechma = schema(search_data.get('db_name'), search_data.get('collection_name'), self.__ref_schemas[search_data.get('collection_name')])
-                temp_sechma.set_connection(self.__db_host, self.__db_port_number)
+                temp_schema = schema(search_data.get('collection_name'), self.__ref_schemas[search_data.get('collection_name')])
+                temp_schema.set_connection(search_data.get('db_name'), self.__db_host, self.__db_port_number)
             elif not search_data.get('db_name') and search_data.get('collection_name'):
-                temp_sechma = schema(self.__db_name, search_data.get('collection_name'), self.__ref_schemas[search_data.get('collection_name')]) #db[search_data.get('collection_name']]
-                temp_sechma.set_connection(self.__db_host, self.__db_port_number)
+                temp_schema = schema(search_data.get('collection_name'), self.__ref_schemas[search_data.get('collection_name')]) #db[search_data.get('collection_name']]
+                temp_schema.set_connection(self.__db_name, self.__db_host, self.__db_port_number)
             else:
-                temp_sechma = self.__schema
+                temp_schema = self.__schema
         
         except Exception as err:
             settings.__LOG__.logError("DMI_ERR: " + str(err))
@@ -189,7 +189,7 @@ class DatabaseHandler(QThread):
 
         results = []
         
-        for doc in temp_sechma.get_schema_cls().objects(__raw__=search_data.get('criteria')):
+        for doc in temp_schema.get_schema_cls().objects(__raw__=search_data.get('criteria')):
             doc = json.loads(doc.to_json())
             doc["_id"] = ObjectId(doc["_id"]["$oid"])
             results.append(doc)

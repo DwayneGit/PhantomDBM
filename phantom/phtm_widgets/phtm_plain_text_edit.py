@@ -22,7 +22,4 @@ class PhtmPlainTextEdit(QPlainTextEdit):
 
         self.setLineWrapMode(QPlainTextEdit.NoWrap)
 
-        self.scroll_bar = QScrollBar()
-        self.addScrollBarWidget(self.scroll_bar, Qt.AlignRight)
-
         self.setPlainText(text)

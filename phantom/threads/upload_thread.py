@@ -51,7 +51,7 @@ class upload_thread(QObject):
 
         except json.decoder.JSONDecodeError as err:
             err_msg = "UPLD_ERR: Failed Sending Document(s) To Database.\nBuild Interrupted With Error:\n" + str(err)
-            self.update_b.emit(str(self.thread_id) + "UPLD_ERR: Failed Sending Document To Database.\nBuild Interrupted With Error:\n" + str(err))
+            self.update_b.emit(str(self.thread_id) + ": UPLD_ERR: Failed Sending Document To Database.\nBuild Interrupted With Error:\n" + str(err))
             settings.__LOG__.logError("RUN_ERR:" + str(err_msg))
             self.thrd_done.emit(str(self.thread_id) + ": Run failed. See log for details.")
             return False
