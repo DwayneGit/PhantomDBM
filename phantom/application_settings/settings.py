@@ -51,7 +51,7 @@ def build_theme(fp):
 
     p = re.compile('@\w+')
 
-    for line in sst.styleSheetTemplate.splitlines():
+    for line in sst.STYLESHEETTEMPLATE.splitlines():
         if p.search(line):
             if p.search(line).group() == "@close_icon":
                 style_sheet += line.replace("@close_icon", __ICONS__.get_close_tab())

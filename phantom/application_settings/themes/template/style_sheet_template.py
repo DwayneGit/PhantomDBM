@@ -1,4 +1,5 @@
-styleSheetTemplate = """
+"Application Style Sheet"
+STYLESHEETTEMPLATE = """
 QComboBox {
     background-color: @main2;
     color: @text;
@@ -30,6 +31,13 @@ QComboBox > QMenu {
 
 QDialog {
     background-color: @main1;
+    padding : 0px;
+    margin : 0px;
+}
+
+
+QFileDialog {
+    background-color: @main2;
     padding : 0px;
     margin : 0px;
 }

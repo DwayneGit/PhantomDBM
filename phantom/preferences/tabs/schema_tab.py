@@ -1,9 +1,9 @@
 import json
 
 from PyQt5.QtCore import QSize, Qt
-from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLineEdit, QMessageBox, QVBoxLayout, QSizePolicy, QMenu, QAction, QInputDialog
+from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLineEdit, QMessageBox, QVBoxLayout, QSizePolicy, QMenu, QAction
 
-from phantom.phtm_widgets import PhtmComboBox, PhtmPushButton, PhtmPlainTextEdit, PhtmMessageBox
+from phantom.phtm_widgets import PhtmComboBox, PhtmPushButton, PhtmPlainTextEdit, PhtmMessageBox, PhtmInputDialog
 
 from phantom.file_stuff import file_ctrl as f_ctrl
 from phantom.utility import text_style, validate_json_script
@@ -119,17 +119,18 @@ class schema_tab(QWidget):
     def __new_ref_script(self):
         if not self.__save_schema(self.__curr_item):
             return False
-        name, ok = QInputDialog.getText(self, "Enter Schema Name", "Name: ", QLineEdit.Normal, "")
-        if ok and name:
-            self.__ref_schemas[name] = ""
-            self.__schema_editor.clear()
-            self.__curr_item = name
+        input_name = PhtmInputDialog(self, "Enter Schema Name", "Name: ", QLineEdit.Normal, "")
+        if input_name.exec_():
+            if input_name.selected_value:
+                self.__ref_schemas[input_name.selected_value] = ""
+                self.__schema_editor.clear()
+                self.__curr_item = input_name.selected_value
 
-            self.schema_box.addItem(name)
-            self.schema_box.setCurrentIndex(self.schema_box.count()-1)
-        else:
-            err_msg = PhtmMessageBox(None, "Enter Name", "Please enter the name of the collection the schema represents.")
-            err_msg.exec_()
+                self.schema_box.addItem(input_name.selected_value)
+                self.schema_box.setCurrentIndex(self.schema_box.count()-1)
+            else:
+                err_msg = PhtmMessageBox(None, "Enter Name", "Please enter the name of the collection the schema represents.")
+                err_msg.exec_()
 
     def save_schemas(self):
         return self.__save_schema(self.__curr_item)
@@ -179,17 +180,18 @@ class schema_tab(QWidget):
     def __import_ref_schema(self, schemaBox):
         file_path = f_ctrl.load_script()[1]
         if file_path:
-            name, ok = QInputDialog.getText(self, "Enter Schema Name", "Name: ", QLineEdit.Normal, "")
-            if ok and name:
-                schema = text_style.read_text(file_path)
-                self.__ref_schemas[name] = schema
+            input_name = PhtmInputDialog(self, "Enter Schema Name", "Name: ", QLineEdit.Normal, "")
+            if input_name.exec_():
+                if input_name.selected_value:
+                    self.__ref_schemas[input_name.selected_value] = ""
+                    self.__schema_editor.clear()
+                    self.__curr_item = input_name.selected_value
 
-                schemaBox.addItem(name)
-                schemaBox.setCurrentIndex(schemaBox.count()-1)
-                self.__curr_item = name
-            else:
-                err_msg = PhtmMessageBox(self, "Invalid Input", "Please enter the name of the collection the schema represents.")
-                err_msg.exec_()
+                    self.schema_box.addItem(input_name.selected_value)
+                    self.schema_box.setCurrentIndex(self.schema_box.count()-1)
+                else:
+                    err_msg = PhtmMessageBox(None, "Enter Name", "Please enter the name of the collection the schema represents.")
+                    err_msg.exec_()
 
     def __import_primary_schema(self):
         file_path = f_ctrl.load_script()[1]

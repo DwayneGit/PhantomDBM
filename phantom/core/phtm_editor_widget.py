@@ -337,6 +337,6 @@ class PhtmEditorWidget(QWidget):
         filename_w_ext = os.path.basename(file_path)
         filename = os.path.splitext(filename_w_ext)[0]
 
-        if self.__tree_root == "New Cluster":
+        if self.__tree_root.text(0) == "New Cluster":
             self.rename_script_root(filename)
             self.parent.updateWindowTitle(filename)
