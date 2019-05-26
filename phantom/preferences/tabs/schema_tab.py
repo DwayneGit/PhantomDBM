@@ -3,9 +3,7 @@ import json
 from PyQt5.QtCore import QSize, Qt
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLineEdit, QMessageBox, QVBoxLayout, QSizePolicy, QMenu, QAction, QInputDialog
 
-from phantom.phtm_widgets import PhtmComboBox
-from phantom.phtm_widgets import PhtmPushButton
-from phantom.phtm_widgets import PhtmPlainTextEdit
+from phantom.phtm_widgets import PhtmComboBox, PhtmPushButton, PhtmPlainTextEdit, PhtmMessageBox
 
 from phantom.file_stuff import file_ctrl as f_ctrl
 from phantom.utility import text_style, validate_json_script
@@ -130,8 +128,8 @@ class schema_tab(QWidget):
             self.schema_box.addItem(name)
             self.schema_box.setCurrentIndex(self.schema_box.count()-1)
         else:
-            reply = QMessageBox.warning(None, "Enter Name", "Please enter the name of the collection the schema represents.",
-                                QMessageBox.Ok)
+            err_msg = PhtmMessageBox(None, "Enter Name", "Please enter the name of the collection the schema represents.")
+            err_msg.exec_()
 
     def save_schemas(self):
         return self.__save_schema(self.__curr_item)
@@ -144,9 +142,10 @@ class schema_tab(QWidget):
         try:
             validate_json_script(self, self.__schema_editor.toPlainText())
         except (ValueError, json.decoder.JSONDecodeError) as err:
-            settings.__LOG__.logError("SCHEMA_ERR:" + str(err))        
-            QMessageBox.warning(self, "Invalid Json Error",
-                            "Invalid Json Format\n" + str(err))
+            settings.__LOG__.logError("SCHEMA_ERR:" + str(err))
+            err_msg = PhtmMessageBox(self, "Invalid JSON Error",
+                                     "Invalid JSON Format\n" + str(err))
+            err_msg.exec_()
             return False
 
         if schema == "Main":
@@ -155,17 +154,19 @@ class schema_tab(QWidget):
             self.__ref_schemas[schema] = self.__schema_editor.toPlainText()
 
         return True
-        
+
     def __edit_schema(self, curr, schema):
         if curr == schema:
             return
 
         if self.__curr_item_changed:
-            reply = QMessageBox.question(self, 'Save Changes', "Do you want to save chnages made to this schema?", QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
-            if reply == QMessageBox.Yes:
-                if not self.__save_schema(curr):
-                    self.schema_box.setCurrentIndex(self.schema_box.setCurrentIndex(self.__index_of_child(schema)))
-                    return
+            err_msg = PhtmMessageBox(self, 'Save Changes', "Do you want to save chnages made to this schema?",
+                                     [QMessageBox.Yes, QMessageBox.No])
+            if err_msg.exec_():
+                if err_msg.msg_selection == QMessageBox.Yes:
+                    if not self.__save_schema(curr):
+                        self.schema_box.setCurrentIndex(self.schema_box.setCurrentIndex(self.__index_of_child(schema)))
+                        return
 
         if schema == "Main":
             self.__schema_editor.setPlainText(self.__schema.get_script())
@@ -187,7 +188,8 @@ class schema_tab(QWidget):
                 schemaBox.setCurrentIndex(schemaBox.count()-1)
                 self.__curr_item = name
             else:
-                QMessageBox(self, "Invalid Input", "Please enter the name of the collection the schema represents.")
+                err_msg = PhtmMessageBox(self, "Invalid Input", "Please enter the name of the collection the schema represents.")
+                err_msg.exec_()
 
     def __import_primary_schema(self):
         file_path = f_ctrl.load_script()[1]

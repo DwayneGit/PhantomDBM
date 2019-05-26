@@ -1,8 +1,10 @@
 import sys
 
-from PyQt5.QtWidgets import QAction, QMenuBar
+from PyQt5.QtWidgets import QAction, QMenuBar, QMessageBox
 from PyQt5.QtCore import Qt, QUrl
 from PyQt5.QtGui import QDesktopServices
+
+from phantom.phtm_widgets import PhtmMessageBox
 
 from phantom.utility import validate_json_script
 from phantom.file_stuff import file_ctrl as f_ctrl
@@ -188,9 +190,9 @@ class phtm_menu_bar(QMenuBar):
         try:
             validate_json_script(self, self.parent.get_editor_widget().get_editor_tabs().currentWidget().toPlainText())
         except Exception as err:
-            QMessageBox.warning(self, "Invalid Json Error",
-                            "Invalid Json Format\n" + str(err))            
-            print(str(err))
+            err_msg = PhtmMessageBox(self, "Invalid Json Error",
+                            "Invalid Json Format\n" + str(err))
+            err_msg.exec_()
     
     def helpMenu(self):
         helpMenu = self.main_menu.addMenu('Help')

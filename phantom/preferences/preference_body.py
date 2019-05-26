@@ -1,6 +1,6 @@
 import json
 
-from PyQt5.QtWidgets import QMessageBox, QDialog, QVBoxLayout, QTabWidget, QWidget, QHBoxLayout
+from PyQt5.QtWidgets import QDialog, QVBoxLayout, QTabWidget, QWidget, QHBoxLayout
 
 from phantom.phtm_widgets import PhtmPushButton
 from phantom.phtm_widgets import PhtmTabWidget
