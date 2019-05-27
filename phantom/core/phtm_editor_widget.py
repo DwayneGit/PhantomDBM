@@ -90,10 +90,12 @@ class PhtmEditorWidget(QWidget):
 
     def load_cluster(self, file_path, filename):
         self.__cluster.load(file_path)
-        self.__script_tree.clear()
 
-        self.__tree_root = self.add_script_root(filename)
-        self.__script_tree.expandItem(self.__tree_root)
+        self.__script_tree.itemSelectionChanged.disconnect()
+        self.__script_tree.clear()
+        self.__script_tree.itemSelectionChanged.connect(lambda: self.__show_details(self.__script_tree.currentItem()))
+
+        self.__tree_root = self.add_script_root()
         self.__script_tree.expandItem(self.__tree_root)
 
         self.__editor_tabs.hide()
@@ -163,7 +165,7 @@ class PhtmEditorWidget(QWidget):
         self.__script_tree_layout.setContentsMargins(0, 26, 0, 0)
 
         self.__script_tree.itemDoubleClicked.connect(self.__open_script)
-        self.__script_tree.itemSelectionChanged.connect(self.__show_details)
+        self.__script_tree.itemSelectionChanged.connect(lambda: self.__show_details(self.__script_tree.currentItem()))
 
         self.__tree_root = self.add_script_root()
         self.__script_tree.setCurrentItem(self.__tree_root)
@@ -183,6 +185,11 @@ class PhtmEditorWidget(QWidget):
                 self.__create_new_script(item, 0)
                 return
 
+            if item == self.__tree_root:
+                self.__cluster.get_phm().set_name(editor.text())
+                # self.parent.updateWindowTitle(editor.text())
+                return
+
             if not item.text(0):
                 item.setText(0, self.name_temp)
 
@@ -194,14 +201,14 @@ class PhtmEditorWidget(QWidget):
             if i != -1:
                 self.__editor_tabs.setTabText(i, item.text(0))
 
-            self.name_temp = None
         elif self.name_temp:
             item.setText(0, self.name_temp)
         else:
             self.__tree_root.removeChild(item)
 
-    def __show_details(self):
-        item = self.__script_tree.currentItem()
+        self.name_temp = None
+
+    def __show_details(self, item):
         if not item or not item.text(0):
             return
 
@@ -226,6 +233,7 @@ class PhtmEditorWidget(QWidget):
 
     def delete_script(self, index):
         item = self.__tree_root.child(index)
+        self.__editor_tabs.close_tab(self.__editor_tabs.tab_by_text(item.text(0)))
         del self.__cluster.get_phm_scripts()[item.text(0)]
         self.__tree_root.removeChild(item)
 
@@ -274,6 +282,10 @@ class PhtmEditorWidget(QWidget):
                 menu.addAction(runBelow)
 
             else:
+                newAction = QAction("Rename Cluster", self)
+                newAction.triggered.connect(lambda x: self.rename_script_root())
+                menu.addAction(newAction)
+
                 newAction = QAction("New Script", self)
                 newAction.triggered.connect(lambda x: self.add_new_script())
                 menu.addAction(newAction)
@@ -286,12 +298,16 @@ class PhtmEditorWidget(QWidget):
 
             menu.popup(self.__script_tree.viewport().mapToGlobal(pos))
 
-    def rename_script_root(self, name):
+    def rename_script_root(self, name=None):
+        if not name:
+            self.name_temp = self.__tree_root.text(0)
+            self.__script_tree.editItem(self.__tree_root)
         self.__tree_root.setText(0, name)
 
-    def add_script_root(self, name="New Cluster"):
+    def add_script_root(self):
         tree_item = QTreeWidgetItem(self.__script_tree)
-        tree_item.setText(0, name)
+        tree_item.setText(0, self.__cluster.get_phm().get_name())
+        tree_item.setFlags(tree_item.flags() | Qt.ItemIsEditable)
         tree_item.setIcon(0, QIcon(settings.__ICONS__.white_dot))
         return tree_item
 
@@ -314,13 +330,13 @@ class PhtmEditorWidget(QWidget):
     def save_phm(self, file_path):
         self.parent.statusBar().showMessage("Saving PHM ...")
         for i in range(self.__editor_tabs.count()):
-            if self.__editor_tabs.widget(i).is_changed:
-                self.__editor_tabs.widget(i).save_script()
+            self.__editor_tabs.save_editor(i)
 
         self.__cluster.save(file_path)
 
         filename_w_ext = os.path.basename(file_path)
         filename = os.path.splitext(filename_w_ext)[0]
-    
-        self.rename_script_root(filename)
-        self.parent.updateWindowTitle(filename)
+
+        if self.__tree_root.text(0) == "New Cluster":
+            self.rename_script_root(filename)
+            self.parent.updateWindowTitle(filename)

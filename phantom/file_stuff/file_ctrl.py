@@ -19,14 +19,14 @@ from PyQt5.QtWidgets import QFileDialog, QMessageBox
 
 from phantom.utility import cleanTmpScripts
 
+from phantom.phtm_widgets import PhtmMessageBox, PhtmFileDialog
+
 def load_instructions():
-    dlg = QFileDialog()
-    dlg.setFileMode(QFileDialog.AnyFile)
-    dlg.setNameFilter("XML files (*.xml)")
+    dlg = PhtmFileDialog(None, "Open", QFileDialog.AnyFile, "XML files (*.xml)", options=QFileDialog.DontUseNativeDialog|QFileDialog.DontUseCustomDirectoryIcons)
     filenames = []
 
     if dlg.exec_():
-        filenames = dlg.selectedFiles()
+        filenames = dlg.selectedFiles
 
         filename_w_ext = os.path.basename(filenames[0])
         filename = os.path.splitext(filename_w_ext)[0]
@@ -35,13 +35,11 @@ def load_instructions():
     return "", None
 
 def load_script():
-    dlg = QFileDialog()
-    dlg.setFileMode(QFileDialog.AnyFile)
-    dlg.setNameFilter("JSON files (*.json)")
+    dlg = PhtmFileDialog(None, "Open", QFileDialog.AnyFile, "JSON files (*.json)", options=QFileDialog.DontUseNativeDialog|QFileDialog.DontUseCustomDirectoryIcons)
     filenames = []
 
     if dlg.exec_():
-        filenames = dlg.selectedFiles()
+        filenames = dlg.selectedFiles
 
         filename_w_ext = os.path.basename(filenames[0])
         filename = os.path.splitext(filename_w_ext)[0]
@@ -50,13 +48,11 @@ def load_script():
     return False, False
 
 def load_phm(main_window):
-    dlg = QFileDialog()
-    dlg.setFileMode(QFileDialog.AnyFile)
-    dlg.setNameFilter("Cluster files (*.phm)")
+    dlg = PhtmFileDialog(main_window, "Open", QFileDialog.AnyFile, "Cluster files (*.phm)", options=QFileDialog.DontUseNativeDialog|QFileDialog.DontUseCustomDirectoryIcons)
     filenames = []
 
     if dlg.exec_():
-        filenames = dlg.selectedFiles()
+        filenames = dlg.selectedFiles
 
         filename_w_ext = os.path.basename(filenames[0])
         filename = os.path.splitext(filename_w_ext)[0]
@@ -70,71 +66,71 @@ def load_phm(main_window):
         main_window.reloadDbNames()
 
         return True
-    raise Exception("Error loading cluster file")
+    return False
+
+
 
 def save_script(editor, editor_widget):
-    fp = editor_widget.get_cluster().get_file_path()
-    if not fp:
-        reply = QMessageBox.warning(None, "Save Script", "Cluster file not saved. would you liket to save?",
-                            QMessageBox.Yes|QMessageBox.Cancel)
-        if reply == QMessageBox.Yes:    
-            x = export_phm(editor_widget)
-            if x: 
-                editor_widget.get_cluster().set_file_path(x)
-            else: return False
+    f_path = editor_widget.get_cluster().get_file_path()
+    if not f_path:
+        f_path = export_phm(editor_widget)
+        if f_path:
+            editor_widget.get_cluster().set_file_path(f_path)
         else: return False
 
-    # main_window.statusBar().showMessage("Saving File ...")
-
-    editor.save_script()
-    save_phm(editor_widget, fp)
-    editor.is_changed = False
+    if not editor.save_script():
+        return False
+    save_phm(editor_widget, f_path)
 
     return True
+
+def save_phm(editor_widget, file_path=None):
+    if not file_path:
+        file_path = editor_widget.get_cluster().get_file_path()
+        if not file_path:
+            err_msg = PhtmMessageBox(None, "Save PHM", "Cluster file not saved. would you like to save?",
+                                        [QMessageBox.Yes, QMessageBox.Cancel])
+            if err_msg.exec_():
+                if err_msg.msg_selection == QMessageBox.Yes:
+                    file_path = export_phm(editor_widget)
+                    if not file_path:
+                        return False
+                else: return False
+
+    editor_widget.save_phm(file_path)
+    
+    return True
+
+
 
 def export_script(curr_script):
     if not curr_script:
         return
     options = QFileDialog.Options()
     options |= QFileDialog.DontUseNativeDialog
-    fileName, _ = QFileDialog.getSaveFileName(None, "Save File", "", "JSON files (*.json)")
-    if fileName:
-        with open(fileName, "w") as write_file:
-            write_file.write(eval(json.dumps(curr_script.toPlainText(), indent=4)))
+    dlg = PhtmFileDialog(None, "Save File", QFileDialog.AnyFile, "JSON files (*.json)", options=options, accept_mode=QFileDialog.AcceptSave)
+    if dlg.exec_():
+        if dlg.save_name:
+            if dlg.save_name[-5:] != ".json":
+                dlg.save_name = dlg.save_name + ".json"
+            with open(dlg.save_name, "w") as write_file:
+                write_file.write(eval(json.dumps(curr_script.toPlainText(), indent=4)))
 
 def export_phm(editor_widget):
     options = QFileDialog.Options()
     options |= QFileDialog.DontUseNativeDialog
-    file_path, _ = QFileDialog.getSaveFileName(None, "Save File", "", "Cluster files (*.phm)")
-    if file_path:
-        save_phm(editor_widget, file_path)
-        return file_path
+    dlg = PhtmFileDialog(None, "Save Cluster", QFileDialog.AnyFile, "Cluster files (*.phm)", options=options, accept_mode=QFileDialog.AcceptSave)
+    if dlg.exec_():
+        if dlg.save_name:
+            # print(dlg.save_name)
+            save_phm(editor_widget, dlg.save_name)
+            return dlg.save_name
     return False
 
-def save_phm(editor_widget, file_path=None):
-    if not file_path:
-        file_path = editor_widget.get_cluster().get_file_path()
-        if not file_path:
-            reply = QMessageBox.warning(None, "Save PHM", "Cluster file not saved. would you liket to save?",
-                                QMessageBox.Yes|QMessageBox.Cancel)
-            if reply == QMessageBox.Yes: 
-                file_path = export_phm(editor_widget)
-                if not file_path:
-                    return False
-            else: return False
-
-    if editor_widget.get_editor_tabs().currentWidget():
-        for i in range(editor_widget.get_editor_tabs().count()):
-            if editor_widget.get_editor_tabs().widget(i).is_changed:
-                editor_widget.get_editor_tabs().save_editor(i)
-
-    editor_widget.save_phm(file_path)
-    return True
-
 def tmpScript(main_window, curr_tab, temp = None):
-    fileName = "tmp/script_"+ strftime("%w%d%m%y_%H%M%S", gmtime()) +".json"
+    file_name = "tmp/script_"+ strftime("%w%d%m%y_%H%M%S", gmtime()) +".json"
 
-    tmpfilePath = fileName
+    tmpfilePath = file_name
 
     with open(tmpfilePath, 'w') as outfile:
         outfile.write(eval(json.dumps(curr_tab.toPlainText(), indent=4)))

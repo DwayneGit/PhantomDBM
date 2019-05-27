@@ -8,12 +8,14 @@ class phm():
     def __len__(self):
         return len(self.__scripts)
 
-    def __init__(self, scripts=None, creator=None, group=None, access_level=None):
+    def __init__(self, name, scripts=None, creator=None, group=None, access_level=None):
 
         self.__class__ = phm
         self.__class__.__name__ = "phm"
 
         current_date_time = datetime.now()
+
+        self.__name = name
 
         self.__date_time_created = current_date_time
         self.__date_time_modified = current_date_time
@@ -33,6 +35,11 @@ class phm():
             self.__scripts = OrderedDict()
 
 #---------------------------- Access Functions ------------------------------
+    def get_name(self):
+        return self.__name
+        
+    def set_name(self, name):
+        self.__name = name
 
     def get_scripts(self):
         return self.__scripts

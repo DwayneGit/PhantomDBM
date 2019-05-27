@@ -1,4 +1,8 @@
 #add option for direct db connection or api connection
+import json
+import pprint
+from bson import ObjectId
+
 from collections import OrderedDict
 from PyQt5.QtCore import QThread
 
@@ -83,9 +87,9 @@ class DatabaseHandler(QThread):
             self.__db_name = db_name
         if db_coll:
             self.__db_collection = db_coll
-
+        self.__ref_schemas = ref_schemas
         self.__schema_json = schema_json
-        self.__schema = schema(self.__db_name, self.__db_collection, schema_json, ref_schemas)
+        self.__schema = schema(self.__db_collection, schema_json, ref_schemas)
         self.__schema.set_connection(self.__db_name, self.__db_host, self.__db_port_number)
 
     def serverStatus(self, max_sev_sel_delay=2):
@@ -141,33 +145,55 @@ class DatabaseHandler(QThread):
     returns -1 if ther is an error or 0 if it does not follow the model
     '''
     def insertDoc(self, document):
-        new_doc = self.__schema.build_document(document)
+        try:
+            new_doc = self.__schema.build_document(document)
+        except Exception as err:
+            settings.__LOG__.logError("VLD_ERR: " + str(err))
+            raise
 
         if new_doc:
             try:
+                # pprint.pprint(json.loads(new_doc.to_json()))
+                # print(new_doc.list_indexes())
                 new_doc.save()
                 return True
             except mEngine.ValidationError as err:
-                settings.__LOG__.logError("DB_ERR: " + str(err))
+                settings.__LOG__.logError("VLD_ERR: " + str(err))
                 raise
             except mEngine.connection.MongoEngineConnectionError as err:
-                settings.__LOG__.logError("DB_ERR: " + str(err))
+                settings.__LOG__.logError("CONN_ERR: " + str(err))
+                raise
+            except pyErrs.DuplicateKeyError as err:
+                settings.__LOG__.logError("DUP_ERR: " + str(err))
+                raise
+            except mEngine.errors.NotUniqueError as err:
+                settings.__LOG__.logError("UNQ_ERR: " + str(err))
                 raise
 
     def findDoc(self, **search_data):
-        settings.__LOG__.logInfo("Info to find " + search_data['criteria'])
-        if search_data['db_name']:
-            temp_sechma = schema(search_data['db_name'], search_data['collection_name'], search_data['schema'], {})
-        elif not search_data['db_name'] and search_data['collection_name']:
-            temp_sechma = schema(self.__db_name, search_data['collection_name'], self.__schema_json, {}) #db[search_data['collection_name']]
-        else:
-            temp_sechma = self.__schema
+        settings.__LOG__.logInfo("Info to find " + str(search_data.get('criteria')))
+        # pprint.pprint(search_data.get('criteria'))
+        try:
+            if search_data.get('db_name'):
+                temp_schema = schema(search_data.get('collection_name'), self.__ref_schemas[search_data.get('collection_name')])
+                temp_schema.set_connection(search_data.get('db_name'), self.__db_host, self.__db_port_number)
+            elif not search_data.get('db_name') and search_data.get('collection_name'):
+                temp_schema = schema(search_data.get('collection_name'), self.__ref_schemas[search_data.get('collection_name')]) #db[search_data.get('collection_name']]
+                temp_schema.set_connection(self.__db_name, self.__db_host, self.__db_port_number)
+            else:
+                temp_schema = self.__schema
+        
+        except Exception as err:
+            settings.__LOG__.logError("DMI_ERR: " + str(err))
+            return False
 
         results = []
-
-        for doc in temp_sechma.get_schema_cls().objects(search_data['criteria']):
+        
+        for doc in temp_schema.get_schema_cls().objects(__raw__=search_data.get('criteria')):
+            doc = json.loads(doc.to_json())
+            doc["_id"] = ObjectId(doc["_id"]["$oid"])
             results.append(doc)
-
+            
         if len(results) > 1:
             return results
         elif len(results) == 1:

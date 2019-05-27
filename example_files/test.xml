@@ -3,7 +3,6 @@
 <!-- example 1 -->
 <root>
     <link method="search" store="complete" format="list">
-        <from_db>jstudy</from_db>
         <from_collection>characters</from_collection>
         <search add_key="kana_characters">
             <look_up method="pattern" pattern="">
@@ -16,16 +15,15 @@
         </search>
     </link>
     <link method="search" store="complete" format="list">
-        <from_db>jstudy</from_db>
         <from_collection>characters</from_collection>
         <search add_key="kanji_characters" >
             <look_up method="pattern" pattern="">
                 <from_key>inKanji</from_key> 
                 <in_key>character</in_key>
-            </look_up>
-            <look_up method="direct">
-                <from_key>kanji</from_key> 
-                <in_key>script</in_key>
+                <filter>
+                    <from_key>kanji</from_key> 
+                    <in_key>script</in_key>
+                </filter>
             </look_up>
         </search>
     </link>

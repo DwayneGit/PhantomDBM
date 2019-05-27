@@ -4,7 +4,9 @@ from PyQt5.QtGui import QPainter, QColor, QTextFormat
 from PyQt5.QtCore import QSize, pyqtSignal, QRect, Qt
 from PyQt5.QtWidgets import QWidget, QTextEdit, QTabWidget, QMessageBox
 
-from phantom.phtm_widgets import PhtmPlainTextEdit
+from phantom.utility import validate_json_script
+
+from phantom.phtm_widgets import PhtmPlainTextEdit, PhtmMessageBox
 
 from phantom.application_settings import settings
 
@@ -29,16 +31,18 @@ class PhtmTabWidget(QTabWidget):
         return tab_index_found
 
     def save_editor(self, index):
-        save_msg = "The current script is not saved. Do you want to save?"
-        reply = QMessageBox.question(self, 'Message', 
-                        save_msg, QMessageBox.Yes | QMessageBox.Save | QMessageBox.Cancel, QMessageBox.Cancel)
+        if not self.widget(index).is_changed:
+            return
 
-        if reply == QMessageBox.Cancel:
-            return False
-        elif reply == QMessageBox.Save:
-            self.widget(index).save_script()
-        elif reply == QMessageBox.Yes:
-            self.is_saved(self.tabText(index)[2:], index)
+        save_msg = "The current script is not saved. Do you want to save?"
+        msg_box = PhtmMessageBox(self, "Save", save_msg, [QMessageBox.Yes, QMessageBox.Cancel])
+        if msg_box.exec_():
+            if msg_box.msg_selection == QMessageBox.Cancel:
+                return False
+            elif msg_box.msg_selection == QMessageBox.Yes:
+                if self.widget(index).save_script():
+                    self.is_saved(self.tabText(index), index)
+                    return False
 
         return True
 
@@ -46,7 +50,7 @@ class PhtmTabWidget(QTabWidget):
         if self.widget(index).is_changed:
             if not self.save_editor(index):
                 return
-                
+
         self.removeTab(index)
         if self.count() < 1:
             self.hide()
@@ -140,11 +144,21 @@ class _PhtmEditor(PhtmPlainTextEdit):
         return self.__curr_script
 
     def save_script(self, user="Daru"):
+        try:
+            validate_json_script(self, self.toPlainText())
+        except Exception as err:
+            error_msg = PhtmMessageBox(self, "Validation Error", "Invalid JSON:\n" + str(err))
+            error_msg.exec_()
+            return False
+
         self.__curr_script.set_script(self.toPlainText())
         self.__curr_script.set_modified_by(user)
         self.__curr_script.update_date_time_modified()
 
+        self.is_changed = False
+
         self.saved.emit(self.__curr_script.get_title())
+        return True
 
     def get_tree_item(self):
         return self.tree_item

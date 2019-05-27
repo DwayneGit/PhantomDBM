@@ -1,4 +1,5 @@
-styleSheetTemplate = """
+"Application Style Sheet"
+STYLESHEETTEMPLATE = """
 QComboBox {
     background-color: @main2;
     color: @text;
@@ -30,6 +31,13 @@ QComboBox > QMenu {
 
 QDialog {
     background-color: @main1;
+    padding : 0px;
+    margin : 0px;
+}
+
+
+QFileDialog {
+    background-color: @main2;
     padding : 0px;
     margin : 0px;
 }
@@ -169,9 +177,8 @@ QScrollBar::down-arrow:vertical {
     width: 3px 
 }
 
-
 QScrollBar:horizontal {
-    width: 13px;
+    height: 13px;
     background: @main1;
 }
 QScrollBar::handle:horizontal {
@@ -180,14 +187,14 @@ QScrollBar::handle:horizontal {
 QScrollBar::add-line:horizontal {
     background: none;
     width: 45px;
-    subcontrol-position: right;
+    subcontrol-position: bottom;
     subcontrol-origin: margin;
 } 
-QScrollBar::up-arrow:horizontal { 
+QScrollBar::right-arrow:horizontal { 
     height: 3px; 
     width: 3px 
 }
-QScrollBar::down-arrow:horizontal {
+QScrollBar::left-arrow:horizontal {
     height: 3px; 
     width: 3px 
 }

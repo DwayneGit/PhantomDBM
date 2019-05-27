@@ -2,9 +2,13 @@ import pickle
 import json
 from copy import deepcopy
 
+from PyQt5.QtWidgets import QMessageBox
+
 from phantom.preferences import default_general_settings as dgs
 
 from phantom.utility import validate_json_script
+
+from phantom.phtm_widgets import PhtmMessageBox
 
 from .json_script import JsonScript
 from .phm import phm as phm_file
@@ -20,7 +24,7 @@ class PhmFileHandler():
             self.__phm = phm
         else:
             setting = dgs()
-            self.__phm = phm_file()
+            self.__phm = phm_file("New Cluster")
             self.add_script(str(setting), "__settings__")
             self.add_script("{\n}", "__schema__")
             self.get_phm_scripts()["__dmi_instr__"] = {"instr" : "", "name" : "" }
@@ -51,7 +55,10 @@ class PhmFileHandler():
             validate_json_script(None, script)
             new_script = JsonScript(script, title, creator)
             self.get_phm_scripts()[title] = new_script
-        except (KeyError, ValueError, json.decoder.JSONDecodeError):
+        except (KeyError, ValueError, json.decoder.JSONDecodeError) as err:
+            err_msg = PhtmMessageBox(self, "Invalid JSON Error",
+                            "Invalid JSON Format\n" + str(err))
+            err_msg.exec_()
             raise
 
         return new_script
