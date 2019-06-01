@@ -43,7 +43,7 @@ def load_script():
 
         filename_w_ext = os.path.basename(filenames[0])
         filename = os.path.splitext(filename_w_ext)[0]
-
+        
         return filename, filenames[0]
     return False, False
 

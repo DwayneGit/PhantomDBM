@@ -48,7 +48,7 @@ class schema():
     def __mk_schema_cls(self, collection, super_cls, schema_json):
         try:
             return type(collection, (super_cls, ), self.__mk_attribute_dict(json.loads(schema_json)))
-        except json.decoder.JSONDecodeError as err:
+        except (json.decoder.JSONDecodeError, TypeError) as err:
             settings.__LOG__.logError("JSON_ERR: " + str(err))
             return None
 

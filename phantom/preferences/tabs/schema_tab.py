@@ -161,7 +161,7 @@ class schema_tab(QWidget):
             return
 
         if self.__curr_item_changed:
-            err_msg = PhtmMessageBox(self, 'Save Changes', "Do you want to save chnages made to this schema?",
+            err_msg = PhtmMessageBox(self, 'Save Changes', "Do you want to save changes made to this schema?",
                                      [QMessageBox.Yes, QMessageBox.No])
             if err_msg.exec_():
                 if err_msg.msg_selection == QMessageBox.Yes:

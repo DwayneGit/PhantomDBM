@@ -128,7 +128,7 @@ class PhtmEditorWidget(QWidget):
         try:
             new_script = self.__cluster.add_script(text_style.read_text(file_path), file_name, "Dwayne W")
         except Exception as err:
-            settings.__LOG__.logError("EDIT_WIDG_ERR:" + str(err))
+            settings.__LOG__.logError("EDIT_WIDG_ERR: " + str(err))
             return
 
         item = self.add_script_child(self.__tree_root, file_name)

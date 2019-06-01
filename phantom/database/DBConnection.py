@@ -182,17 +182,28 @@ class DatabaseHandler(QThread):
                 temp_schema.set_connection(self.__db_name, self.__db_host, self.__db_port_number)
             else:
                 temp_schema = self.__schema
-        
+
+        except KeyError as err:
+            settings.__LOG__.logError("SCH_ERR: No schema for collection " + str(err))
+            return False
+
         except Exception as err:
             settings.__LOG__.logError("DMI_ERR: " + str(err))
+            # template = "An exception of type {0} occurred. Arguments:\n{1!r}"
+            # message = template.format(type(err).__name__, err.args)
             return False
 
         results = []
-        
-        for doc in temp_schema.get_schema_cls().objects(__raw__=search_data.get('criteria')):
-            doc = json.loads(doc.to_json())
-            doc["_id"] = ObjectId(doc["_id"]["$oid"])
-            results.append(doc)
+        try:
+            for doc in temp_schema.get_schema_cls().objects(__raw__=search_data.get('criteria')):
+                doc = json.loads(doc.to_json())
+                doc["_id"] = ObjectId(doc["_id"]["$oid"])
+                results.append(doc)
+
+        except Exception as err:
+            settings.__LOG__.logError("ERR: " + str(err))
+            print(err)
+            return False
             
         if len(results) > 1:
             return results

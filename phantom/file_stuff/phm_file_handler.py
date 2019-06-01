@@ -49,6 +49,7 @@ class PhmFileHandler():
 #------------------------- script methods --------------------------
     def add_script(self, script, title=None, creator=None):
         if title in self.get_phm_scripts():
+            print(self.get_phm_scripts())
             raise Exception("Error: script title already exist in this ____(cluster)")
 
         try:
@@ -56,7 +57,7 @@ class PhmFileHandler():
             new_script = JsonScript(script, title, creator)
             self.get_phm_scripts()[title] = new_script
         except (KeyError, ValueError, json.decoder.JSONDecodeError) as err:
-            err_msg = PhtmMessageBox(self, "Invalid JSON Error",
+            err_msg = PhtmMessageBox(None, "Invalid JSON Error",
                             "Invalid JSON Format\n" + str(err))
             err_msg.exec_()
             raise
