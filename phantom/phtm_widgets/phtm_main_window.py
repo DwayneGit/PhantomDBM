@@ -22,7 +22,7 @@ class PhtmMainWindow(QMainWindow):
         self.__program_title = "Phantom DBM"
         self.window_title = ''
 
-        self.setWindowIcon(QIcon("icons/phantom.png"))
+        self.setWindowIcon(QIcon("icons/logo.png"))
         self.oldPos = self.pos()
 
         self.layout().setSpacing(0)

@@ -1,18 +1,16 @@
 import os
 import json
-import fileinput
 import re
 
 from PyQt5.QtCore import QObject, pyqtSignal, pyqtSlot
 from PyQt5.QtWidgets import QApplication
 
 from phantom.logging_stuff import PhtmLogger
-from phantom.database import DatabaseHandler
 
 from .phtm_icons import PhtmIcons
 from .themes.template import style_sheet_template as sst
 
-def init( app, stngs_file):
+def init(app, stngs_file):
     stngs_json = json.load(open(stngs_file))
 
     global __LOG__, __ICONS__, __THEME__

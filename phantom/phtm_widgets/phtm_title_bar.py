@@ -65,10 +65,13 @@ class PhtmTitleBar(QToolBar):
 
             self.addWidget(spacer)
 
-            exit_bttn.defaultAction().triggered.connect(self.window.close)
+            exit_bttn.defaultAction().triggered.connect(self.dialog_exit)
             exit_bttn.setObjectName("exit")
 
         self.addWidget(exit_bttn)
+
+    def dialog_exit(self):
+        self.window.close
 
     def screen_toggle(self, tool_button):
         if not self.is_max:

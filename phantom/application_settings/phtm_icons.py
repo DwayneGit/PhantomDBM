@@ -1,5 +1,3 @@
-import os
-
 class PhtmIcons():
     def __init__(self, icon_set=None):
         self.icon_set = icon_set
