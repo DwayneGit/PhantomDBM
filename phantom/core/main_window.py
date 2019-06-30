@@ -1,5 +1,7 @@
-from PyQt5.QtCore import QRect, Qt, QCoreApplication, pyqtSlot
-from PyQt5.QtWidgets import QMainWindow, QSplitter, QProgressBar, QMessageBox, QWidget, QHBoxLayout
+from copy import deepcopy
+
+from PyQt5.QtCore import QRect, Qt, QCoreApplication, pyqtSlot, QFileInfo
+from PyQt5.QtWidgets import QMainWindow, QSplitter, QProgressBar, QMessageBox, QWidget, QHBoxLayout, QAction
 
 from phantom.users import loginScreen
 from phantom.database import DatabaseHandler
@@ -28,6 +30,12 @@ class main_window(QMainWindow):
         self.dmi_settings = None
         self.prefs = None
         self.dbData = None
+
+        self.maxFileNum = 4
+        self.recentFileActionList = []
+        self.createActionsAndConnections()
+
+        self.currentFile = None
 
         self.r_ctrl = run_ctrl(self)
 
@@ -174,8 +182,54 @@ class main_window(QMainWindow):
         return self.__editor_widget
 
     def new_editor_widget(self):
-        if f_ctrl.save_phm(self.__editor_widget):
+        if f_ctrl.save_phm(self.__editor_widget, self.adjustForCurrentFile):
             new_ew = PhtmEditorWidget(self)
             self.__splitter1.replaceWidget(self.__splitter1.indexOf(self.__editor_widget), new_ew)
             self.__editor_widget = new_ew
             self.main_tool_bar.dbnameMenu.setCurrentIndex(0)
+
+    def adjustForCurrentFile(self, filePath):
+
+        recentFilePaths = settings.__APPLICATION_SETTINGS__.get_settings()['recent_files']
+
+        try:
+            recentFilePaths.remove(filePath)
+        except Exception as err:
+            settings.__LOG__.logError(str(err))
+
+        recentFilePaths.insert(0, filePath)
+
+        while len(recentFilePaths) > self.maxFileNum:
+            recentFilePaths.pop()
+
+        self.updateRecentActionList()
+
+    def updateRecentActionList(self):
+
+        recentFilePaths = settings.__APPLICATION_SETTINGS__.get_settings()['recent_files']
+
+        itEnd = 0
+        if len(recentFilePaths) <= self.maxFileNum:
+            itEnd = len(recentFilePaths)
+        else:
+            itEnd = self.maxFileNum
+        
+        for i in range(0, itEnd):
+            strippedName = QFileInfo(recentFilePaths[i]).fileName()
+            self.recentFileActionList[i].setText(strippedName)
+            self.recentFileActionList[i].setData(recentFilePaths[i])
+            self.recentFileActionList[i].setVisible(True)
+
+        for j in range(itEnd, self.maxFileNum):
+            self.recentFileActionList[j].setVisible(False)
+
+        settings.__APPLICATION_SETTINGS__.update_settings()
+
+    def createActionsAndConnections(self):
+        recentFileAction = None
+        for i in range(0, self.maxFileNum):
+            recentFileAction = QAction(self.parent)
+            recentFileAction.setVisible(False)
+            recentFileAction.triggered.connect(lambda: f_ctrl.load_phm(self, self.sender().data()))
+
+            self.recentFileActionList.append(recentFileAction)

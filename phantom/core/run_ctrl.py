@@ -41,7 +41,8 @@ class run_ctrl():
         self.parent.appendToBoard("Connected to Database. " + self.parent.dbData['dbname'] + " collection " + self.parent.dbData['collection'])
 
         self.__mongoose_thrd = mongoose_thread(db_handler) # instanciate the Q object
-        self.__upld_thrd = upload_thread(script_s, db_handler, self.parent.get_editor_widget().get_cluster().get_phm_scripts()["__dmi_instr__"]["instr"]) # instanciate the Q object
+        self.__upld_thrd = upload_thread(script_s, db_handler,
+                                         self.parent.get_editor_widget().get_cluster().get_phm_scripts()["__dmi_instr__"]["instr"]) # instanciate the Q object
 
         thread1 = QThread(self.parent) # create a thread
         thread2 = QThread(self.parent)
@@ -58,17 +59,17 @@ class run_ctrl():
         self.__upld_thrd.update_s.connect(self.update_status) # link signals to functions
         self.__upld_thrd.update_b.connect(self.update_board) # link signals to functions
         self.__upld_thrd.done.connect(self.script_done)
-        self.__upld_thrd.thrd_done.connect(lambda msg:self.thread_done(thread1, msg))
-        
+        self.__upld_thrd.thrd_done.connect(lambda msg: self.thread_done(thread1, msg))
+
         thread1.started.connect(self.__upld_thrd.addToDatabase) # connect function to be started in thread
-        thread2.started.connect(self.__mongoose_thrd.run)
+        thread2.started.connect(self.__mongoose_thrd.insert_docs)
 
         thread2.start()
         thread1.start()
 
     def run(self, opt=0, index=None):
         if opt == 0:
-            f_ctrl.save_script(self.parent.get_editor_widget().get_editor_tabs().currentWidget(), self.parent.get_editor_widget())
+            f_ctrl.save_script(self.parent.get_editor_widget().get_editor_tabs().currentWidget(), self.parent.get_editor_widget(), self.parent.adjustForCurrentFile)
             script_s = self.parent.get_editor_widget().get_editor_tabs().currentWidget().get_curr_script().get_script()
 
         elif opt == 1:

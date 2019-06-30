@@ -13,10 +13,20 @@ class mongoose_thread(QObject):
         QObject.__init__(self)
         self.dbHandler = dbHandler
 
-    def run(self):
+    def insert_docs(self):
         try:
             execute_js('./phantom/database/js/index.js',
-                       arguments=self.dbHandler.get_uri() + " " + self.dbHandler.get_collection() + 'Schema')
+                       arguments="insert " + self.dbHandler.get_uri() + " " + self.dbHandler.get_collection() + 'Schema')
+            print(os.getpid())
+
+        except Exception as err:
+            settings.__LOG__.logError(str(err))
+
+
+    def find_docs(self):
+        try:
+            execute_js('./phantom/database/js/index.js',
+                       arguments="find " + self.dbHandler.get_uri() + " " + self.dbHandler.get_collection() + 'Schema')
             print(os.getpid())
 
         except Exception as err:

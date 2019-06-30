@@ -92,7 +92,6 @@ class upload_thread(QObject):
                 if self.dmi:
                     send_data = self.dmi.manipulate(docs[i])
                 try:
-                    
                     s.sendall(bytes(json.dumps(send_data), encoding='utf-8'))
                     data = s.recv(1024)
                     if data.decode("utf-8") == "err":
@@ -101,6 +100,7 @@ class upload_thread(QObject):
                     self.update_b.emit("Failed to upload document %d/%d" %(i+1, len(docs)) + "\n" + str(err))
                     continue
                 finally:
+                    print(data.decode("utf-8") + str(i))
                     self.update_s.emit("Sending Objects to Database... %d/%d" %(i+1, len(docs)))
                     time.sleep(1)
             else:
@@ -113,7 +113,7 @@ class upload_thread(QObject):
         s.shutdown(1)
         s.close()
 
-        self.thrd_done.emit(str(self.thread_id) + "Complete")
+        self.thrd_done.emit(str(self.thread_id) + ": Complete")
 
     def setStopFlag(self):
         settings.__LOG__.logInfo(str(self.thread_id) + ": Run Terminated Before Completion")

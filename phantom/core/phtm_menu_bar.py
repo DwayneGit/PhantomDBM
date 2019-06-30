@@ -1,7 +1,8 @@
 import sys
+import json
 
 from PyQt5.QtWidgets import QAction, QMenuBar, QMessageBox
-from PyQt5.QtCore import Qt, QUrl
+from PyQt5.QtCore import Qt, QUrl, QSettings
 from PyQt5.QtGui import QDesktopServices
 
 from phantom.phtm_widgets import PhtmMessageBox
@@ -9,13 +10,14 @@ from phantom.phtm_widgets import PhtmMessageBox
 from phantom.utility import validate_json_script
 from phantom.file_stuff import file_ctrl as f_ctrl
 
+from phantom.application_settings import settings
+
 class phtm_menu_bar(QMenuBar):
     def __init__(self, parent):
         super().__init__()
         self.parent = parent
 
         self.main_menu = self
-        self.recentFilesList = None
 
         self.setContextMenuPolicy(Qt.PreventContextMenu)
 
@@ -56,32 +58,26 @@ class phtm_menu_bar(QMenuBar):
         openPhmAction.triggered.connect(lambda: f_ctrl.load_phm(self.parent))
         fileMenu.addAction(openPhmAction)
 
-        openRMenu = fileMenu.addMenu("Open Recent")
-        # openRMenu.setLayoutDirection(Qt.LeftToRight)
-        # openRMenu.setStatusTip('Open a Recent Script File')
-
-        # for files in self.parent.getRecentFiles():
-        #     #create fuction that creates an action to reopen recent file
-        
-        rfileAction = QAction("/path/to/recent/file", self.parent)
-        openRMenu.addAction(rfileAction)
-        # openRAction.triggered.connect(self.parent.getfile)
+        openRecentMenu = fileMenu.addMenu("Open Recent")
+        for rfile in self.parent.recentFileActionList:
+            openRecentMenu.addAction(rfile)
+        self.parent.updateRecentActionList()
         fileMenu.addSeparator()
 
         saveAction = QAction("Save Script", self.parent)
         saveAction.setStatusTip('Save Script File')
-        saveAction.triggered.connect(lambda: f_ctrl.save_script(self.parent.get_editor_widget().get_editor_tabs().currentWidget(), self.parent.get_editor_widget()))
+        saveAction.triggered.connect(lambda: f_ctrl.save_script(self.parent.get_editor_widget().get_editor_tabs().currentWidget(), self.parent.get_editor_widget(), self.parent.adjustForCurrentFile))
         fileMenu.addAction(saveAction)
 
         savePAction = QAction("Save PHM", self.parent)
         savePAction.setShortcut("Ctrl+S")
         savePAction.setStatusTip('Save Cluster File')
-        savePAction.triggered.connect(lambda: f_ctrl.save_phm(self.parent.get_editor_widget()))
+        savePAction.triggered.connect(lambda: f_ctrl.save_phm(self.parent.get_editor_widget().get_editor_tabs().currentWidget(), self.parent.adjustForCurrentFile))
         fileMenu.addAction(savePAction)
 
         savePAsAction = QAction("Save PHM As...", self.parent)
         savePAsAction.setStatusTip('Save Script File')
-        savePAsAction.triggered.connect(lambda: f_ctrl.export_phm(self.parent))
+        savePAsAction.triggered.connect(lambda: f_ctrl.export_phm(self.parent, self.parent.adjustForCurrentFile))
         fileMenu.addAction(savePAsAction)
         fileMenu.addSeparator()
 
@@ -217,12 +213,3 @@ class phtm_menu_bar(QMenuBar):
         helpMenu.addSeparator()
 
         helpMenu.addAction(aboutAction)
-
-    def loadRecentFiles(self):
-        pass
-
-    def appendRecentFile(self):
-        pass
-
-    def getRecentFilesList(self):
-        return self.recentFilesList

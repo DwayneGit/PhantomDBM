@@ -10,8 +10,7 @@ from phantom.logging_stuff import PhtmLogger
 from .phtm_icons import PhtmIcons
 from .themes.template import style_sheet_template as sst
 
-def init(app, stngs_file):
-    stngs_json = json.load(open(stngs_file))
+def init(app, sttngs_file):
 
     global __LOG__, __ICONS__, __THEME__
     global __STYLESHEET__, __APPLICATION_SETTINGS__, style_signal
@@ -19,8 +18,8 @@ def init(app, stngs_file):
 
     __LOG__ = PhtmLogger()
     __ICONS__ = PhtmIcons()
-    __APPLICATION_SETTINGS__ = stngs_file
-    __STYLESHEET__, __THEME__ = build_theme(stngs_json["theme"])
+    __APPLICATION_SETTINGS__ = _Settings(sttngs_file)
+    __STYLESHEET__, __THEME__ = build_theme(__APPLICATION_SETTINGS__ .get_settings()["theme"])
     __DATABASE__ = None
 
     style_signal = _StyleChanged(app)
@@ -32,6 +31,22 @@ def init(app, stngs_file):
         user_paths = []
 
     __LOG__.logDebug(user_paths)
+
+class _Settings():
+    def __init__(self, sttngs_file):
+        self.sttngs_file = sttngs_file
+        self.sttngs_json = json.load(open(self.sttngs_file))
+
+    def get_settings(self):
+        return self.sttngs_json
+
+    def update_settings(self):
+        with open(self.sttngs_file, 'w') as sttngs:
+            json.dump(self.sttngs_json,
+                      sttngs,
+                      indent=4,
+                      separators=(',', ': '))
+
 
 def build_theme(fp):
     style_sheet = ""
