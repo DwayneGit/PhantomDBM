@@ -9,15 +9,18 @@ from phantom.file_stuff import file_ctrl as f_ctrl
 from phantom.utility import text_style, validate_json_script
 
 from phantom.application_settings import settings
+from phantom.database.createSchema import generate_mongoose_schema
 
 class schema_tab(QWidget):
-    def __init__(self, schema, ref_schemas):
+    def __init__(self, schema, ref_schemas, collection):
         super().__init__()
 
         self.__schema = schema
         self.__ref_schemas = ref_schemas
         self.__schema_editor = PhtmPlainTextEdit()
         self.__schema_editor.setPlainText("Schemas use the keywords found in mongoengine.\nFor Details go to https://www.blahblahblah.com.")
+        
+        self._collection = collection
 
         self.__curr_item = "Main"
         self.__curr_item_changed = False
@@ -101,7 +104,7 @@ class schema_tab(QWidget):
         load_widget.setSizePolicy(spTop)
         load_widget_layout = QHBoxLayout()
 
-        new_ref_btn = PhtmPushButton("Add Reference Schema")
+        new_ref_btn = PhtmPushButton("Add Child Schema")
 
         load_widget_layout.addWidget(self.schema_box)
         load_widget_layout.addWidget(new_ref_btn)
@@ -140,19 +143,22 @@ class schema_tab(QWidget):
             self.schema_box.addItem(schema)
 
     def __save_schema(self, schema):
-        try:
-            validate_json_script(self, self.__schema_editor.toPlainText())
-        except (ValueError, json.decoder.JSONDecodeError) as err:
-            settings.__LOG__.logError("SCHEMA_ERR:" + str(err))
-            err_msg = PhtmMessageBox(self, "Invalid JSON Error",
-                                     "Invalid JSON Format\n" + str(err))
-            err_msg.exec_()
-            return False
+        # try:
+        #     validate_json_script(self, self.__schema_editor.toPlainText())
+        # except (ValueError, json.decoder.JSONDecodeError) as err:
+        #     settings.__LOG__.logError("SCHEMA_ERR:" + str(err))
+        #     err_msg = PhtmMessageBox(self, "Invalid JSON Error",
+        #                              "Invalid JSON Format\n" + str(err))
+        #     err_msg.exec_()
+        #     return False
 
         if schema == "Main":
+            options = {'collection': self._collection}
             self.__schema.set_script(self.__schema_editor.toPlainText())
+            generate_mongoose_schema(self._collection, self.__schema_editor.toPlainText(), json.dumps(options))
         else:
             self.__ref_schemas[schema] = self.__schema_editor.toPlainText()
+            generate_mongoose_schema(self.__schema_editor.toPlainText(), schema)
 
         return True
 

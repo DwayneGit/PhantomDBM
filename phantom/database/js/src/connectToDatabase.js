@@ -1,8 +1,6 @@
 var mongoose = require("mongoose")
 
-module.exports = (dbURL) => {
-
-    mongoose.connect(dbURL, { useNewUrlParser: true });
+module.exports = async (dbURL) => {
 
     mongoose.connection.on('connected', () => {
         console.log("Mongoose default connection is open to ", dbURL);
@@ -22,4 +20,7 @@ module.exports = (dbURL) => {
             process.exit(0)
         });
     });
+
+    return await mongoose.connect(dbURL, { useNewUrlParser: true })
+
 }

@@ -1,7 +1,10 @@
+
+import os
+import sys
 import json
 import time
-
-import pprint
+import signal
+import socket
 
 from collections import OrderedDict
 
@@ -11,6 +14,8 @@ from phantom.instructions import dmi_handler
 from phantom.utility import validate_json_script
 
 from phantom.application_settings import settings
+
+from Naked.toolshed.shell import execute_js
 
 class upload_thread(QObject):
     update_s = pyqtSignal(str) # signal data ready to be appended to th board
@@ -61,27 +66,54 @@ class upload_thread(QObject):
         time.sleep(1)
 
     def __run_script(self, script):
-        data = script
+        docs = script
+        
+        s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        
+        server_addr = "./phantom/database/js/src/tmp/db.sock"
+        settings.__LOG__.logInfo('Connecting to %s' % server_addr)
+        print(os.getcwd())
+        print(os.getpid())
 
-        for i in range(0, len(data)):
-            self.start.emit(len(data))
+        try:
+            s.connect(server_addr)
+
+        except socket.error as err:
+            settings.__LOG__.logError(str(err))
+            self.thrd_done.emit(str(self.thread_id) + ": " + str(err))
+            self.setStopFlag()
+
+        for i in range(0, len(docs)):
+            self.start.emit(len(docs))
             if self.stopFlag:
                 return
             elif not self.pauseFlag:
-                send_data = data[i]
+                send_data = docs[i]
                 if self.dmi:
-                    send_data = self.dmi.manipulate(data[i])
+                    send_data = self.dmi.manipulate(docs[i])
                 try:
-                    self.dbHandler.insertDoc(send_data)
+                    
+                    s.sendall(bytes(json.dumps(send_data), encoding='utf-8'))
+                    data = s.recv(1024)
+                    if data.decode("utf-8") == "err":
+                        raise Exception
                 except Exception as err:
-                    self.update_b.emit("Failed to upload document %d/%d" %(i+1, len(data)) + "\n" + str(err))
+                    self.update_b.emit("Failed to upload document %d/%d" %(i+1, len(docs)) + "\n" + str(err))
                     continue
                 finally:
-                    self.update_s.emit("Sending Objects to Database... %d/%d" %(i+1, len(data)))
+                    self.update_s.emit("Sending Objects to Database... %d/%d" %(i+1, len(docs)))
                     time.sleep(1)
             else:
                 continue
-        return True
+
+        settings.__LOG__.logInfo('Client closing socket...')
+        
+        s.sendall(bytes("end", encoding='utf-8'))
+
+        s.shutdown(1)
+        s.close()
+
+        self.thrd_done.emit(str(self.thread_id) + "Complete")
 
     def setStopFlag(self):
         settings.__LOG__.logInfo(str(self.thread_id) + ": Run Terminated Before Completion")
