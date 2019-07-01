@@ -13,6 +13,10 @@ connectToDatabase(process.argv[3]).catch((err)=>{
 
 const socket_addr = path.join(__dirname, "src/tmp/db.sock")
 
+if (!fs.existsSync(socket_addr)) {
+    fs.mkdirSync(path.join(__dirname, "src/tmp"))
+}
+
 var server = null
 var dao = new mongoose_dao()
 
