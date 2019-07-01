@@ -35,18 +35,27 @@ def init(app, sttngs_file):
 class _Settings():
     def __init__(self, sttngs_file):
         self.sttngs_file = sttngs_file
+        if not os.path.exists(self.sttngs_file):
+            self.__set_default_settings()
+            
         self.sttngs_json = json.load(open(self.sttngs_file))
 
     def get_settings(self):
         return self.sttngs_json
 
     def update_settings(self):
-        with open(self.sttngs_file, 'w') as sttngs:
+        with open(self.sttngs_file, 'w+') as sttngs:
             json.dump(self.sttngs_json,
                       sttngs,
                       indent=4,
                       separators=(',', ': '))
 
+    def __set_default_settings(self):
+        sttngs = {
+            'theme':"phantom/application_settings/themes/1_dark.json", 
+            "recent_files":[]
+        }
+        json.dump(sttngs, open(self.sttngs_file, 'w+'), indent=4, separators=(',', ': '))
 
 def build_theme(fp):
     style_sheet = ""

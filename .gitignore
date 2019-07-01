@@ -16,6 +16,8 @@ breezess
 # vscode settings folder
 .vscode
 
+app_settings.json
+
 icons/icon_sets
 
 node_modules

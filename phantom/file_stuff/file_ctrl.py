@@ -9,6 +9,8 @@ from phantom.utility import cleanTmpScripts
 
 from phantom.phtm_widgets import PhtmMessageBox, PhtmFileDialog
 
+from phantom.application_settings import settings
+
 def load_instructions():
     dlg = PhtmFileDialog(None, "Open", QFileDialog.AnyFile, "XML files (*.xml)", options=QFileDialog.DontUseNativeDialog|QFileDialog.DontUseCustomDirectoryIcons)
     filenames = []
@@ -38,6 +40,9 @@ def load_script():
 def load_phm(main_window, file_path=None):
     
     def load(path):
+        if not os.path.exists(path):
+            raise Exception("PathError: No such file or directory: '" + path + "'" )
+
         filename_w_ext = os.path.basename(path)
         filename = os.path.splitext(filename_w_ext)[0]
 
@@ -60,13 +65,14 @@ def load_phm(main_window, file_path=None):
                 load(filenames[0])
                 return True
             except Exception as err:
-                print(str(err))
+                settings.__LOG__.logError(str(err))
+    
     else:
         try:
             load(file_path)
             return True
         except Exception as err:
-            print(str(err))
+            settings.__LOG__.logError(str(err))
 
     return False
 

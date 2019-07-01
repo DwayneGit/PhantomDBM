@@ -230,6 +230,17 @@ class main_window(QMainWindow):
         for i in range(0, self.maxFileNum):
             recentFileAction = QAction(self.parent)
             recentFileAction.setVisible(False)
-            recentFileAction.triggered.connect(lambda: f_ctrl.load_phm(self, self.sender().data()))
+            recentFileAction.triggered.connect(self.openRecent)
 
             self.recentFileActionList.append(recentFileAction)
+
+    def openRecent(self):
+        if not f_ctrl.load_phm(self, self.sender().data()):
+            recentFilePaths = settings.__APPLICATION_SETTINGS__.get_settings()['recent_files']
+
+            try:
+                recentFilePaths.remove(self.sender().data())
+            except Exception as err:
+                settings.__LOG__.logError("IOError: " + str(err))
+
+            self.updateRecentActionList()
