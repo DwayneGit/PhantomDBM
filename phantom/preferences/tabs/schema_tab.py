@@ -36,6 +36,9 @@ class schema_tab(QWidget):
 
         self.__collection = collection
 
+        self.__curr_item = "main"
+        self.__curr_item_changed = False
+
         if not self.__collection:
             self.__schema_editor.setReadOnly(True)
             return
@@ -46,9 +49,6 @@ class schema_tab(QWidget):
         else:
             self.schema = schema.get_script()
         self.__schema_editor.appendPlainText(self.schema)
-
-        self.__curr_item = "main"
-        self.__curr_item_changed = False
 
         # if self.__schema.get_script():
         #     self.__schema_editor.appendPlainText(self.__schema.get_script())
@@ -169,7 +169,9 @@ class schema_tab(QWidget):
         #     return False
 
         self.__schema.set_script(self.__schema_editor.toPlainText())
-        self.generate_mongoose_schema(self.__schema_editor.toPlainText())
+        if self.__curr_item_changed:
+            self.__curr_item_changed = False
+            self.generate_mongoose_schema(self.__schema_editor.toPlainText())
         # else:
         #     self.__ref_schemas[schema] = self.__schema_editor.toPlainText()
         #     generate_mongoose_schema(self.__schema_editor.toPlainText(), schema)
@@ -203,7 +205,7 @@ class schema_tab(QWidget):
 
         collection_dir = schema_addr + self.db + "_" + self.__collection + "/"
         if not os.path.exists(collection_dir):
-            os.mkdir(collection_dir)
+            os.makedirs(collection_dir)
 
         fp = open(collection_dir + self.__collection +"Schema.js", "w+")
         fp.write('const mongoose = require("mongoose")\n')
