@@ -22,4 +22,4 @@ icons/icon_sets
 
 node_modules
 
-src/schemas
+schemas/
