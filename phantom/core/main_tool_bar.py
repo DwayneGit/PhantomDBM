@@ -44,7 +44,7 @@ class main_tool_bar():
         tbfiles.triggered.connect(lambda: f_ctrl.export_script(self.parent.get_editor_widget().get_editor_tabs().currentWidget()))
         topTBar.addAction(tbfiles)
 
-        tbsettings = PhtmAction(settings.style_signal.icon_signal, settings.__ICONS__.get_settings, "sSettings", self.parent)
+        tbsettings = PhtmAction(settings.style_signal.icon_signal, settings.__ICONS__.get_settings, "Settings", self.parent)
         tbsettings.triggered.connect(self.parent.showPref)
         topTBar.addAction(tbsettings)
 

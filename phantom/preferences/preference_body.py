@@ -25,8 +25,8 @@ class preference_body(QDialog):
 
         self.dmiTab = dmi_tab(self.parent.parent)
         self.schemaTab = schema_tab(self.parent.parent.get_editor_widget().get_cluster().get_phm_scripts()["__schema__"],
-                                        self.parent.parent.get_editor_widget().get_cluster().get_phm_scripts()["__reference_schemas__"],
-                                        self.prefs['mongodb']['collection'])
+                                    self.prefs['mongodb']['dbname'],
+                                    self.prefs['mongodb']['collection'])
         self.databaseTab = database_tab(self.prefs, self.instancesPrefDict)
         self.themeTab = theme_tab()
 

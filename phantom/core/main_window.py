@@ -148,7 +148,7 @@ class main_window(QMainWindow):
             settings.__LOG__.logInfo("Program Ended")
 
     def showPref(self, index=0):
-        p = PhtmDialog("Preferences", QRect(10, 10, 350, 475), self)
+        p = PhtmDialog("Preferences", QRect(10, 10, 450, 500), self)
         p.set_central_dialog(prefs.preference_body(self.user, p))
         p.get_central_dialog().tabW.setCurrentIndex(index)
 

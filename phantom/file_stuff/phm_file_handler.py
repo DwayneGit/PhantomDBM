@@ -4,7 +4,7 @@ from copy import deepcopy
 
 from PyQt5.QtWidgets import QMessageBox
 
-from phantom.preferences import default_general_settings as dgs
+from phantom.preferences import default_settings as dgs
 
 from phantom.utility import validate_json_script
 
@@ -14,6 +14,7 @@ from .json_script import JsonScript
 from .phm import phm as phm_file
 
 class PhmFileHandler():
+
     def __init__(self, phm=None, db_handler=None):
         self.__class__ = PhmFileHandler
         self.__class__.__name__ = "PhmFileHandler"
@@ -26,9 +27,8 @@ class PhmFileHandler():
             setting = dgs()
             self.__phm = phm_file("New Cluster")
             self.add_script(str(setting), "__settings__")
-            self.add_script("{\n}", "__schema__")
+            self.add_script("{}", "__schema__")
             self.get_phm_scripts()["__dmi_instr__"] = {"instr" : "", "name" : "" }
-            self.get_phm_scripts()["__reference_schemas__"] = {}
 
         self.__db_handler = db_handler
 
@@ -97,6 +97,7 @@ class PhmFileHandler():
 
     def set_file_path(self, file_path):
         self.__file_path = file_path
+        
 
 #---------------------------- Database Methods ------------------------------
     def get_db_handler(self, user=None):

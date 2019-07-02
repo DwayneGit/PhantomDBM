@@ -23,3 +23,6 @@ class PhtmPlainTextEdit(QPlainTextEdit):
         self.setLineWrapMode(QPlainTextEdit.NoWrap)
 
         self.setPlainText(text)
+
+    def appendPlainText(self, text):
+        self.setPlainText(self.toPlainText() + "\n" + text)

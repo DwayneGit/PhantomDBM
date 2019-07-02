@@ -1,146 +1,162 @@
 import json
+import os
+import regex
 
 from PyQt5.QtCore import QSize, Qt
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLineEdit, QMessageBox, QVBoxLayout, QSizePolicy, QMenu, QAction
 
 from phantom.phtm_widgets import PhtmComboBox, PhtmPushButton, PhtmPlainTextEdit, PhtmMessageBox, PhtmInputDialog
 
-from phantom.file_stuff import file_ctrl as f_ctrl
+from phantom.preferences.default_settings import default_schema_template
+
 from phantom.utility import text_style, validate_json_script
 
 from phantom.application_settings import settings
 from phantom.database.createSchema import generate_mongoose_schema
 
 class schema_tab(QWidget):
-    def __init__(self, schema, ref_schemas, collection):
+    def __init__(self, schema, db, collection):
         super().__init__()
 
         self.__schema = schema
-        self.__ref_schemas = ref_schemas
+        # self.__ref_schemas = ref_schemas
         self.__schema_editor = PhtmPlainTextEdit()
-        self.__schema_editor.setPlainText("Schemas use the keywords found in mongoengine.\nFor Details go to https://www.blahblahblah.com.")
-        
-        self._collection = collection
+        # self.__schema_editor.setPlainText("// Schemas use the keywords found in mongoengine.\n// For Details go to https://www.blahblahblah.com.")
 
-        self.__curr_item = "Main"
-        self.__curr_item_changed = False
         schemaVBox = QVBoxLayout()
 
         spBottm = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         spBottm.setVerticalStretch(10)
+
         self.__schema_editor.setSizePolicy(spBottm)
-
-        if self.__schema.get_script():
-            self.__schema_editor.setPlainText(self.__schema.get_script())
-            # self.schema_box.setPlainText(self.schema)
-
-        self.schema_box = PhtmComboBox()
-        self.schema_box.setFixedSize(QSize(175, 31))
-        self.schema_box.addItem(self.__curr_item)
-
-        self.schema_box.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.schema_box.customContextMenuRequested.connect(lambda p: self.on_schemaBox_customContextMenuRequested(p))
-
-        self.__load_reference_schemas()
-
-        self.__schema_editor.textChanged.connect(self.__schema_changed)
-        self.schema_box.currentIndexChanged.connect(lambda i: self.__edit_schema(self.__curr_item, self.schema_box.itemText(i)))
-
-        schemaVBox.addWidget(self.btn_row_1())
-        schemaVBox.addWidget(self.btn_row_2())
         schemaVBox.addWidget(self.__schema_editor)
         schemaVBox.setContentsMargins(0, 0, 0, 0)
 
         self.setLayout(schemaVBox)
 
+        self.__collection = collection
 
-    def on_schemaBox_customContextMenuRequested(self, pos):
-        menu = QMenu(self)
+        if not self.__collection:
+            self.__schema_editor.setReadOnly(True)
+            return
 
-        index = self.schema_box.view().indexAt(pos)
+        self.db = db
+        if schema.get_script() == "{}":
+            self.schema = default_schema_template(self.__collection)
+        else:
+            self.schema = schema.get_script()
+        self.__schema_editor.appendPlainText(self.schema)
 
-        renameAction = QAction("Rename", self)
-        renameAction.triggered.connect(lambda x: self.__rename_script(1))
+        self.__curr_item = "main"
+        self.__curr_item_changed = False
 
-        deleteAction = QAction("Delete", self)
-        deleteAction.triggered.connect(lambda x: self.__delete_script(1))
+        # if self.__schema.get_script():
+        #     self.__schema_editor.appendPlainText(self.__schema.get_script())
+            # self.schema_box.setPlainText(self.schema)
 
-        menu.addAction(renameAction)
-        menu.addAction(deleteAction)
+        # self.schema_box = PhtmComboBox()
+        # self.schema_box.setFixedSize(QSize(175, 31))
+        # self.schema_box.addItem(self.__curr_item)
 
-        menu.popup(self.schema_box.view().mapToGlobal(pos))
+        # self.schema_box.setContextMenuPolicy(Qt.CustomContextMenu)
+        # self.schema_box.customContextMenuRequested.connect(lambda p: self.on_schemaBox_customContextMenuRequested(p))
 
-    def __rename_script(self, x):
-        pass
+        # self.__load_reference_schemas()
 
-    def __delete_script(self, x):
-        pass
+        # self.__schema_editor.textChanged.connect(self.__schema_changed)
+        # self.schema_box.currentIndexChanged.connect(lambda i: self.__edit_schema(self.__curr_item, self.schema_box.itemText(i)))
 
-    def btn_row_1(self):
-        load_widget = QWidget()
-        spTop = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
-        spTop.setVerticalStretch(1)
-        load_widget.setSizePolicy(spTop)
-        load_widget_layout = QHBoxLayout()
+        # schemaVBox.addWidget(self.btn_row_1())
+        # schemaVBox.addWidget(self.btn_row_2())
 
-        import_ref_schema_btn = PhtmPushButton("Import Reference Schema")
-        import_primary_schema_btn = PhtmPushButton("Import Primary Schema")
 
-        load_widget_layout.addWidget(import_primary_schema_btn)
-        load_widget_layout.addWidget(import_ref_schema_btn)
-        load_widget_layout.setContentsMargins(0, 0, 0, 0)
+    # def on_schemaBox_customContextMenuRequested(self, pos):
+    #     menu = QMenu(self)
 
-        load_widget.setLayout(load_widget_layout)
+    #     index = self.schema_box.view().indexAt(pos)
 
-        import_ref_schema_btn.clicked.connect(lambda: self.__import_ref_schema(self.schema_box))
-        import_primary_schema_btn.clicked.connect(self.__import_primary_schema)
+    #     renameAction = QAction("Rename", self)
+    #     renameAction.triggered.connect(lambda x: self.__rename_script(1))
 
-        return load_widget
+    #     deleteAction = QAction("Delete", self)
+    #     deleteAction.triggered.connect(lambda x: self.__delete_script(1))
 
-    def btn_row_2(self):
-        load_widget = QWidget()
-        spTop = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
-        spTop.setVerticalStretch(1)
-        load_widget.setSizePolicy(spTop)
-        load_widget_layout = QHBoxLayout()
+    #     menu.addAction(renameAction)
+    #     menu.addAction(deleteAction)
 
-        new_ref_btn = PhtmPushButton("Add Child Schema")
+    #     menu.popup(self.schema_box.view().mapToGlobal(pos))
 
-        load_widget_layout.addWidget(self.schema_box)
-        load_widget_layout.addWidget(new_ref_btn)
-        load_widget_layout.setContentsMargins(0, 0, 0, 0)
+    # def __rename_script(self, x):
+    #     pass
 
-        load_widget.setLayout(load_widget_layout)
+    # def __delete_script(self, x):
+    #     pass
 
-        new_ref_btn.clicked.connect(self.__new_ref_script)
+    # def btn_row_1(self):
+    #     load_widget = QWidget()
+    #     spTop = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+    #     spTop.setVerticalStretch(1)
+    #     load_widget.setSizePolicy(spTop)
+    #     load_widget_layout = QHBoxLayout()
 
-        return load_widget
+    #     import_ref_schema_btn = PhtmPushButton("Import Reference Schema")
+    #     import_primary_schema_btn = PhtmPushButton("Import Primary Schema")
 
-    def __schema_changed(self):
-        self.__curr_item_changed = True
+    #     load_widget_layout.addWidget(import_primary_schema_btn)
+    #     load_widget_layout.addWidget(import_ref_schema_btn)
+    #     load_widget_layout.setContentsMargins(0, 0, 0, 0)
 
-    def __new_ref_script(self):
-        if not self.__save_schema(self.__curr_item):
-            return False
-        input_name = PhtmInputDialog(self, "Enter Schema Name", "Name: ", QLineEdit.Normal, "")
-        if input_name.exec_():
-            if input_name.selected_value:
-                self.__ref_schemas[input_name.selected_value] = ""
-                self.__schema_editor.clear()
-                self.__curr_item = input_name.selected_value
+    #     load_widget.setLayout(load_widget_layout)
 
-                self.schema_box.addItem(input_name.selected_value)
-                self.schema_box.setCurrentIndex(self.schema_box.count()-1)
-            else:
-                err_msg = PhtmMessageBox(None, "Enter Name", "Please enter the name of the collection the schema represents.")
-                err_msg.exec_()
+    #     import_ref_schema_btn.clicked.connect(lambda: self.__import_ref_schema(self.schema_box))
+    #     import_primary_schema_btn.clicked.connect(self.__import_primary_schema)
+
+    #     return load_widget
+
+    # def btn_row_2(self):
+    #     load_widget = QWidget()
+    #     spTop = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
+    #     spTop.setVerticalStretch(1)
+    #     load_widget.setSizePolicy(spTop)
+    #     load_widget_layout = QHBoxLayout()
+
+    #     new_ref_btn = PhtmPushButton("Add Child Schema")
+
+    #     load_widget_layout.addWidget(self.schema_box)
+    #     load_widget_layout.addWidget(new_ref_btn)
+    #     load_widget_layout.setContentsMargins(0, 0, 0, 0)
+
+    #     load_widget.setLayout(load_widget_layout)
+
+    #     new_ref_btn.clicked.connect(self.__new_ref_script)
+
+    #     return load_widget
+
+    # def __schema_changed(self):
+    #     self.__curr_item_changed = True
+
+    # def __new_ref_script(self):
+    #     if not self.__save_schema(self.__curr_item):
+    #         return False
+    #     input_name = PhtmInputDialog(self, "Enter Schema Name", "Name: ", QLineEdit.Normal, "")
+    #     if input_name.exec_():
+    #         if input_name.selected_value:
+    #             self.__ref_schemas[input_name.selected_value] = ""
+    #             self.__schema_editor.clear()
+    #             self.__curr_item = input_name.selected_value
+
+    #             self.schema_box.addItem(input_name.selected_value)
+    #             self.schema_box.setCurrentIndex(self.schema_box.count()-1)
+    #         else:
+    #             err_msg = PhtmMessageBox(None, "Enter Name", "Please enter the name of the collection the schema represents.")
+    #             err_msg.exec_()
 
     def save_schemas(self):
         return self.__save_schema(self.__curr_item)
 
-    def __load_reference_schemas(self):
-        for schema in self.__ref_schemas:
-            self.schema_box.addItem(schema)
+    # def __load_reference_schemas(self):
+    #     for schema in self.__ref_schemas:
+    #         self.schema_box.addItem(schema)
 
     def __save_schema(self, schema):
         # try:
@@ -152,13 +168,11 @@ class schema_tab(QWidget):
         #     err_msg.exec_()
         #     return False
 
-        if schema == "Main":
-            options = {'collection': self._collection}
-            self.__schema.set_script(self.__schema_editor.toPlainText())
-            generate_mongoose_schema(self._collection, self.__schema_editor.toPlainText(), json.dumps(options))
-        else:
-            self.__ref_schemas[schema] = self.__schema_editor.toPlainText()
-            generate_mongoose_schema(self.__schema_editor.toPlainText(), schema)
+        self.__schema.set_script(self.__schema_editor.toPlainText())
+        self.generate_mongoose_schema(self.__schema_editor.toPlainText())
+        # else:
+        #     self.__ref_schemas[schema] = self.__schema_editor.toPlainText()
+        #     generate_mongoose_schema(self.__schema_editor.toPlainText(), schema)
 
         return True
 
@@ -175,40 +189,101 @@ class schema_tab(QWidget):
                         self.schema_box.setCurrentIndex(self.schema_box.setCurrentIndex(self.__index_of_child(schema)))
                         return
 
-        if schema == "Main":
+        if schema == "main":
             self.__schema_editor.setPlainText(self.__schema.get_script())
-        else:
-            self.__schema_editor.setPlainText(self.__ref_schemas[schema])
+        # else:
+        #     self.__schema_editor.setPlainText(self.__ref_schemas[schema])
 
         self.__curr_item = schema
         self.__curr_item_changed = False
 
-    def __import_ref_schema(self, schemaBox):
-        file_path = f_ctrl.load_script()[1]
-        if file_path:
-            input_name = PhtmInputDialog(self, "Enter Schema Name", "Name: ", QLineEdit.Normal, "")
-            if input_name.exec_():
-                if input_name.selected_value:
-                    self.__ref_schemas[input_name.selected_value] = ""
-                    self.__schema_editor.clear()
-                    self.__curr_item = input_name.selected_value
+    def generate_mongoose_schema(self, schemas, schema_addr="./phantom/database/js/src/schemas/"):
+        # print(os.getcwd())
+        col_key = "__" + self.__collection
 
-                    self.schema_box.addItem(input_name.selected_value)
-                    self.schema_box.setCurrentIndex(self.schema_box.count()-1)
-                else:
-                    err_msg = PhtmMessageBox(None, "Enter Name", "Please enter the name of the collection the schema represents.")
-                    err_msg.exec_()
+        collection_dir = schema_addr + self.db + "_" + self.__collection + "/"
+        if not os.path.exists(collection_dir):
+            os.mkdir(collection_dir)
 
-    def __import_primary_schema(self):
-        file_path = f_ctrl.load_script()[1]
-        if file_path:
-            schema = text_style.read_text(file_path)
-            self.__schema_editor.setPlainText(schema)
-            self.__schema.set_script(schema)
-            self.__curr_item = "Main"
+        fp = open(collection_dir + self.__collection +"Schema.js", "w+")
+        fp.write('const mongoose = require("mongoose")\n')
+        fp.write("var " + self.__collection + "Schema = new mongoose.Schema(")
+        fp.write(self.__get_object(schemas, col_key, "__schema")[0] + ", " + self.__get_object(schemas, col_key, "__options")[0] + ")\n\n")
+        fp.write("module.exports = mongoose.model(\""+ self.__collection + 'Model' +"\"," + self.__collection + "Schema" +")")
+        fp.close()
+
+        if schemas.find("__children"):
+            fp2 = open(collection_dir + self.__collection + "ChildSchemas.js", "w+")
+            fp2.write('const mongoose = require("mongoose")\n')
+            fp2.write('const ' + self.__collection + 'Model = require("./'+ self.__collection +'Schema")\n')
+
+            self.__get_keys(fp2, self.__get_object(schemas, "__children")[0])
+
+            fp2.close()
+                
+    def __get_keys(self, fp, json_data, start=0):
+        key = regex.search("[^\[\]{}\s:\",]+", json_data[start:])
+        if not key: return
+        data, index = self.__get_object(json_data, key.group(0))
+        print(data)
+
+        fp.write("module.exports." + key.group(0) + " = new " + self.__collection + "Model.discriminator('" + key.group(0) + "',")
+        fp.write("\n\tnew mongoose.Schema(")
+        fp.write(self.__get_object(data, '__schema')[0] + ", " + self.__get_object(data, '__options')[0] + "))\n\n")
+            
+        if start < len(json_data):
+            self.__get_keys(fp, json_data, index)
+
+    def __get_object(self, json_data, *keydata):
+        index = 0
+        for val in keydata:
+            index = json_data.find(val, index)
+            if index == -1:
+                return "", 0
+        index = json_data.find("{", index)
+        return self.__bracket_parse(json_data, index)
+        
+    def __bracket_parse(self, strg, start):
+        out = ""
+        bracket = 0
+        i = 0
+        for i in range(start, len(strg)):
+            if strg[i] == "{":
+                bracket += 1
+            elif strg[i] == "}":
+                bracket -= 1
+            elif bracket <= 0:
+                break
+            out += strg[i]
+
+        return out, i
+
+    # def __import_ref_schema(self, schemaBox):
+    #     file_path = f_ctrl.load_script()[1]
+    #     if file_path:
+    #         input_name = PhtmInputDialog(self, "Enter Schema Name", "Name: ", QLineEdit.Normal, "")
+    #         if input_name.exec_():
+    #             if input_name.selected_value:
+    #                 self.__ref_schemas[input_name.selected_value] = ""
+    #                 self.__schema_editor.clear()
+    #                 self.__curr_item = input_name.selected_value
+
+    #                 self.schema_box.addItem(input_name.selected_value)
+    #                 self.schema_box.setCurrentIndex(self.schema_box.count()-1)
+    #             else:
+    #                 err_msg = PhtmMessageBox(None, "Enter Name", "Please enter the name of the collection the schema represents.")
+    #                 err_msg.exec_()
+
+    # def __import_primary_schema(self):
+    #     file_path = f_ctrl.load_script()[1]
+    #     if file_path:
+    #         schema = text_style.read_text(file_path)
+    #         self.__schema_editor.setPlainText(schema)
+    #         self.__schema.set_script(schema)
+    #         self.__curr_item = "main"
     
-    def __index_of_child(self, child):
-        for i in range(self.schema_box.count()):
-            if self.schema_box.childAt(i) == child:
-                return i
-        return None
+    # def __index_of_child(self, child):
+    #     for i in range(self.schema_box.count()):
+    #         if self.schema_box.childAt(i) == child:
+    #             return i
+    #     return None

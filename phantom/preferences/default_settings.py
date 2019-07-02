@@ -1,4 +1,5 @@
-class default_general_settings():
+class default_settings():
+
     @staticmethod
     def to_str(json_dict):
         to_str = "{"
@@ -43,8 +44,21 @@ class default_general_settings():
         }
 
     def __str__(self):
-        return default_general_settings.to_str(self.__pref_dict)
+        return default_settings.to_str(self.__pref_dict)
 
     def get_setting(self):
         return self.__pref_dict
-        
+
+def default_schema_template(collection):
+    default = "{\n"
+    default += "\t__" + collection + " : {\n"
+    default += "\t\t__schema: {\n"
+    default += "\t\t}\n"
+    default += "\t\t__options: {\n"
+    default += "\t\tcollection: \""+ collection +"\"\n"
+    default += "\t\t}\n"
+    default += "\t}\n"
+    default += "\t__children: {\n"
+    default += "\t}\n"
+    default += "}\n"
+    return default        

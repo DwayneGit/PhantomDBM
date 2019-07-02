@@ -1,3 +1,3 @@
 from .preferences import Preferences
 from .preference_body import preference_body
-from .default_general_settings import default_general_settings
+from .default_settings import default_settings
