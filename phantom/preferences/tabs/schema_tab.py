@@ -63,7 +63,7 @@ class schema_tab(QWidget):
 
         # self.__load_reference_schemas()
 
-        # self.__schema_editor.textChanged.connect(self.__schema_changed)
+        self.__schema_editor.textChanged.connect(self.__schema_changed)
         # self.schema_box.currentIndexChanged.connect(lambda i: self.__edit_schema(self.__curr_item, self.schema_box.itemText(i)))
 
         # schemaVBox.addWidget(self.btn_row_1())
@@ -132,8 +132,8 @@ class schema_tab(QWidget):
 
     #     return load_widget
 
-    # def __schema_changed(self):
-    #     self.__curr_item_changed = True
+    def __schema_changed(self):
+        self.__curr_item_changed = True
 
     # def __new_ref_script(self):
     #     if not self.__save_schema(self.__curr_item):
@@ -210,7 +210,12 @@ class schema_tab(QWidget):
         fp = open(collection_dir + self.__collection +"Schema.js", "w+")
         fp.write('const mongoose = require("mongoose")\n')
         fp.write("var " + self.__collection + "Schema = new mongoose.Schema(")
-        fp.write(self.__get_object(schemas, col_key, "__schema")[0] + ", " + self.__get_object(schemas, col_key, "__options")[0] + ")\n\n")
+
+        schm = self.__get_object(schemas, col_key, "__schema")[0]
+        if schm:
+            fp.write(schm + ", " + self.__get_object(schemas, col_key, "__options")[0] + ")\n\n")
+        else:
+            fp.write(self.__get_object(schemas, col_key) + ")\n\n" )
         fp.write("module.exports = mongoose.model(\""+ self.__collection + 'Model' +"\"," + self.__collection + "Schema" +")")
         fp.close()
 
@@ -227,12 +232,16 @@ class schema_tab(QWidget):
         key = regex.search("[^\[\]{}\s:\",]+", json_data[start:])
         if not key: return
         data, index = self.__get_object(json_data, key.group(0))
-        print(data)
+        # print(data)
 
         fp.write("module.exports." + key.group(0) + " = new " + self.__collection + "Model.discriminator('" + key.group(0) + "',")
         fp.write("\n\tnew mongoose.Schema(")
-        fp.write(self.__get_object(data, '__schema')[0] + ", " + self.__get_object(data, '__options')[0] + "))\n\n")
-            
+        chld = self.__get_object(data, '__schema')[0]
+        if chld:
+            fp.write(chld + ", " + self.__get_object(data, '__options')[0] + "))\n\n")
+        else:
+            fp.write(self.__get_object(data)[0] + "))\n\n")
+
         if start < len(json_data):
             self.__get_keys(fp, json_data, index)
 
