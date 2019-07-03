@@ -17,6 +17,7 @@ class PhtmIcons():
         self.edit = "icons/" + self.icon_set +"/edit.png"
         self.sync = "icons/" + self.icon_set +"/sync.png"
         self.info = "icons/" + self.icon_set +"/info.png"
+        self.warning = "icons/" + self.icon_set +"/warning.png"
         self.close = "icons/" + self.icon_set +"/close.png"
         self.add = "icons/" + self.icon_set +"/add.png"
         self.settings = "icons/" + self.icon_set +"/settings.png"
@@ -51,6 +52,9 @@ class PhtmIcons():
 
     def get_sync(self):
         return self.sync
+
+    def get_warning(self):
+        return self.warning
 
     def get_info(self):
         return self.info

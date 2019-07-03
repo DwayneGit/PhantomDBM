@@ -31,6 +31,7 @@ class PhmFileHandler():
             self.get_phm_scripts()["__dmi_instr__"] = {"instr" : "", "name" : "" }
 
         self.__db_handler = db_handler
+        self.__children = []
 
     def save(self, file_path, user=None):
         self.__phm.modified_by(user)
@@ -97,7 +98,12 @@ class PhmFileHandler():
 
     def set_file_path(self, file_path):
         self.__file_path = file_path
-        
+
+    def get_children(self):
+        return self.__children
+
+    def set_children(self, chlds):
+        self.__children = chlds
 
 #---------------------------- Database Methods ------------------------------
     def get_db_handler(self, user=None):

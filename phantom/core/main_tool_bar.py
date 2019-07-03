@@ -53,7 +53,7 @@ class main_tool_bar():
         topTBar.addWidget(spacer)
 
         tbinfo = PhtmAction(settings.style_signal.icon_signal, settings.__ICONS__.get_info, "Info", self.parent)
-        tbinfo.triggered.connect(lambda: QDesktopServices.openUrl(QUrl("https://github.com/DwayneGit/PhantomDBM")))
+        tbinfo.triggered.connect(lambda: QDesktopServices.openUrl(QUrl("https://github.com/DwayneGit/PhantomDBM/wiki")))
         topTBar.addAction(tbinfo)
 
         # ----------------- Side Toolbar ---------------------------
@@ -61,6 +61,7 @@ class main_tool_bar():
         sideTBar.setMovable(False)
 
         blank = PhtmAction(settings.style_signal.icon_signal, settings.__ICONS__.get_app_icon, "", self.parent)
+        blank.triggered.connect(lambda: QDesktopServices.openUrl(QUrl("https://github.com/DwayneGit/PhantomDBM")))
         sideTBar.addAction(blank)
 
         self.tbrun = QAction()
@@ -119,7 +120,12 @@ class main_tool_bar():
         index = self.collnameMenu.findText(self.parent.prefs['mongodb']['collection'])
         self.collnameMenu.setCurrentIndex(index)
         self.collnameMenu.currentTextChanged.connect(lambda: collectionNameChanged(self, self.parent))
+        
         sideTBar.addWidget(self.collnameMenu)
+
+        # tbalert = PhtmAction(settings.style_signal.icon_signal, settings.__ICONS__.get_warning, "Schema Alert", self.parent)
+        # tbalert.triggered.connect(lambda: print())
+        # sideTBar.addAction(tbalert)
 
         self.parent.addToolBar(Qt.TopToolBarArea, sideTBar)
         self.parent.addToolBar(Qt.LeftToolBarArea, topTBar)

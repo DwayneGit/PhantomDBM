@@ -194,10 +194,10 @@ class phtm_menu_bar(QMenuBar):
         helpMenu = self.main_menu.addMenu('Help')
 
         docAction = QAction("Documentation", self.parent)
-        docAction.triggered.connect(lambda: QDesktopServices.openUrl(QUrl("https://github.com/DwayneGit/PhantomDBM")))
+        docAction.triggered.connect(lambda: QDesktopServices.openUrl(QUrl("https://github.com/DwayneGit/PhantomDBM/wiki")))
 
         notesAction = QAction("Release Notes", self.parent)
-        notesAction.triggered.connect(lambda: QDesktopServices.openUrl(QUrl("https://github.com/DwayneGit/PhantomDBM")))
+        notesAction.triggered.connect(lambda: QDesktopServices.openUrl(QUrl("https://github.com/DwayneGit/PhantomDBM/releases")))
 
         updateAction = QAction("Check For Updates...", self.parent)
         updateAction.triggered.connect(lambda: QDesktopServices.openUrl(QUrl("https://github.com/DwayneGit/PhantomDBM")))

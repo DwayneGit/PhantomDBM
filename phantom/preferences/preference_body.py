@@ -74,8 +74,11 @@ class preference_body(QDialog):
         self.parent.parent.get_editor_widget().get_cluster().save_settings(self.parent.prefs)
 
         self.dmiTab.save_dmi()
+        
         if not self.schemaTab.save_schemas():
             return False
+        self.parent.parent.get_editor_widget().get_cluster().set_children(self.schemaTab.children)
+
         self.svd = True
 
         if self.themeTab.selected_theme and settings.__THEME__["file"] != self.themeTab.selected_theme:

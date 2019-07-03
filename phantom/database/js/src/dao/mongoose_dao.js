@@ -11,44 +11,6 @@ class mongooseDOA {
 
     constructor(){}
 
-    insertDataSocket(schema_addr){
-        return (socket) => {
-            console.log("Connection established...")
-            socket.on('data', (data) => {
-                try {
-                    console.debug(data.toString('utf8'))
-                    if(data.toString('utf8') === "end"){
-                        process.exit(1)
-                    }
-                    
-                    var d = JSON.parse(data.toString())
-                    var test = new schemas[schema_addr](d)
-                    
-                    test.save().then((err) => {
-                        socket.write("Document saved")
-                    })
-                }
-                catch (err) {
-                    console.error(err)
-                    socket.write("err")
-                    // socket.end()
-                }
-            })
-
-            socket.on('error', (err) => {
-                if (err.code === 'ECONNRESET') {
-                    console.error('Collection');
-                    setTimeout(() => {
-                        socket.end();
-                    }, 1000);
-                }
-                else{
-                    console.error(err)
-                }
-            })
-        }
-    }
-
     findDataSocket( ){
         return (socket) => {
             console.log("Connection established...")

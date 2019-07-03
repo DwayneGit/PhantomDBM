@@ -67,13 +67,11 @@ class upload_thread(QObject):
 
     def __run_script(self, script):
         docs = script
-        
+
         s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        
+
         server_addr = "./phantom/database/js/src/tmp/db.sock"
         settings.__LOG__.logInfo('Connecting to %s' % server_addr)
-        print(os.getcwd())
-        print(os.getpid())
 
         try:
             s.connect(server_addr)

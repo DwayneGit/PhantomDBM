@@ -12,7 +12,6 @@ from phantom.preferences.default_settings import default_schema_template
 from phantom.utility import text_style, validate_json_script
 
 from phantom.application_settings import settings
-from phantom.database.createSchema import generate_mongoose_schema
 
 class schema_tab(QWidget):
     def __init__(self, schema, db, collection):
@@ -21,6 +20,7 @@ class schema_tab(QWidget):
         self.__schema = schema
         # self.__ref_schemas = ref_schemas
         self.__schema_editor = PhtmPlainTextEdit()
+        self.__schema_editor.showLineNumbers()
         # self.__schema_editor.setPlainText("// Schemas use the keywords found in mongoengine.\n// For Details go to https://www.blahblahblah.com.")
 
         schemaVBox = QVBoxLayout()
@@ -34,7 +34,9 @@ class schema_tab(QWidget):
 
         self.setLayout(schemaVBox)
 
+
         self.__collection = collection
+        self.children = []
 
         self.__curr_item = "main"
         self.__curr_item_changed = False
@@ -224,15 +226,15 @@ class schema_tab(QWidget):
             fp2.write('const mongoose = require("mongoose")\n')
             fp2.write('const ' + self.__collection + 'Model = require("./'+ self.__collection +'Schema")\n')
 
-            self.__get_keys(fp2, self.__get_object(schemas, "__children")[0])
+            self.children = (self.__get_keys(fp2, self.__get_object(schemas, "__children")[0]))
 
             fp2.close()
                 
-    def __get_keys(self, fp, json_data, start=0):
+    def __get_keys(self, fp, json_data, start=0, key_list=[]):
         key = regex.search("[^\[\]{}\s:\",]+", json_data[start:])
-        if not key: return
+        if not key: return key_list
         data, index = self.__get_object(json_data, key.group(0))
-        # print(data)
+        key_list.append(data)
 
         fp.write("module.exports." + key.group(0) + " = new " + self.__collection + "Model.discriminator('" + key.group(0) + "',")
         fp.write("\n\tnew mongoose.Schema(")
@@ -243,7 +245,7 @@ class schema_tab(QWidget):
             fp.write(self.__get_object(data)[0] + "))\n\n")
 
         if start < len(json_data):
-            self.__get_keys(fp, json_data, index)
+            self.__get_keys(fp, json_data, index, key_list)
 
     def __get_object(self, json_data, *keydata):
         index = 0
