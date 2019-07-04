@@ -1,6 +1,7 @@
 import json
+from copy import deepcopy
 
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QRect
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QTabWidget, QWidget, QHBoxLayout, QGraphicsDropShadowEffect
 from PyQt5.QtGui import QColor
 
@@ -16,7 +17,7 @@ from .tabs.schema_tab import schema_tab
 from .tabs.theme_tab import theme_tab
 
 class preference_body(QDialog):
-    def __init__(self, title, geometry, parent, user=None):
+    def __init__(self, cluster, user=None):
         super().__init__() # set screen size (left, top, width, height
 
         self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint)
@@ -25,9 +26,9 @@ class preference_body(QDialog):
 
         self.setWindowModality(Qt.ApplicationModal)
 
-        self.window_title = title
-
-        self.parent = parent
+        self.window_title = "Preferences"
+        
+        self.__cluster = cluster
         self.user = user
 
         self.oldPos = self.pos()
@@ -46,7 +47,7 @@ class preference_body(QDialog):
 
         self.setLayout(self.__layout)
 
-        self.setGeometry(geometry)
+        self.setGeometry(QRect(10, 10, 450, 500),)
         self.move(center_window(self))
 
         self.shadow = QGraphicsDropShadowEffect(self)
@@ -71,15 +72,12 @@ class preference_body(QDialog):
         vBox = QVBoxLayout()
 
         self.svd = False
+ 
+        self.instancesPrefDict = deepcopy(settings.__DATABASE__)
 
-        self.prefs = self.parent.get_editor_widget().get_cluster().get_settings()
-        self.instancesPrefDict = self.prefs
-
-        self.dmiTab = dmi_tab(self.parent)
-        self.schemaTab = schema_tab(self.parent.get_editor_widget().get_cluster().get_phm_scripts()["__schema__"],
-                                    self.prefs['mongodb']['dbname'],
-                                    self.prefs['mongodb']['collection'])
-        self.databaseTab = database_tab(self.prefs, self.instancesPrefDict)
+        self.dmiTab = dmi_tab(self.__cluster)
+        self.schemaTab = schema_tab(self.__cluster.get_phm_scripts()["__schema__"])
+        self.databaseTab = database_tab(self.instancesPrefDict)
         self.themeTab = theme_tab()
 
         self.tabW = PhtmTabWidget(self)
@@ -117,14 +115,13 @@ class preference_body(QDialog):
         return btnWidget
 
     def savePreferences(self):
-        self.parent.prefs = self.databaseTab.save(self.prefs)
-        self.parent.get_editor_widget().get_cluster().save_settings(self.parent.prefs)
+        self.databaseTab.save()
 
         self.dmiTab.save_dmi()
         
         if not self.schemaTab.save_schemas():
             return False
-        self.parent.get_editor_widget().get_cluster().set_children(self.schemaTab.children)
+        self.__cluster.set_children(self.schemaTab.children)
 
         self.svd = True
 

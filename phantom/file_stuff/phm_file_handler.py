@@ -4,7 +4,7 @@ from copy import deepcopy
 
 from PyQt5.QtWidgets import QMessageBox
 
-from phantom.preferences import default_settings as dgs
+from phantom.preferences import default_settings
 
 from phantom.utility import validate_json_script
 
@@ -12,6 +12,9 @@ from phantom.phtm_widgets import PhtmMessageBox
 
 from .json_script import JsonScript
 from .phm import phm as phm_file
+
+from phantom.database.database_handler import DatabaseHandler
+from phantom.application_settings import settings
 
 class PhmFileHandler():
 
@@ -24,28 +27,33 @@ class PhmFileHandler():
         if phm:
             self.__phm = phm
         else:
-            setting = dgs()
             self.__phm = phm_file("New Cluster")
-            self.add_script(str(setting), "__settings__")
+            self.add_script(str(default_settings()), "__settings__")
             self.add_script("{}", "__schema__")
             self.get_phm_scripts()["__dmi_instr__"] = {"instr" : "", "name" : "" }
 
+        self.load_settings()
         self.__db_handler = db_handler
         self.__children = []
 
     def save(self, file_path, user=None):
-        self.__phm.modified_by(user)
-
+        self.save_settings()
         tmp = deepcopy(file_path)
         if tmp[-4:] == ".phm":
             tmp = tmp[0:-4]
         pickle.dump(self.__phm, open(tmp + ".phm", "wb"))
 
         self.__file_path = file_path
+        self.__phm.modified_by(user)
 
     def load(self, file_path):
         self.__phm = pickle.load(open(file_path, "rb"))
+        self.load_settings()
         self.__file_path = file_path
+
+    def load_settings(self):
+        self.phm_settings = json.loads(self.get_script("__settings__").get_script())
+        settings.__DATABASE__ = DatabaseHandler(self.phm_settings['mongodb'])
 
 #------------------------- script methods --------------------------
     def add_script(self, script, title=None, creator=None):
@@ -61,22 +69,19 @@ class PhmFileHandler():
             err_msg = PhtmMessageBox(None, "Invalid JSON Error",
                             "Invalid JSON Format\n" + str(err))
             err_msg.exec_()
+            settings.__LOG__.logError(str(err))
             raise
 
         return new_script
 
-    def get_settings(self):
-        return json.loads(self.get_script("__settings__").get_script())
+    def save_settings(self):
 
-    def save_settings(self, sett_dict=None, db=None, col=None):
-        if not sett_dict:
-            sett_dict = self.get_settings()
-            if db:
-                sett_dict["mongodb"]["dbname"] = db
-            elif col:
-                sett_dict["mongodb"]["collection"] = col
+        self.phm_settings["mongodb"]["host"] = settings.__DATABASE__.get_host_name()
+        self.phm_settings["mongodb"]["port"] = settings.__DATABASE__.get_port_number()
+        self.phm_settings["mongodb"]["dbname"] = settings.__DATABASE__.get_database_name()
+        self.phm_settings["mongodb"]["collection"] = settings.__DATABASE__.get_collection_name()
 
-        sett_str = dgs.to_str(sett_dict)
+        sett_str = default_settings.to_str(self.phm_settings)
         self.get_script("__settings__").set_script(sett_str)
 
     def get_script(self, title):

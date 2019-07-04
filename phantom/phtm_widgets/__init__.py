@@ -12,4 +12,3 @@ from .phtm_text_edit import PhtmTextEdit
 from .phtm_tree_widget import PhtmTreeWidget
 from .phtm_push_button import PhtmPushButton
 from .phtm_tab_widget import PhtmTabWidget
-from .phtm_main_window import PhtmMainWindow

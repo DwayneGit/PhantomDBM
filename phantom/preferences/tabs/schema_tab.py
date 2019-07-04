@@ -14,7 +14,7 @@ from phantom.utility import text_style, validate_json_script
 from phantom.application_settings import settings
 
 class schema_tab(QWidget):
-    def __init__(self, schema, db, collection):
+    def __init__(self, schema):
         super().__init__()
 
         self.__schema = schema
@@ -35,7 +35,7 @@ class schema_tab(QWidget):
         self.setLayout(schemaVBox)
 
 
-        self.__collection = collection
+        self.__collection = settings.__DATABASE__.get_collection_name()
         self.children = []
 
         self.__curr_item = "main"
@@ -45,7 +45,7 @@ class schema_tab(QWidget):
             self.__schema_editor.setReadOnly(True)
             return
 
-        self.db = db
+        self.db = settings.__DATABASE__.get_database_name()
         if schema.get_script() == "{}":
             self.schema = default_schema_template(self.__collection)
         else:
@@ -137,46 +137,14 @@ class schema_tab(QWidget):
     def __schema_changed(self):
         self.__curr_item_changed = True
 
-    # def __new_ref_script(self):
-    #     if not self.__save_schema(self.__curr_item):
-    #         return False
-    #     input_name = PhtmInputDialog(self, "Enter Schema Name", "Name: ", QLineEdit.Normal, "")
-    #     if input_name.exec_():
-    #         if input_name.selected_value:
-    #             self.__ref_schemas[input_name.selected_value] = ""
-    #             self.__schema_editor.clear()
-    #             self.__curr_item = input_name.selected_value
-
-    #             self.schema_box.addItem(input_name.selected_value)
-    #             self.schema_box.setCurrentIndex(self.schema_box.count()-1)
-    #         else:
-    #             err_msg = PhtmMessageBox(None, "Enter Name", "Please enter the name of the collection the schema represents.")
-    #             err_msg.exec_()
-
     def save_schemas(self):
         return self.__save_schema(self.__curr_item)
 
-    # def __load_reference_schemas(self):
-    #     for schema in self.__ref_schemas:
-    #         self.schema_box.addItem(schema)
-
     def __save_schema(self, schema):
-        # try:
-        #     validate_json_script(self, self.__schema_editor.toPlainText())
-        # except (ValueError, json.decoder.JSONDecodeError) as err:
-        #     settings.__LOG__.logError("SCHEMA_ERR:" + str(err))
-        #     err_msg = PhtmMessageBox(self, "Invalid JSON Error",
-        #                              "Invalid JSON Format\n" + str(err))
-        #     err_msg.exec_()
-        #     return False
-
         self.__schema.set_script(self.__schema_editor.toPlainText())
         if self.__curr_item_changed:
             self.__curr_item_changed = False
             self.generate_mongoose_schema(self.__schema_editor.toPlainText())
-        # else:
-        #     self.__ref_schemas[schema] = self.__schema_editor.toPlainText()
-        #     generate_mongoose_schema(self.__schema_editor.toPlainText(), schema)
 
         return True
 
@@ -195,8 +163,6 @@ class schema_tab(QWidget):
 
         if schema == "main":
             self.__schema_editor.setPlainText(self.__schema.get_script())
-        # else:
-        #     self.__schema_editor.setPlainText(self.__ref_schemas[schema])
 
         self.__curr_item = schema
         self.__curr_item_changed = False
@@ -236,13 +202,13 @@ class schema_tab(QWidget):
         data, index = self.__get_object(json_data, key.group(0))
         key_list.append(data)
 
-        fp.write("module.exports." + key.group(0) + " = new " + self.__collection + "Model.discriminator('" + key.group(0) + "',")
+        fp.write("\nmodule.exports." + key.group(0) + " = " + self.__collection + "Model.discriminator('" + key.group(0) + "',")
         fp.write("\n\tnew mongoose.Schema(")
         chld = self.__get_object(data, '__schema')[0]
         if chld:
-            fp.write(chld + ", " + self.__get_object(data, '__options')[0] + "))\n\n")
+            fp.write(chld + ", " + self.__get_object(data, '__options')[0] + "))\n")
         else:
-            fp.write(self.__get_object(data)[0] + "))\n\n")
+            fp.write(self.__get_object(data)[0] + "))\n")
 
         if start < len(json_data):
             self.__get_keys(fp, json_data, index, key_list)
@@ -270,33 +236,3 @@ class schema_tab(QWidget):
             out += strg[i]
 
         return out, i
-
-    # def __import_ref_schema(self, schemaBox):
-    #     file_path = f_ctrl.load_script()[1]
-    #     if file_path:
-    #         input_name = PhtmInputDialog(self, "Enter Schema Name", "Name: ", QLineEdit.Normal, "")
-    #         if input_name.exec_():
-    #             if input_name.selected_value:
-    #                 self.__ref_schemas[input_name.selected_value] = ""
-    #                 self.__schema_editor.clear()
-    #                 self.__curr_item = input_name.selected_value
-
-    #                 self.schema_box.addItem(input_name.selected_value)
-    #                 self.schema_box.setCurrentIndex(self.schema_box.count()-1)
-    #             else:
-    #                 err_msg = PhtmMessageBox(None, "Enter Name", "Please enter the name of the collection the schema represents.")
-    #                 err_msg.exec_()
-
-    # def __import_primary_schema(self):
-    #     file_path = f_ctrl.load_script()[1]
-    #     if file_path:
-    #         schema = text_style.read_text(file_path)
-    #         self.__schema_editor.setPlainText(schema)
-    #         self.__schema.set_script(schema)
-    #         self.__curr_item = "main"
-    
-    # def __index_of_child(self, child):
-    #     for i in range(self.schema_box.count()):
-    #         if self.schema_box.childAt(i) == child:
-    #             return i
-    #     return None

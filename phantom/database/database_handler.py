@@ -15,7 +15,7 @@ from pymongo import errors as pyErrs
 
 from phantom.application_settings import settings
 
-class DatabaseHandler(QThread):
+class DatabaseHandler():
 
     @staticmethod
     def getDatabaseList(host, port):
@@ -61,6 +61,10 @@ class DatabaseHandler(QThread):
 
         self.mDbDocs = []
 
+    def __str__(self):
+        data = {"Database":self.__db_name, "Collection":self.__db_collection, "PortNumber":self.__db_port_number, "Host":self.__db_host}
+
+        return str(data)
     # def set_schema(self, schema_json, ref_schemas, db_name=None, db_coll=None):
     #     if db_name:
     #         self.__db_name = db_name
@@ -70,7 +74,31 @@ class DatabaseHandler(QThread):
     #     self.__schema_json = schema_json
     #     self.__schema = schema(self.__db_collection, schema_json, ref_schemas)
     #     self.__schema.set_connection(self.__db_name, self.__db_host, self.__db_port_number)
-
+    
+    def get_host_name(self):
+        return self.__db_host
+        
+    def get_database_name(self):
+        return self.__db_name
+        
+    def get_collection_name(self):
+        return self.__db_collection
+        
+    def get_port_number(self):
+        return self.__db_port_number
+    
+    def set_host_name(self, host):
+        self.__db_host = host
+        
+    def set_database_name(self, db):
+        self.__db_name = db
+        
+    def set_collection_name(self, col):
+        self.__db_collection = col
+        
+    def set_port_number(self, port):
+        self.__db_port_number = port
+        
     def get_uri(self):
         return self.__uri
 

@@ -1,25 +1,32 @@
 import sys
 import json
 
-from PyQt5.QtWidgets import QAction, QMenuBar, QMessageBox
-from PyQt5.QtCore import Qt, QUrl, QSettings
+from PyQt5.QtWidgets import QAction, QMenuBar
+from PyQt5.QtCore import Qt, QUrl, pyqtSignal, pyqtSlot, QFileInfo
 from PyQt5.QtGui import QDesktopServices
 
 from phantom.phtm_widgets import PhtmMessageBox
 
 from phantom.utility import validate_json_script
-from phantom.file_stuff import file_ctrl as f_ctrl
+
 
 from phantom.application_settings import settings
 
 class phtm_menu_bar(QMenuBar):
-    def __init__(self, parent):
+
+    adjust = pyqtSignal(str)
+
+    def __init__(self, file_handler, parent):
         super().__init__()
         self.parent = parent
-
-        self.main_menu = self
-
+        self.adjust.connect(lambda x: self.adjustForCurrentFile(x))
         self.setContextMenuPolicy(Qt.PreventContextMenu)
+
+        self.file_handler = file_handler
+
+        self.maxFileNum = 4
+        self.recentFileActionList = []
+        self.createActionsAndConnections()
 
     def init_menu_bar(self):
         self.fileMenu()
@@ -28,11 +35,14 @@ class phtm_menu_bar(QMenuBar):
         self.searchMenu()
         self.helpMenu()
 
+    def get_adjust_signal(self):
+        return self.adjust
+
     def searchMenu(self):
-        searchMenu = self.main_menu.addMenu('Search')
+        searchMenu = self.addMenu('Search')
 
     def fileMenu(self):
-        fileMenu = self.main_menu.addMenu('File')
+        fileMenu = self.addMenu('File')
 
         newJsonAction = QAction("New Script", self.parent)
         newJsonAction.setShortcut("Ctrl+N")
@@ -55,29 +65,29 @@ class phtm_menu_bar(QMenuBar):
         openPhmAction = QAction("Open PHM", self.parent)
         openPhmAction.setShortcut("Ctrl+P")
         openPhmAction.setStatusTip('Load a Cluster File')
-        openPhmAction.triggered.connect(lambda: f_ctrl.load_phm(self.parent))
+        openPhmAction.triggered.connect(lambda: self.file_handler.load_phm())
         fileMenu.addAction(openPhmAction)
 
         openRecentMenu = fileMenu.addMenu("Open Recent")
-        for rfile in self.parent.recentFileActionList:
+        for rfile in self.recentFileActionList:
             openRecentMenu.addAction(rfile)
-        self.parent.updateRecentActionList()
+        self.updateRecentActionList()
         fileMenu.addSeparator()
 
         saveAction = QAction("Save Script", self.parent)
         saveAction.setStatusTip('Save Script File')
-        saveAction.triggered.connect(lambda: f_ctrl.save_script(self.parent.get_editor_widget().get_editor_tabs().currentWidget(), self.parent.get_editor_widget(), self.parent.adjustForCurrentFile))
+        saveAction.triggered.connect(lambda: self.file_handler.save_script())
         fileMenu.addAction(saveAction)
 
         savePAction = QAction("Save PHM", self.parent)
         savePAction.setShortcut("Ctrl+S")
         savePAction.setStatusTip('Save Cluster File')
-        savePAction.triggered.connect(lambda: f_ctrl.save_phm(self.parent.get_editor_widget().get_editor_tabs().currentWidget(), self.parent.adjustForCurrentFile))
+        savePAction.triggered.connect(lambda: self.file_handler.save_phm())
         fileMenu.addAction(savePAction)
 
         savePAsAction = QAction("Save PHM As...", self.parent)
         savePAsAction.setStatusTip('Save Script File')
-        savePAsAction.triggered.connect(lambda: f_ctrl.export_phm(self.parent, self.parent.adjustForCurrentFile))
+        savePAsAction.triggered.connect(lambda: self.file_handler.export_phm())
         fileMenu.addAction(savePAsAction)
         fileMenu.addSeparator()
 
@@ -88,7 +98,7 @@ class phtm_menu_bar(QMenuBar):
 
         exportAction = QAction("Export Script", self.parent)
         exportAction.setStatusTip('Save Script File')
-        exportAction.triggered.connect(lambda: f_ctrl.export_script(self.parent.get_editor_widget().get_editor_tabs().currentWidget()))
+        exportAction.triggered.connect(lambda: self.file_handler.export_script())
         fileMenu.addAction(exportAction)
 
         exittAction = QAction("Exit", self.parent)
@@ -129,7 +139,7 @@ class phtm_menu_bar(QMenuBar):
         replaceAction.setShortcut("Ctrl+H")
         # replaceAction.triggered.connect()
         
-        editMenu = self.main_menu.addMenu('Edit')
+        editMenu = self.addMenu('Edit')
         editMenu.addAction(undoAction)
         editMenu.addAction(redoAction)
         editMenu.addSeparator()
@@ -158,7 +168,7 @@ class phtm_menu_bar(QMenuBar):
             curr_wid.paste()
 
     def runMenu(self):
-        runMenu = self.main_menu.addMenu("Run")
+        runMenu = self.addMenu("Run")
 
         runAction = QAction("Run", self.parent)
         runAction.setShortcut("Ctrl+R")
@@ -191,7 +201,7 @@ class phtm_menu_bar(QMenuBar):
             err_msg.exec_()
     
     def helpMenu(self):
-        helpMenu = self.main_menu.addMenu('Help')
+        helpMenu = self.addMenu('Help')
 
         docAction = QAction("Documentation", self.parent)
         docAction.triggered.connect(lambda: QDesktopServices.openUrl(QUrl("https://github.com/DwayneGit/PhantomDBM/wiki")))
@@ -213,3 +223,61 @@ class phtm_menu_bar(QMenuBar):
         helpMenu.addSeparator()
 
         helpMenu.addAction(aboutAction)
+
+    @pyqtSlot()
+    def adjustForCurrentFile(self, filePath):
+
+        recentFilePaths = settings.__APPLICATION_SETTINGS__.get_settings()['recent_files']
+
+        try:
+            recentFilePaths.remove(filePath)
+        except Exception as err:
+            settings.__LOG__.logError(str(err)+ str(type(err)))
+
+        recentFilePaths.insert(0, filePath)
+
+        while len(recentFilePaths) > self.maxFileNum:
+            recentFilePaths.pop()
+
+        self.updateRecentActionList()
+
+    def updateRecentActionList(self):
+
+        recentFilePaths = settings.__APPLICATION_SETTINGS__.get_settings()['recent_files']
+
+        itEnd = 0
+        if len(recentFilePaths) <= self.maxFileNum:
+            itEnd = len(recentFilePaths)
+        else:
+            itEnd = self.maxFileNum
+        
+        for i in range(0, itEnd):
+            strippedName = QFileInfo(recentFilePaths[i]).fileName()
+            self.recentFileActionList[i].setText(strippedName)
+            self.recentFileActionList[i].setData(recentFilePaths[i])
+            self.recentFileActionList[i].setVisible(True)
+
+        for j in range(itEnd, self.maxFileNum):
+            self.recentFileActionList[j].setVisible(False)
+
+        settings.__APPLICATION_SETTINGS__.update_settings()
+
+    def createActionsAndConnections(self):
+        recentFileAction = None
+        for i in range(0, self.maxFileNum):
+            recentFileAction = QAction(self)
+            recentFileAction.setVisible(False)
+            recentFileAction.triggered.connect(self.openRecent)
+
+            self.recentFileActionList.append(recentFileAction)
+
+    def openRecent(self):
+        if not self.file_handler.load_phm(self.sender().data()):
+            recentFilePaths = settings.__APPLICATION_SETTINGS__.get_settings()['recent_files']
+
+            try:
+                recentFilePaths.remove(self.sender().data())
+            except Exception as err:
+                settings.__LOG__.logError("IOError: " + str(err))
+
+            self.updateRecentActionList()

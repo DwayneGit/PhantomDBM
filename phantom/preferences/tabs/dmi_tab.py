@@ -7,10 +7,10 @@ from phantom.phtm_widgets import PhtmPushButton
 from phantom.phtm_widgets import PhtmPlainTextEdit
 
 class dmi_tab(QWidget):
-    def __init__(self, main_window):
+    def __init__(self, cluster):
         super().__init__()
 
-        self.mw = main_window
+        self.__cluster = cluster
         dmiVBox = QVBoxLayout()
 
         load_widget = QWidget()
@@ -20,7 +20,7 @@ class dmi_tab(QWidget):
         load_widget_layout = QHBoxLayout()
 
         self.__dmi_editor = PhtmPlainTextEdit()
-        self.__dmi_instr = self.mw.get_editor_widget().get_cluster().get_phm_scripts()["__dmi_instr__"]
+        self.__dmi_instr = self.__cluster.get_phm_scripts()["__dmi_instr__"]
 
         load_dmi_btn = PhtmPushButton("Open Instruction Doc")
 

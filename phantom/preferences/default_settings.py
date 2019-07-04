@@ -16,7 +16,6 @@ class default_settings():
         to_str += "\n        \"dbname\" :  \"" + json_dict['mongodb']['dbname'] + "\","
         to_str += "\n        \"collection\" :  \"" + json_dict['mongodb']['collection'] + "\","
         to_str += "\n        \"host\" :  \"" + json_dict['mongodb']['host'] + "\","
-        to_str += "\n        \"tableSize\" : " + str(json_dict['mongodb']['tableSize']) + ","
         to_str += "\n        \"port\" : " + str(json_dict['mongodb']['port'])
         to_str += "\n    }"
         to_str += "\n}"
@@ -38,7 +37,6 @@ class default_settings():
                 'dbname' : '',
                 'collection' : '',
                 'host' : 'localhost',
-                'tableSize' : 100,
                 'port' : 27017
             }
         }

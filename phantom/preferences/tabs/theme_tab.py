@@ -2,11 +2,12 @@ from os import listdir
 from os.path import isfile, join
 
 import json
-from phantom.application_settings import settings
 
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QGraphicsView, QGraphicsScene, QGraphicsWidget, QGraphicsTextItem, QGraphicsLinearLayout
-from PyQt5.QtGui import QPalette, QColor 
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QGraphicsView, QGraphicsScene, QGraphicsWidget, QGraphicsLinearLayout
+from PyQt5.QtGui import QPalette, QColor
 from PyQt5.QtCore import Qt
+
+from phantom.application_settings import settings
 
 class theme_tab(QWidget):
     def __init__(self):

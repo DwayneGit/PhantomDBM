@@ -6,9 +6,7 @@ from itertools import islice
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import QThread
 
-from phantom.database import DatabaseHandler, upload_thread, mongoose_thread
-
-from phantom.file_stuff import file_ctrl as f_ctrl
+from phantom.database import upload_thread, mongoose_thread
 
 from phantom.application_settings import settings
 
@@ -27,21 +25,11 @@ class run_ctrl():
         self.parent.runs += 1
         settings.__LOG__.logInfo("Checking Database Connection...")
 
-        try:
-            db_handler = DatabaseHandler(self.parent.dbData)
-            # json.loads(self.parent.get_editor_widget().get_cluster().get_phm_scripts()["__schema__"].get_script())
-            # db_handler.set_schema(self.parent.get_editor_widget().get_cluster().get_phm_scripts()["__reference_schemas__"])
+        settings.__LOG__.logInfo("Connected to Database. " + settings.__DATABASE__.get_database_name() + " collection " + settings.__DATABASE__.get_collection_name())
+        self.parent.appendToBoard("Connected to Database. " + settings.__DATABASE__.get_database_name() + " collection " + settings.__DATABASE__.get_collection_name())
 
-        except (Exception, KeyError, AttributeError, json.decoder.JSONDecodeError) as err:
-            settings.__LOG__.logError("RUN_ERR:" + str(err))
-            self.parent.get_main_toolbar().setRunState(False)
-            return False
-
-        settings.__LOG__.logInfo("Connected to Database. " + self.parent.dbData['dbname'] + " collection " + self.parent.dbData['collection'])
-        self.parent.appendToBoard("Connected to Database. " + self.parent.dbData['dbname'] + " collection " + self.parent.dbData['collection'])
-
-        self.__mongoose_thrd = mongoose_thread(db_handler) # instanciate the Q object
-        self.__upld_thrd = upload_thread(script_s, db_handler,
+        self.__mongoose_thrd = mongoose_thread(settings.__DATABASE__) # instanciate the Q object
+        self.__upld_thrd = upload_thread(script_s, settings.__DATABASE__,
                                          self.parent.get_editor_widget().get_cluster().get_phm_scripts()["__dmi_instr__"]["instr"]) # instanciate the Q object
 
         thread1 = QThread(self.parent) # create a thread
@@ -69,7 +57,7 @@ class run_ctrl():
 
     def run(self, opt=0, index=None):
         if opt == 0:
-            f_ctrl.save_script(self.parent.get_editor_widget().get_editor_tabs().currentWidget(), self.parent.get_editor_widget(), self.parent.adjustForCurrentFile)
+            # f_ctrl.save_script(self.parent.get_editor_widget().get_editor_tabs().currentWidget(), self.parent.get_editor_widget(), self.parent.get_menubar().get_adjust_signal())
             script_s = self.parent.get_editor_widget().get_editor_tabs().currentWidget().get_curr_script().get_script()
 
         elif opt == 1:
@@ -102,7 +90,7 @@ class run_ctrl():
         thread.exit(1)
 
     def script_done(self, name):
-        self.parent.statusBar().showMessage(name + " Complete")
+        self.parent.body.statusBar().showMessage(name + " Complete")
         self.parent.progressBar.setValue(0)
 
     def set_progress_max(self, mx):
@@ -110,7 +98,7 @@ class run_ctrl():
 
     def update_status(self, status):
         self.parent.progressBar.setValue(self.parent.progressBar.value()+1)
-        self.parent.statusBar().showMessage(status)
+        self.parent.body.statusBar().showMessage(status)
 
     def update_board(self, status):
         self.parent.appendToBoard(status)

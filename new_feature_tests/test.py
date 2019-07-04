@@ -17,8 +17,7 @@ pref_dict = {
     'mongodb': {
         'dbname' : '',
         'collection' : '',
-        'host' : 'localhost',
-        'tableSize' : 100,
+        'host' : 'localhost'
         'port' : 27017
     }
 }

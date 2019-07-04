@@ -6,12 +6,12 @@ from PyQt5.QtWidgets import QPlainTextEdit, QSplitter, QHBoxLayout, QWidget, QVB
 
 import phantom.utility.text_style as text_style
 from phantom.phtm_widgets import PhtmTreeWidget, PhtmPlainTextEdit, PhtmTabWidget
-from phantom.file_stuff import load_script, PhmFileHandler
+from phantom.file_stuff import PhmFileHandler
 
 from phantom.application_settings import settings
 
 class PhtmEditorWidget(QWidget):
-    def __init__(self, parent=None):
+    def __init__(self, file_handler, parent=None):
         super().__init__()
         self.parent = parent
         self.__cluster = PhmFileHandler()
@@ -25,6 +25,8 @@ class PhtmEditorWidget(QWidget):
         self.__init_script_tree()
 
         self.__default_count = 0
+
+        self.file_handler = file_handler
 
         self.name_temp = None
 
@@ -124,7 +126,7 @@ class PhtmEditorWidget(QWidget):
         self.__script_tree.editItem(item)
 
     def load_script(self):
-        file_name, file_path = load_script()
+        file_name, file_path = self.file_handler.load_script()
         try:
             new_script = self.__cluster.add_script(text_style.read_text(file_path), file_name, "Dwayne W")
         except Exception as err:
@@ -329,7 +331,7 @@ class PhtmEditorWidget(QWidget):
         return self.__cluster
 
     def save_phm(self, file_path):
-        self.parent.statusBar().showMessage("Saving PHM ...")
+        self.parent.body.statusBar().showMessage("Saving PHM ...")
         for i in range(self.__editor_tabs.count()):
             self.__editor_tabs.save_editor(i)
 

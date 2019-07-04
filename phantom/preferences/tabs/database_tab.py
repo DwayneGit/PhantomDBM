@@ -8,9 +8,9 @@ from phantom.database import DatabaseHandler
 from phantom.application_settings import settings
 
 class database_tab(QWidget):
-    def __init__(self, prefs, instancesPrefDict):
+    def __init__(self, instancesPrefDict):
         super().__init__()
-        self.prefs = prefs
+        
         self.instancesPrefDict = instancesPrefDict
 
         self.__colList = self.__getListOfCollections()
@@ -24,11 +24,11 @@ class database_tab(QWidget):
         mgButton = QRadioButton("MongoDB")
         otherButton = QRadioButton("Other")
 
-        if self.instancesPrefDict['db'] == 'mongodb':
-            mgButton.setChecked(True)
+        # if self.instancesPrefDict['db'] == 'mongodb':
+        mgButton.setChecked(True)
 
-        elif self.instancesPrefDict['db'] == 'other':
-            otherButton.setChecked(True)
+        # elif self.instancesPrefDict['db'] == 'other':
+        #     otherButton.setChecked(True)
 
         self.__dbBtnGroup.addButton(mgButton)
         self.__dbBtnGroup.addButton(otherButton)
@@ -40,24 +40,22 @@ class database_tab(QWidget):
         dbLabel = QLabel("Database: ")
         dbW.setLayout(dbHBox)
 
-        self.__clrFlag = False
-
         colLabel = QLabel("Collection: ")
         self.__colEditBtn = PhtmComboBox()
 
         self.__colEditBtn.addItems(self.__colList)
-        index = self.__colEditBtn.findText(self.prefs['mongodb']['collection'])
+        index = self.__colEditBtn.findText(self.instancesPrefDict.get_collection_name())
         self.__colEditBtn.setCurrentIndex(index)
 
-        self.__colEditBtn.currentTextChanged.connect(lambda a : self.__changeColl(self.__colEditBtn.currentText()))
+        self.__colEditBtn.currentTextChanged.connect(lambda a: self.__changeColl(self.__colEditBtn.currentText()))
 
         #------------------------------ database name --------------------------------
 
         dbNameLabel = QLabel("Database Name: ")
         dbNameBox = PhtmComboBox()
-        dbNameBox.addItems(DatabaseHandler.getDatabaseList(self.prefs['mongodb']['host'],self.prefs['mongodb']['port']))
+        dbNameBox.addItems(DatabaseHandler.getDatabaseList(self.instancesPrefDict.get_host_name(), self.instancesPrefDict.get_port_number()))
 
-        index = dbNameBox.findText(self.prefs['mongodb']['dbname'])
+        index = dbNameBox.findText(self.instancesPrefDict.get_database_name())
         dbNameBox.setCurrentIndex(index)
 
         self.__dbChanged(dbNameBox.currentText())
@@ -68,22 +66,22 @@ class database_tab(QWidget):
 
         hostLabel = QLabel("Host: ")
         hostBox = QLineEdit()
-        hostBox.setText(str(self.instancesPrefDict['mongodb']['host']))
+        hostBox.setText(str(self.instancesPrefDict.get_host_name()))
         hostBox.textChanged.connect(lambda a : self.__changeHost(hostBox.text()))
 
         #------------------------------ Port Number --------------------------------
 
         portNumLabel = QLabel("Port Number: ")
         portNumBox = QLineEdit()
-        portNumBox.setText(str(self.instancesPrefDict['mongodb']['port']))
+        portNumBox.setText(str(self.instancesPrefDict.get_port_number()))
         portNumBox.textChanged.connect(lambda a : self.__changePort(portNumBox.text()))
 
         #------------------------------ database name --------------------------------
 
-        tbSizeLabel = QLabel("Table Size: ")
-        tbSizeBox = QLineEdit()
-        tbSizeBox.setText(str(self.instancesPrefDict['mongodb']['tableSize']))
-        tbSizeBox.textChanged.connect(lambda a : self.__changeTbSize(int(tbSizeBox.text())))
+        # tbSizeLabel = QLabel("Table Size: ")
+        # tbSizeBox = QLineEdit()
+        # tbSizeBox.setText(str(self.instancesPrefDict['mongodb']['tableSize']))
+        # tbSizeBox.textChanged.connect(lambda a : self.__changeTbSize(int(tbSizeBox.text())))
 
         #------------------------------ reload settings --------------------------------
 
@@ -96,7 +94,7 @@ class database_tab(QWidget):
         self.__dbForm.addRow(dbNameLabel, dbNameBox)
         self.__dbForm.addRow(hostLabel, hostBox)
         self.__dbForm.addRow(portNumLabel, portNumBox)
-        self.__dbForm.addRow(tbSizeLabel, tbSizeBox)
+        # self.__dbForm.addRow(tbSizeLabel, tbSizeBox)
         self.__dbForm.addRow(colLabel, self.__colEditBtn)
         self.__dbForm.addWidget(reloadBtn)
 
@@ -106,36 +104,34 @@ class database_tab(QWidget):
         return self.__dbForm
 
     def __changeHost(self, host):
-        self.instancesPrefDict['mongodb']['host']=host
+        self.instancesPrefDict.set_host_name(host)
 
     def __changePort(self, port):
-        self.instancesPrefDict['mongodb']['port'] = port 
+        self.instancesPrefDict.set_port_number(port)
 
-    def __changeTbSize(self,port):
-        self.instancesPrefDict['mongodb']['tableSize'] = port 
+    # def __changeTbSize(self, port):
+    #     self.instancesPrefDict['mongodb']['tableSize'] = port
 
     #----------------------- database engine ---------------------
     def __changeDb(self, engine):
-        self.instancesPrefDict['db']=engine
+        settings.__LOG__.logInfo(engine)
 
     #------------------------------ current collection --------------------------------
     def __changeColl(self, coll):
-        if coll == "" or coll==None:
-            return
-        elif self.__clrFlag == True:
-            self.__clrFlag = False
+        if not coll:
             return
 
-        self.instancesPrefDict['mongodb']['collection'] = coll
+        self.instancesPrefDict.set_collection_name(coll)
 
-        index = self.__colEditBtn.findText(self.prefs['mongodb']['collection'])
+        index = self.__colEditBtn.findText(self.instancesPrefDict.get_collection_name())
         self.__colEditBtn.setCurrentIndex(index)
 
     def __getListOfCollections(self):
-        if not self.prefs['mongodb']['dbname'] or self.prefs['mongodb']['dbname']=="":
+        if not self.instancesPrefDict.get_database_name() or self.instancesPrefDict.get_database_name() == "":
             return []
 
-        return DatabaseHandler.getCollectionList(self.prefs['mongodb']['host'], self.prefs['mongodb']['port'], self.prefs['mongodb']['dbname'])
+        return DatabaseHandler.getCollectionList(self.instancesPrefDict.get_host_name(), int(self.instancesPrefDict.get_port_number()),
+                                                 self.instancesPrefDict.get_database_name())
 
     def __reloadSettings(self):
         print(self.instancesPrefDict)
@@ -144,27 +140,27 @@ class database_tab(QWidget):
         print("Open Edit Collections Window")
 
     def __dbChanged(self, name):
-
-        self.instancesPrefDict['mongodb']['dbname']=name
+        
+        self.instancesPrefDict.set_database_name(name)
         self.__colList = self.__getListOfCollections()
+        
+        self.__colEditBtn.disconnect()
 
-        self.__clrFlag = True
         self.__colEditBtn.clear()
 
         self.__colEditBtn.addItems(self.__colList)
 
-        index = self.__colEditBtn.findText(self.prefs['mongodb']['collection'])
+        index = self.__colEditBtn.findText(self.instancesPrefDict.get_collection_name())
         self.__colEditBtn.setCurrentIndex(index)
 
-    def save(self, prefs):
-        if prefs['db'] == "mongodb":
-            prefs['mongodb']['dbname'] = self.__dbForm.itemAt(3).widget().currentText()
-            prefs['mongodb']['collection'] = self.__dbForm.itemAt(11).widget().currentText()
-            prefs['mongodb']['host'] = self.__dbForm.itemAt(5).widget().text()
-            prefs['mongodb']['port'] = int(self.__dbForm.itemAt(7).widget().text())
-            prefs['mongodb']['tableSize'] = int(self.__dbForm.itemAt(9).widget().text())
+        self.__colEditBtn.currentTextChanged.connect(lambda a: self.__changeColl(self.__colEditBtn.currentText()))
 
-        elif prefs['db'] == "other":
-            pass
+    def save(self):
 
-        return prefs
+        settings.__DATABASE__.set_database_name(self.instancesPrefDict.get_database_name())
+        settings.__DATABASE__.set_collection_name(self.instancesPrefDict.get_collection_name())
+        settings.__DATABASE__.set_host_name(self.instancesPrefDict.get_host_name())
+        settings.__DATABASE__.set_port_number(int(self.instancesPrefDict.get_port_number()))
+        
+        # prefs['mongodb']['tableSize'] = int(self.__dbForm.itemAt(9).widget().text())
+

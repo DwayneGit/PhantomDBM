@@ -8,17 +8,17 @@ from phantom.database import DatabaseHandler
 
 from phantom.phtm_widgets import PhtmToolBar, PhtmComboBox, PhtmPlainTextEdit, PhtmAction
 
-from phantom.file_stuff import file_ctrl as f_ctrl
-
 from phantom.application_settings import settings
 
 class main_tool_bar():
     """ application toolbars class """
-    def __init__(self, parent):
+    def __init__(self, file_handler, parent):
         self.parent = parent
 
         self.instr_filepath = None
         self.instr_filename = None
+
+        self.file_handler = file_handler
 
         self.isRunning = False
         self.isPaused = True
@@ -33,15 +33,15 @@ class main_tool_bar():
         topTBar.addAction(tbadd)
 
         tbsave = PhtmAction(settings.style_signal.icon_signal, settings.__ICONS__.get_save, "Save", self.parent)
-        tbsave.triggered.connect(lambda: f_ctrl.save_script(self.parent.get_editor_widget().get_editor_tabs().currentWidget(), self.parent.get_editor_widget(), self.parent.adjustForCurrentFile))
+        tbsave.triggered.connect(lambda: self.file_handler.save_script())
         topTBar.addAction(tbsave)
 
         tbphm = PhtmAction(settings.style_signal.icon_signal, settings.__ICONS__.get_import_file, "Open PHM", self.parent)
-        tbphm.triggered.connect(lambda:f_ctrl.load_phm(self.parent))
+        tbphm.triggered.connect(lambda:self.file_handler.load_phm())
         topTBar.addAction(tbphm)
 
         tbfiles = PhtmAction(settings.style_signal.icon_signal, settings.__ICONS__.get_export, "Export Script", self.parent)
-        tbfiles.triggered.connect(lambda: f_ctrl.export_script(self.parent.get_editor_widget().get_editor_tabs().currentWidget()))
+        tbfiles.triggered.connect(lambda: self.file_handler.export_script())
         topTBar.addAction(tbfiles)
 
         tbsettings = PhtmAction(settings.style_signal.icon_signal, settings.__ICONS__.get_settings, "Settings", self.parent)
@@ -102,24 +102,24 @@ class main_tool_bar():
 
         self.dbnameMenu = PhtmComboBox()
         self.dbnameMenu.setFixedSize(dropdownSize)
-        self.dbnameMenu.addItems(DatabaseHandler.getDatabaseList(self.parent.dbData['host'], self.parent.dbData['port']))
+        self.dbnameMenu.addItems(DatabaseHandler.getDatabaseList(settings.__DATABASE__.get_host_name(), settings.__DATABASE__.get_port_number()))
 
-        index = self.dbnameMenu.findText(self.parent.prefs['mongodb']['dbname'])
+        index = self.dbnameMenu.findText(settings.__DATABASE__.get_database_name())
         self.dbnameMenu.setCurrentIndex(index)
-        self.dbnameMenu.currentTextChanged.connect(lambda: databaseNameChanged(self, self.parent))
+        self.dbnameMenu.currentTextChanged.connect(lambda: self.databaseNameChanged())
 
         sideTBar.addWidget(self.dbnameMenu)
 
         self.collnameMenu = PhtmComboBox()
         self.collnameMenu.setFixedSize(dropdownSize)
         try:
-            self.collnameMenu.addItems(DatabaseHandler.getCollectionList(self.parent.dbData['host'], self.parent.dbData['port'], self.parent.dbData['dbname']))
+            self.collnameMenu.addItems(DatabaseHandler.getCollectionList(settings.__DATABASE__.get_host_name(), settings.__DATABASE__.get_port_number(), settings.__DATABASE__.get_database_name()))
         except:
             settings.__LOG__.logError("No collections found in database")
 
-        index = self.collnameMenu.findText(self.parent.prefs['mongodb']['collection'])
+        index = self.collnameMenu.findText(settings.__DATABASE__.get_collection_name())
         self.collnameMenu.setCurrentIndex(index)
-        self.collnameMenu.currentTextChanged.connect(lambda: collectionNameChanged(self, self.parent))
+        self.collnameMenu.currentTextChanged.connect(lambda: self.collectionNameChanged())
         
         sideTBar.addWidget(self.collnameMenu)
 
@@ -127,11 +127,11 @@ class main_tool_bar():
         # tbalert.triggered.connect(lambda: print())
         # sideTBar.addAction(tbalert)
 
-        self.parent.addToolBar(Qt.TopToolBarArea, sideTBar)
-        self.parent.addToolBar(Qt.LeftToolBarArea, topTBar)
+        self.parent.body.addToolBar(Qt.TopToolBarArea, sideTBar)
+        self.parent.body.addToolBar(Qt.LeftToolBarArea, topTBar)
 
     def set_instructions(self):
-        self.instr_filename, self.instr_filepath = f_ctrl.load_instructions()
+        self.instr_filename, self.instr_filepath = self.file_handler.load_instructions()
         # self.dmi_selected.setDisabled(False)
         self.curr_dmi.setPlainText(self.instr_filename)
 
@@ -170,21 +170,19 @@ class main_tool_bar():
         if self.parent.get_editor_widget().get_editor_tabs().currentWidget():
             self.parent.r_ctrl.run(0)
 
-def collectionNameChanged(ptoolbar, main_window, edit_widget=0, db_data=0):
-    main_window.dbData['collection'] = ptoolbar.collnameMenu.currentText()
-    main_window.get_editor_widget().get_cluster().save_settings(col=ptoolbar.collnameMenu.currentText())
+    def databaseNameChanged(self):
+        self.reloadCollectionNames()
+        settings.__DATABASE__.set_database_name(self.dbnameMenu.currentText())
 
-def databaseNameChanged(ptoolbar, main_window, edit_widget=0, db_data=0):
-    reloadCollectionNames(ptoolbar, main_window)
-    main_window.dbData['dbname'] = ptoolbar.dbnameMenu.currentText()
-    main_window.get_editor_widget().get_cluster().save_settings(db=ptoolbar.dbnameMenu.currentText())
+    def collectionNameChanged(self):
+        settings.__DATABASE__.set_collection_name(self.collnameMenu.currentText())
 
-def reloadCollectionNames(ptoolbar, main_window, edit_widget=0, db_data=0):
-    ptoolbar.collnameMenu.currentTextChanged.disconnect()
-    ptoolbar.collnameMenu.clear()
+    def reloadCollectionNames(self):
+        self.collnameMenu.currentTextChanged.disconnect()
+        self.collnameMenu.clear()
 
-    ptoolbar.collnameMenu.addItems(DatabaseHandler.getCollectionList(main_window.dbData['host'], main_window.dbData['port'], ptoolbar.dbnameMenu.currentText()))
-    ptoolbar.collnameMenu.currentTextChanged.connect(lambda: collectionNameChanged(ptoolbar, main_window))
+        self.collnameMenu.addItems(DatabaseHandler.getCollectionList(settings.__DATABASE__.get_host_name(), settings.__DATABASE__.get_port_number(), self.dbnameMenu.currentText()))
+        self.collnameMenu.currentTextChanged.connect(lambda: self.collectionNameChanged())
 
-    index = ptoolbar.collnameMenu.findText(main_window.prefs['mongodb']['collection'])
-    ptoolbar.collnameMenu.setCurrentIndex(index)
+        index = self.collnameMenu.findText(settings.__DATABASE__.get_collection_name())
+        self.collnameMenu.setCurrentIndex(index)
