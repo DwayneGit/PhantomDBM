@@ -52,7 +52,7 @@ class PhtmDialog(QDialog):
     def set_window_title(self, text):
         self.title_bar.set_window_title(text)
         self.setWindowTitle(text)
-    
+
     def getWindowTitle(self):
         return self.title_bar.window_title
 

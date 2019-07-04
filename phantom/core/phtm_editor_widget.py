@@ -193,8 +193,7 @@ class PhtmEditorWidget(QWidget):
 
             if not item.text(0):
                 item.setText(0, self.name_temp)
-            
-            print(item.text(0))
+
             self.__cluster.get_phm_scripts()[item.text(0)] = self.__cluster.get_phm_scripts()[self.name_temp]
             self.__cluster.get_phm_scripts()[item.text(0)].set_title(item.text(0))
             del self.__cluster.get_phm_scripts()[self.name_temp]

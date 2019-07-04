@@ -3,7 +3,6 @@ const net = require("net")
 const path = require('path')
 
 const mongoose_dao = require("./src/dao/mongoose_dao")
-const insert_data_handler = require("./src/dao/insert_data_handler")
 const connectToDatabase = require("./src/utility/connectToDatabase")
 
 // console.log(process.argv)
@@ -19,11 +18,11 @@ if (!fs.existsSync(socket_addr)) {
 }
 
 var server = null
-var dao = new mongoose_dao()
+var dao = new mongoose_dao(process.argv[3], process.argv[4])
 
 try{
     if(process.argv[2] == "insert"){
-        server = net.createServer(insert_data_handler(process.argv[4]))
+        server = net.createServer(dao.insert_data_handler(process.argv[4]))
     }
     else if(process.argv[2] == "find"){
         server = net.createServer(dao.findDataSocket())

@@ -210,7 +210,7 @@ class schema_tab(QWidget):
             os.makedirs(collection_dir)
 
         fp = open(collection_dir + self.__collection +"Schema.js", "w+")
-        fp.write('const mongoose = require("mongoose")\n')
+        fp.write('const mongoose = require("mongoose")\n\n')
         fp.write("var " + self.__collection + "Schema = new mongoose.Schema(")
 
         schm = self.__get_object(schemas, col_key, "__schema")[0]

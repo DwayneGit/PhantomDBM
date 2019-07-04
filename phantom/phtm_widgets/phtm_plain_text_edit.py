@@ -27,7 +27,7 @@ class PhtmPlainTextEdit(QPlainTextEdit):
         self.setPlainText(text)
 
     def appendPlainText(self, text):
-        self.setPlainText(self.toPlainText() + (("\n" + text) if text[len(text)-1] else text) )
+        self.setPlainText(self.toPlainText() + "\n" + text)
 
     def showLineNumbers(self):
 

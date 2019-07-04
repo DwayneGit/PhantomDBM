@@ -14,11 +14,14 @@ def translate_text(xfile, text_edit=None):
             line = regex.sub("(?<=:\s*)(\"\w+\")", add_style_to_text, line)
             line = regex.sub("\"\w+\"(?=\s*:)", add_style_to_text_col, line)
             line = regex.sub("(?<!\<span)\s", "&nbsp;", line)
-            text_edit.appendHtml(line) #regex.sub("\n", "", line)
+            text_edit.appendHtml(line)
 
     return text_edit
 
 def read_text(xfile):
+    if not xfile:
+        raise Exception("File does not exist")
+        
     with fileinput.input(files=(xfile)) as f:
         script = ""
         for line in f:

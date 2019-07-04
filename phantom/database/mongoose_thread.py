@@ -16,7 +16,7 @@ class mongoose_thread(QObject):
     def insert_docs(self):
         try:
             execute_js('./phantom/database/js/index.js',
-                       arguments="insert " + self.dbHandler.get_uri() + " " + self.dbHandler.get_collection() + 'Schema')
+                       arguments="insert " + self.dbHandler.get_uri() + " " + self.dbHandler.get_collection())
             print(os.getpid())
 
         except Exception as err:

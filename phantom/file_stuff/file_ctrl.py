@@ -92,7 +92,7 @@ def save_script(editor, editor_widget, adjustForCurrentFile):
 
 def save_phm(editor_widget, adjustForCurrentFile, file_path=None):
     
-    if not file_path:
+    try:
         file_path = editor_widget.get_cluster().get_file_path()
         if not file_path:
             err_msg = PhtmMessageBox(None, "Save PHM", "Cluster file not saved. would you like to save?",
@@ -104,10 +104,13 @@ def save_phm(editor_widget, adjustForCurrentFile, file_path=None):
                         return False
                 else: return False
                     
-    adjustForCurrentFile(file_path if file_path[-4:] == ".phm" else file_path+".phm")
-    editor_widget.save_phm(file_path)
-    
-    return True
+        adjustForCurrentFile(file_path if file_path[-4:] == ".phm" else file_path+".phm")
+        editor_widget.save_phm(file_path)
+        
+        return True
+    except Exception as err:
+        print(err)
+        return False
 
 def export_script(curr_script):
     if not curr_script:

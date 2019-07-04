@@ -1,10 +1,10 @@
 const fs = require("fs")
 const path = require('path')
-const normalizedPath = path.join(__dirname, "../schemas");
+const normalizedPath = path.join(__dirname, "../schemas/");
 
 var schemas = {}
 fs.readdirSync(normalizedPath).forEach(function(file) {
-    schemas[file.substring(0, file.length-3)] = require("./../schemas/" + file);
+    schemas[file.substring(0, file.length-3)] = require(normalizedPath + file);
 });
 
 module.exports = (schema_addr) => {
