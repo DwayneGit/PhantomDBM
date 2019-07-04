@@ -6,3 +6,7 @@ mongoengine
 PyYaml
 freeze
 Naked
+pytest
+pytest-qt
+tox
+pre-commit
