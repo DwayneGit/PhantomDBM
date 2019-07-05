@@ -66,8 +66,6 @@ class upload_thread(QObject):
         time.sleep(1)
 
     def __run_script(self, script):
-        docs = script
-
         s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 
         server_addr = "./phantom/database/js/src/tmp/db.sock"
@@ -81,6 +79,33 @@ class upload_thread(QObject):
             self.thrd_done.emit(str(self.thread_id) + ": " + str(err))
             self.setStopFlag()
 
+        if isinstance(script, dict):
+            for model, docs in script.items():
+                s.sendall(bytes("set_model", encoding='utf-8'))
+                data = s.recv(1024)
+                print(data.decode("utf-8"))
+                time.sleep(1)
+                s.sendall(bytes(model, encoding='utf-8'))
+                data = s.recv(1024)
+                print(data.decode("utf-8"))
+                time.sleep(1)
+                self.__docs_to_run(s, docs)
+        else:
+            s.sendall(bytes("set_model", encoding='utf-8'))
+            data = s.recv(1024)
+            time.sleep(1)
+            s.sendall(bytes(settings.__DATABASE__.get_collection_name(), encoding='utf-8'))
+            time.sleep(1)
+            self.__docs_to_run(s, script)
+
+        settings.__LOG__.logInfo('Client closing socket...')
+        
+        s.sendall(bytes("end", encoding='utf-8'))
+
+        s.shutdown(1)
+        s.close()
+
+    def __docs_to_run(self, s, docs):
         for i in range(0, len(docs)):
             self.start.emit(len(docs))
             if self.stopFlag:
@@ -98,18 +123,11 @@ class upload_thread(QObject):
                     self.update_b.emit("Failed to upload document %d/%d" %(i+1, len(docs)) + "\n" + str(err))
                     continue
                 finally:
-                    print(data.decode("utf-8") + str(i))
+                    # print(data.decode("utf-8") + str(i))
                     self.update_s.emit("Sending Objects to Database... %d/%d" %(i+1, len(docs)))
                     time.sleep(1)
             else:
                 continue
-
-        settings.__LOG__.logInfo('Client closing socket...')
-        
-        s.sendall(bytes("end", encoding='utf-8'))
-
-        s.shutdown(1)
-        s.close()
 
         self.thrd_done.emit(str(self.thread_id) + ": Complete")
 

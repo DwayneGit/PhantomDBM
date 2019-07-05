@@ -175,7 +175,7 @@ class schema_tab(QWidget):
         if not os.path.exists(collection_dir):
             os.makedirs(collection_dir)
 
-        fp = open(collection_dir + self.__collection +"Schema.js", "w+")
+        fp = open(collection_dir + self.__collection +".js", "w+")
         fp.write('const mongoose = require("mongoose")\n\n')
         fp.write("var " + self.__collection + "Schema = new mongoose.Schema(")
 
@@ -184,34 +184,37 @@ class schema_tab(QWidget):
             fp.write(schm + ", " + self.__get_object(schemas, col_key, "__options")[0] + ")\n\n")
         else:
             fp.write(self.__get_object(schemas, col_key) + ")\n\n" )
-        fp.write("module.exports = mongoose.model(\""+ self.__collection + 'Model' +"\"," + self.__collection + "Schema" +")")
+        fp.write("module.exports = mongoose.model(\""+ self.__collection + 'Model' +"\", " + self.__collection + "Schema" +")")
         fp.close()
 
         if schemas.find("__children"):
-            fp2 = open(collection_dir + self.__collection + "ChildSchemas.js", "w+")
-            fp2.write('const mongoose = require("mongoose")\n')
-            fp2.write('const ' + self.__collection + 'Model = require("./'+ self.__collection +'Schema")\n')
-
-            self.children = (self.__get_keys(fp2, self.__get_object(schemas, "__children")[0]))
-
-            fp2.close()
+            self.children = (self.__get_keys(collection_dir, self.__get_object(schemas, "__children")[0]))
+            print(self.children)
                 
-    def __get_keys(self, fp, json_data, start=0, key_list=[]):
+    def __get_keys(self, collection_dir, json_data, start=0, key_list=[]):
         key = regex.search("[^\[\]{}\s:\",]+", json_data[start:])
-        if not key: return key_list
-        data, index = self.__get_object(json_data, key.group(0))
-        key_list.append(data)
 
-        fp.write("\nmodule.exports." + key.group(0) + " = " + self.__collection + "Model.discriminator('" + key.group(0) + "',")
-        fp.write("\n\tnew mongoose.Schema(")
+        if not key: 
+            return key_list
+
+        data, index = self.__get_object(json_data, key.group(0))
+        key_list.append(key.group(0))
+
+        fp2 = open(collection_dir + key.group(0) + ".js", "w+")
+        fp2.write('const mongoose = require("mongoose")\n')
+        fp2.write('const ' + self.__collection + 'Model = require("./'+ self.__collection +'")\n')
+
+        fp2.write("\nmodule.exports = " + self.__collection + "Model.discriminator('" + key.group(0) + "',")
+        fp2.write("\n\tnew mongoose.Schema(")
         chld = self.__get_object(data, '__schema')[0]
         if chld:
-            fp.write(chld + ", " + self.__get_object(data, '__options')[0] + "))\n")
+            fp2.write(chld + ", " + self.__get_object(data, '__options')[0] + "))\n")
         else:
-            fp.write(self.__get_object(data)[0] + "))\n")
+            fp2.write(self.__get_object(data)[0] + "))\n")
 
+        fp2.close()
         if start < len(json_data):
-            self.__get_keys(fp, json_data, index, key_list)
+            return self.__get_keys(collection_dir, json_data, index, key_list)
 
     def __get_object(self, json_data, *keydata):
         index = 0

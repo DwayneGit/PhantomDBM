@@ -13,8 +13,11 @@ connectToDatabase(process.argv[3]).catch((err)=>{
 
 const socket_addr = path.join(__dirname, "src/tmp/db.sock")
 
-if (!fs.existsSync(socket_addr)) {
+try{
     fs.mkdirSync(path.join(__dirname, "src/tmp"))
+}
+catch(err){
+    console.error(err.message)
 }
 
 var server = null
@@ -22,7 +25,7 @@ var dao = new mongoose_dao(process.argv[3], process.argv[4])
 
 try{
     if(process.argv[2] == "insert"){
-        server = net.createServer(dao.insert_data_handler(process.argv[4]))
+        server = net.createServer(dao.insert_data_handler())
     }
     else if(process.argv[2] == "find"){
         server = net.createServer(dao.findDataSocket())
@@ -41,7 +44,7 @@ fs.unlink(
     () => {
 
         var timer;
-        var timeout = 15000;
+        var timeout = 60000;
         try {
             server.listen(socket_addr)
 
