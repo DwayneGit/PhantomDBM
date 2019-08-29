@@ -57,7 +57,6 @@ class run_ctrl():
 
     def run(self, opt=0, index=None):
         if opt == 0:
-            # f_ctrl.save_script(self.parent.get_editor_widget().get_editor_tabs().currentWidget(), self.parent.get_editor_widget(), self.parent.get_menubar().get_adjust_signal())
             script_s = self.parent.get_editor_widget().get_editor_tabs().currentWidget().get_curr_script().get_script()
 
         elif opt == 1:

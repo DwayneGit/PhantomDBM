@@ -73,12 +73,6 @@ class phtm_menu_bar(QMenuBar):
             openRecentMenu.addAction(rfile)
         self.updateRecentActionList()
         fileMenu.addSeparator()
-
-        saveAction = QAction("Save Script", self.parent)
-        saveAction.setStatusTip('Save Script File')
-        saveAction.triggered.connect(lambda: self.file_handler.save_script())
-        fileMenu.addAction(saveAction)
-
         savePAction = QAction("Save PHM", self.parent)
         savePAction.setShortcut("Ctrl+S")
         savePAction.setStatusTip('Save Cluster File')

@@ -21,7 +21,11 @@ class PhtmEditorWidget(QWidget):
 
         self.__splitter = QSplitter()
 
-        self.__init_editor()
+        self.__editor_tabs = PhtmTabWidget(self)
+        self.__editor_tabs.currentChanged.connect(self.tab_changed)
+
+        self.__splitter.addWidget(self.__editor_tabs)
+
         self.__init_script_tree()
 
         self.__default_count = 0
@@ -35,23 +39,12 @@ class PhtmEditorWidget(QWidget):
 
         self.setLayout(self.__layout)
 
-    def __init_editor(self):
-        self.__editor_tabs = PhtmTabWidget(self)
-
-        self.__editor_tabs.setMovable(True)
-        self.__editor_tabs.setTabsClosable(True)
-
-        self.__splitter.addWidget(self.__editor_tabs)
-        self.__editor_tabs.hide()
-
-        self.__editor_tabs.currentChanged.connect(self.tab_changed)
-
     def tab_changed(self, index):
-        scrpt = self.__editor_tabs.tabText(index)
-
+        scriptName = self.__editor_tabs.tabText(index)
         for i in range(self.__tree_root.childCount()):
-            if self.__tree_root.child(i).text(0) == scrpt:
+            if self.__tree_root.child(i).text(0) == scriptName:
                 self.__script_tree.setCurrentItem(self.__tree_root.child(i))
+                break
 
     def clear_tabs(self):
         self.__editor_tabs.clear()
@@ -84,7 +77,6 @@ class PhtmEditorWidget(QWidget):
             self.__editor_tabs.setTabText(self.__editor_tabs.currentIndex(), item.text(0))
 
             self.__editor_tabs.currentWidget().textChanged.connect(lambda: self.__editor_tabs.isChanged(self.__editor_tabs.currentIndex()))
-
 
     def __open_script_in_tab(self, tree_item):
         index = self.__editor_tabs.add_editor(self.__cluster.get_phm_scripts()[tree_item.text(0)])
@@ -147,10 +139,6 @@ class PhtmEditorWidget(QWidget):
         self.__tree_root = None
 
         self.__script_tree = PhtmTreeWidget()
-        self.__script_tree.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.__script_tree.setColumnCount(1)
-        self.__script_tree.setContentsMargins(0, 50, 0, 0)
-        self.__script_tree.setHeaderHidden(True)
 
         self.__script_tree.itemDelegate().closeEditor.connect(self.__editor_closed)
 
@@ -161,21 +149,17 @@ class PhtmEditorWidget(QWidget):
         self.__script_tree_layout = QVBoxLayout()
         self.__script_tree_layout.addWidget(self.__script_tree)
         self.__script_tree_layout.addWidget(self.__script_tree_details_box)
+        self.__script_tree_layout.setContentsMargins(0, 26, 0, 0)
 
         self.__script_tree_widget = QWidget()
         self.__script_tree_widget.setLayout(self.__script_tree_layout)
-        self.__script_tree_layout.setContentsMargins(0, 26, 0, 0)
 
         self.__script_tree.itemDoubleClicked.connect(self.__open_script)
         self.__script_tree.itemSelectionChanged.connect(lambda: self.__show_details(self.__script_tree.currentItem()))
 
         self.__tree_root = self.add_script_root()
         self.__script_tree.setCurrentItem(self.__tree_root)
-
-        self.__script_tree.setHeaderLabels(["Script Cluster"])
         self.__script_tree.expandItem(self.__tree_root)
-
-        self.__script_tree.setContextMenuPolicy(Qt.CustomContextMenu)
         self.__script_tree.customContextMenuRequested.connect(self.on_treeWidget_customContextMenuRequested)
 
         self.__splitter.addWidget(self.__script_tree_widget)
@@ -190,7 +174,6 @@ class PhtmEditorWidget(QWidget):
             if item == self.__tree_root:
                 self.__cluster.get_phm().set_name(editor.text())
                 self.name_temp = None
-                # self.parent.updateWindowTitle(editor.text())
                 return
 
             if not item.text(0):

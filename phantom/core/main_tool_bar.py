@@ -33,7 +33,7 @@ class main_tool_bar():
         topTBar.addAction(tbadd)
 
         tbsave = PhtmAction(settings.style_signal.icon_signal, settings.__ICONS__.get_save, "Save", self.parent)
-        tbsave.triggered.connect(lambda: self.file_handler.save_script())
+        tbsave.triggered.connect(lambda: self.file_handler.save_phm())
         topTBar.addAction(tbsave)
 
         tbphm = PhtmAction(settings.style_signal.icon_signal, settings.__ICONS__.get_import_file, "Open PHM", self.parent)

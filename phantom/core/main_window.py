@@ -65,7 +65,6 @@ class main_window(QMainWindow):
         self.setCentralWidget(self.body)
 
         self.file_handler = FileHandler(self)
-        self.file_handler.tmpScriptCleaner()
         login = PhtmDialog("Login", QRect(10, 10, 260, 160), self)
         login.set_central_dialog(loginScreen(login))
 
@@ -190,6 +189,7 @@ class main_window(QMainWindow):
     def new_editor_widget(self):
         if self.file_handler.save_phm(self.menu_bar.get_adjust_signal()):
             new_ew = PhtmEditorWidget(self)
+            self.set_window_title(self.__program_title)
             self.__splitter1.replaceWidget(self.__splitter1.indexOf(self.__editor_widget), new_ew)
             self.__editor_widget = new_ew
             self.main_tool_bar.dbnameMenu.setCurrentIndex(0)

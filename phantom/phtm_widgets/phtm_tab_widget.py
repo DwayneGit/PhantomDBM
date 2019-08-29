@@ -15,6 +15,10 @@ class PhtmTabWidget(QTabWidget):
         super().__init__()
         self.parent = parent
 
+        self.setMovable(True)
+        self.setTabsClosable(True)
+        self.hide()
+
         self.default_tab_count = 1
         self.tab_data = {}
         self.script_set = {}

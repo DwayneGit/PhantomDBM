@@ -5,8 +5,6 @@ from time import gmtime, strftime
 
 from PyQt5.QtWidgets import QFileDialog, QMessageBox
 
-from phantom.utility import cleanTmpScripts
-
 from phantom.phtm_widgets import PhtmMessageBox, PhtmFileDialog
 
 from phantom.application_settings import settings
@@ -82,39 +80,29 @@ class FileHandler():
 
         return False
 
-    def save_script(self):
-        f_path = self.parent.get_editor_widget().get_cluster().get_file_path()
-        editor = self.parent.get_editor_widget().get_editor_tabs().currentWidget()
-        if not f_path:
-            f_path = self.export_phm(self.parent.get_editor_widget())
-            if f_path:
-                self.parent.get_editor_widget().get_cluster().set_file_path(f_path)
-            else: return False
-
-        if not editor.save_script():
-            return False
-        self.save_phm(f_path)
-
-        return True
-
     def save_phm(self, file_path=None):
-
         try:
-            file_path = self.parent.get_editor_widget().get_cluster().get_file_path()
+            cluster = self.parent.get_editor_widget().get_cluster()
+            file_path = cluster.get_file_path()
             if not file_path:
-                err_msg = PhtmMessageBox(None, "Save PHM", "Cluster file not saved. would you like to save?",
+                save_msg = PhtmMessageBox(None, "Save PHM", "Cluster file not saved. would you like to save?",
                                             [QMessageBox.Yes, QMessageBox.Cancel])
-                if err_msg.exec_():
-                    if err_msg.msg_selection == QMessageBox.Yes:
+                if save_msg.exec_():
+                    if save_msg.msg_selection == QMessageBox.Yes:
                         file_path = self.export_phm(self.parent.get_editor_widget())
                         if not file_path:
                             return False
+                        
+                        if cluster.get_phm().get_name() == "New Cluster":
+                            cluster.get_phm().set_name(os.path.basename(file_path)[:-4])
+
                     else: return False
                         
             self.adjustSignal.emit(file_path if file_path[-4:] == ".phm" else file_path+".phm")
             self.parent.get_editor_widget().save_phm(file_path)
             
             return True
+
         except Exception as err:
             print("Error Here " + str(err))
             return False
@@ -139,21 +127,5 @@ class FileHandler():
         dlg = PhtmFileDialog(None, "Save Cluster", QFileDialog.AnyFile, "Cluster files (*.phm)", options=options, accept_mode=QFileDialog.AcceptSave)
         if dlg.exec_():
             if dlg.save_name:
-                # print(dlg.save_name)
-                self.save_phm(dlg.save_name)
                 return dlg.save_name
         return False
-
-    def tmpScript(self, curr_tab, temp = None):
-        file_name = "tmp/script_"+ strftime("%w%d%m%y_%H%M%S", gmtime()) +".json"
-
-        tmpfilePath = file_name
-
-        with open(tmpfilePath, 'w') as outfile:
-            outfile.write(eval(json.dumps(curr_tab.toPlainText(), indent=4)))
-
-        return tmpfilePath
-
-    def tmpScriptCleaner(self):
-        self.parent.cleanScripts = cleanTmpScripts(0) # for now deletes all previous temp files on startup
-        self.parent.cleanScripts.start()

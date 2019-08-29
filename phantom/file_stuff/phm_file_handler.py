@@ -47,6 +47,7 @@ class PhmFileHandler():
         self.__phm.modified_by(user)
 
     def load(self, file_path):
+        del self.__phm
         self.__phm = pickle.load(open(file_path, "rb"))
         self.load_settings()
         self.__file_path = file_path

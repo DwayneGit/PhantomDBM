@@ -21,5 +21,6 @@ app_settings.json
 icons/icon_sets
 
 node_modules
+package-lock.json
 
 schemas/
