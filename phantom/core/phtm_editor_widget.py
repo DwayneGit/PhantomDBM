@@ -71,7 +71,7 @@ class PhtmEditorWidget(QWidget):
         else:
             self.__editorTabs.currentWidget().textChanged.disconnect()
             
-            self.__editorTabs.currentWidget().set_currScript(self.__cluster.getPhmScripts()[item.text(0)])
+            self.__editorTabs.currentWidget().setCurrScript(self.__cluster.getPhmScripts()[item.text(0)])
             self.__editorTabs.currentWidget().setTreeItem(item)
 
             self.__editorTabs.setTabText(self.__editorTabs.currentIndex(), item.text(0))

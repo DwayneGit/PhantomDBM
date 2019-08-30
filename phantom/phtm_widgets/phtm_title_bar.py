@@ -7,13 +7,13 @@ from PyQt5.QtWidgets import QToolBar, QToolButton, QWidget, QAction, QLabel, QSi
 from phantom.applicationSettings import settings
 
 class PhtmTitleBar(QToolBar):
-    def __init__(self, window, is_MainWindow=False):
+    def __init__(self, window, isMainWindow=False):
         super().__init__()
         
         self.window = window
         self.windowTitle = ""
-        self.is_max = False
-        self.is_MainWindow = is_MainWindow
+        self.isMax = False
+        self.isMainWindow = isMainWindow
         self.windowTitle = ""
         self.setObjectName("titleBar")
 
@@ -25,10 +25,10 @@ class PhtmTitleBar(QToolBar):
         self.setFixedHeight(36)
         self.setIconSize(QSize(19, 19))
 
-        exit_bttn = QToolButton()
-        exit_bttn.setDefaultAction(QAction(QIcon(settings.__ICONS__.close), "", self))
+        exitButton = QToolButton()
+        exitButton.setDefaultAction(QAction(QIcon(settings.__ICONS__.close), "", self))
 
-        if self.is_MainWindow:
+        if self.isMainWindow:
             # logo_bttn = QToolButton()
             # logo_bttn.setDefaultAction(QAction(QIcon(settings.__ICONS__.appIcon), "phantom", self))
             # logo_bttn.setObjectName("logo")
@@ -41,20 +41,20 @@ class PhtmTitleBar(QToolBar):
             spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
             self.addWidget(spacer)
 
-            min_bttn = QToolButton()
-            min_bttn.setObjectName("title_button")
-            min_bttn.setDefaultAction(QAction(QIcon(settings.__ICONS__.minimze), "", self))
-            min_bttn.defaultAction().triggered.connect(self.window.showMinimized)
-            self.addWidget(min_bttn)
+            minimizeButton = QToolButton()
+            minimizeButton.setObjectName("title_button")
+            minimizeButton.setDefaultAction(QAction(QIcon(settings.__ICONS__.minimze), "", self))
+            minimizeButton.defaultAction().triggered.connect(self.window.showMinimized)
+            self.addWidget(minimizeButton)
 
-            screen_bttn = QToolButton()
-            screen_bttn.setObjectName("title_button")
-            screen_bttn.setDefaultAction(QAction(QIcon(settings.__ICONS__.maximize), "", self))
-            screen_bttn.triggered.connect(lambda x: self.screen_toggle(screen_bttn))
-            self.addWidget(screen_bttn)
+            maximizeButton = QToolButton()
+            maximizeButton.setObjectName("title_button")
+            maximizeButton.setDefaultAction(QAction(QIcon(settings.__ICONS__.maximize), "", self))
+            maximizeButton.triggered.connect(lambda x: self.screenToggle(maximizeButton))
+            self.addWidget(maximizeButton)
 
-            exit_bttn.defaultAction().triggered.connect(sys.exit)
-            exit_bttn.setObjectName("exit")
+            exitButton.defaultAction().triggered.connect(sys.exit)
+            exitButton.setObjectName("exit")
 
         else:
             spacer = QWidget()
@@ -65,23 +65,23 @@ class PhtmTitleBar(QToolBar):
 
             self.addWidget(spacer)
 
-            exit_bttn.defaultAction().triggered.connect(self.dialog_exit)
-            exit_bttn.setObjectName("exit")
+            exitButton.defaultAction().triggered.connect(self.dialogExit)
+            exitButton.setObjectName("exit")
 
-        self.addWidget(exit_bttn)
+        self.addWidget(exitButton)
 
-    def dialog_exit(self):
+    def dialogExit(self):
         self.window.close()
 
-    def screen_toggle(self, tool_button):
-        if not self.is_max:
+    def screenToggle(self, toolButton):
+        if not self.isMax:
             self.window.showMaximized()
-            tool_button.setDefaultAction(QAction(QIcon(settings.__ICONS__.restore), "", self))
-        elif self.is_max:
+            toolButton.setDefaultAction(QAction(QIcon(settings.__ICONS__.restore), "", self))
+        elif self.isMax:
             self.window.showNormal()
-            tool_button.setDefaultAction(QAction(QIcon(settings.__ICONS__.maximize), "", self))
+            toolButton.setDefaultAction(QAction(QIcon(settings.__ICONS__.maximize), "", self))
 
-        self.is_max = not self.is_max
+        self.isMax = not self.isMax
 
     def mousePressEvent(self, event):
         self.window.oldPos = event.globalPos()

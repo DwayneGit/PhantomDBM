@@ -8,25 +8,25 @@ class phm():
     def __len__(self):
         return len(self.__scripts)
 
-    def __init__(self, name, scripts=None, creator=None, group=None, access_level=None):
+    def __init__(self, name, scripts=None, creator=None, group=None, accessLevel=None):
 
         self.__class__ = phm
         self.__class__.__name__ = "phm"
 
-        current_date_time = datetime.now()
+        currentDateTime = datetime.now()
 
         self.__name = name
 
-        self.__date_time_created = current_date_time
-        self.__date_time_modified = current_date_time
+        self.__dateTimeCreated = currentDateTime
+        self.__dateTimeModified = currentDateTime
 
         self.__creator = creator
         self.__group = group
 
-        self.__last_modified_by = None
-        self.__modify_log = []
+        self.__lastModifiedBy = None
+        self.__modifyLog = []
 
-        self.__access_level = access_level
+        self.__accessLevel = accessLevel
         self.__public = True
 
         if scripts:
@@ -44,38 +44,38 @@ class phm():
     def getScripts(self):
         return self.__scripts
 
-    def modified_by(self, user, script_title=None):
-        if script_title:
-            self.__scripts[script_title].set_modified_by()
+    def modifiedBy(self, user, scriptTitle=None):
+        if scriptTitle:
+            self.__scripts[scriptTitle].setModifiedBy()
 
-        self.__last_modified_by = user
-        self.__modify_log.append(user)
+        self.__lastModifiedBy = user
+        self.__modifyLog.append(user)
 
-    def get_last_modified_by(self, script_title=None):
-        if script_title:
-            return self.__scripts[script_title].getModifiedBy()
-        return self.__last_modified_by
+    def getLastModifiedBy(self, scriptTitle=None):
+        if scriptTitle:
+            return self.__scripts[scriptTitle].getModifiedBy()
+        return self.__lastModifiedBy
 
-    def get_access(self, user):
-        if user in self.__group or (user.access_level == self.__access_level and self.__access_level):
+    def getAccess(self, user):
+        if user in self.__group or (user.accessLevel == self.__accessLevel and self.__accessLevel):
             return True
         return False
 
-    def get_group(self):
+    def getGroup(self):
         return self.__group
 
-    def set_group(self, group):
+    def setGroup(self, group):
         self.__group = group
 
-    def is_public(self, public):
+    def isPublic(self, public):
         self.__public = public
         return self.__public
 
-    def get_time_created(self):
-        return self.__date_time_created
+    def getTimeCreated(self):
+        return self.__dateTimeCreated
 
-    def get_time_modified(self):
-        return self.__date_time_modified
+    def getTimeModified(self):
+        return self.__dateTimeModified
 
-    def set_time_modified(self):
-        self.__date_time_modified = datetime.now()
+    def setTimeModified(self):
+        self.__dateTimeModified = datetime.now()

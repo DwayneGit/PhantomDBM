@@ -72,7 +72,7 @@ class MainWindow(QMainWindow):
 
         # if login.exec_():
         #     settings.__LOG__.logInfo("Successfully Logged In.")
-        #     self.user = login.get_central_dialog().user
+        #     self.user = login.getCentralDialog().user
         #     self.initUI()
         # else:
         #     settings.__LOG__.logInfo("No login program exited.")

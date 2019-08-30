@@ -108,7 +108,7 @@ class PhtmPlainTextEdit(QPlainTextEdit):
         for line in htmlText.splitlines():
             self.appendHtml(line)
 
-    def set_filePath(self, path):
+    def setFilePath(self, path):
         self.filePath = path
 
         fileName = re.split('^(.+)\/([^\/]+)$', path)

@@ -1,34 +1,34 @@
 from datetime import datetime
 
 class JsonScript():
-    def __init__(self, script, script_title=None, script_creator=None):
+    def __init__(self, script, scriptTitle=None, scriptCreator=None):
 
-        current_date_time = datetime.now()
+        currentDateTime = datetime.now()
 
-        self.__date_time_created = current_date_time
-        self.__date_time_modified = current_date_time
+        self.__dateTimeCreated = currentDateTime
+        self.__dateTimeModified = currentDateTime
 
-        self.__creator = script_creator
-        self.__modified_by = script_creator
+        self.__creator = scriptCreator
+        self.__modifiedBy = scriptCreator
 
         self.__script = script
-        self.__title = script_title
+        self.__title = scriptTitle
 
     def __str__(self):
-        to_str = "{"
-        to_str += "\n    Created : {" 
-        to_str += "\n        Date : " + str(self.__date_time_created) + ","
-        to_str += "\n        By : " + str(self.__creator)
-        to_str += "\n    },"
-        to_str += "\n    Last Modified : {"
-        to_str += "\n        Date : " + str(self.__date_time_modified) + ","
-        to_str += "\n        By : " + str(self.__modified_by)
-        to_str += "\n    },"
-        to_str += "\n    Title : " + "\"" + self.__title + "\"" + ","
-        to_str += "\n    Script : " + "\"" + self.__script + "\""
-        to_str += "\n}"
+        toStr = "{"
+        toStr += "\n    Created : {" 
+        toStr += "\n        Date : " + str(self.__dateTimeCreated) + ","
+        toStr += "\n        By : " + str(self.__creator)
+        toStr += "\n    },"
+        toStr += "\n    Last Modified : {"
+        toStr += "\n        Date : " + str(self.__dateTimeModified) + ","
+        toStr += "\n        By : " + str(self.__modifiedBy)
+        toStr += "\n    },"
+        toStr += "\n    Title : " + "\"" + self.__title + "\"" + ","
+        toStr += "\n    Script : " + "\"" + self.__script + "\""
+        toStr += "\n}"
 
-        return to_str
+        return toStr
 
     def getCreator(self):
         return self.__creator
@@ -36,20 +36,20 @@ class JsonScript():
     def getScript(self):
         return self.__script
 
-    def set_script(self, script):
+    def setScript(self, script):
         self.__script = script
 
     def getDateTimeCreated(self):
-        return self.__date_time_created
+        return self.__dateTimeCreated
 
     def getDateTimeModified(self):
-        return self.__date_time_modified
+        return self.__dateTimeModified
 
-    def set_modified_by(self, modifier):
-        self.__modified_by = modifier
+    def setModifiedBy(self, modifier):
+        self.__modifiedBy = modifier
 
     def getModifiedBy(self):
-        return self.__modified_by
+        return self.__modifiedBy
 
     def setTitle(self, title):
         self.__title = title
@@ -57,5 +57,5 @@ class JsonScript():
     def getTitle(self):
         return self.__title
 
-    def update_date_time_modified(self):
-        self.__date_time_modified = datetime.now()
+    def updateDateTimeModified(self):
+        self.__dateTimeModified = datetime.now()

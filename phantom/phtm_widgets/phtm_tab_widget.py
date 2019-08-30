@@ -19,32 +19,32 @@ class PhtmTabWidget(QTabWidget):
         self.setTabsClosable(True)
         self.hide()
 
-        self.default_tab_count = 1
-        self.tab_data = {}
-        self.script_set = {}
+        self.defaultTabCount = 1
+        self.tabData = {}
+        self.scriptSet = {}
         self.tabCloseRequested.connect(self.closeTab)
 
     def tabByText(self, text):
-        tab_index_found = -1
+        tabIndexFound = -1
         for i in range(self.count()):
             if text == self.tabText(i):
-                tab_index_found = i
+                tabIndexFound = i
                 self.setCurrentIndex(i)
                 break
-        return tab_index_found
+        return tabIndexFound
 
     def saveEditor(self, index):
         if not self.widget(index).isChanged:
             return
 
-        save_msg = "The current script is not saved. Do you want to save?"
-        msg_box = PhtmMessageBox(self, "Save", save_msg, [QMessageBox.Yes, QMessageBox.Cancel])
-        if msg_box.exec_():
-            if msg_box.msg_selection == QMessageBox.Cancel:
+        saveMessage = "The current script is not saved. Do you want to save?"
+        messageBox = PhtmMessageBox(self, "Save", saveMessage, [QMessageBox.Yes, QMessageBox.Cancel])
+        if messageBox.exec_():
+            if messageBox.messageSelection == QMessageBox.Cancel:
                 return False
-            elif msg_box.msg_selection == QMessageBox.Yes:
-                if self.widget(index).save_script():
-                    self.is_saved(self.tabText(index), index)
+            elif messageBox.messageSelection == QMessageBox.Yes:
+                if self.widget(index).saveScript():
+                    self.isSaved(self.tabText(index), index)
                     return False
 
         return True
@@ -70,34 +70,34 @@ class PhtmTabWidget(QTabWidget):
             index = self.addTab(editor, editor.title)
 
             editor.textChanged.connect(lambda: self.isChanged(self.currentIndex()))
-            editor.saved.connect(lambda title: self.is_saved(title, self.currentIndex()))
+            editor.saved.connect(lambda title: self.isSaved(title, self.currentIndex()))
 
         else:
             editor = _PhtmEditor()
             index = self.addTab(editor, "")
             editor.textChanged.connect(lambda: self.isChanged(self.currentIndex()))
-            editor.saved.connect(lambda title: self.is_saved(title, self.currentIndex()))
+            editor.saved.connect(lambda title: self.isSaved(title, self.currentIndex()))
 
         self.setCurrentIndex(index)
         return index
 
-    def is_saved(self, title, index):
+    def isSaved(self, title, index):
         self.widget(index).isChanged = False
         self.setTabText(index, title)
 
-        self.widget(index).get_treeItem().setText(0, title)
+        self.widget(index).getTreeItem().setText(0, title)
 
     def isChanged(self, index):
         if not self.widget(index).isChanged and self.tabText(index):
             self.widget(index).isChanged = True
             self.setTabText(index, "* " + self.tabText(index))
 
-            self.widget(index).get_treeItem().setText(0, self.tabText(index))
+            self.widget(index).getTreeItem().setText(0, self.tabText(index))
 
-    def get_index(self, editor):
+    def getIndex(self, editor):
         return self.indexOf(editor)
 
-    def get_tab_text(self, index):
+    def getTabText(self, index):
         if self.tabText(index)[0:2] == "* ":
             return self.tabText(index)[2:]
         else: return self.tabText(index)
@@ -117,7 +117,7 @@ class _PhtmEditor(PhtmPlainTextEdit):
         self.title = self.__currScript.getTitle()
         self.setPlainText(self.__currScript.getScript())
 
-    def set_currScript(self, script):
+    def setCurrScript(self, script):
         self.__currScript = script
         self.title = self.__currScript.getTitle()
         self.setPlainText(self.__currScript.getScript())
@@ -126,24 +126,24 @@ class _PhtmEditor(PhtmPlainTextEdit):
     def getCurrScript(self):
         return self.__currScript
 
-    def save_script(self, user="Daru"):
+    def saveScript(self, user="Daru"):
         try:
             validateJsonScript(self, self.toPlainText())
         except Exception as err:
-            error_msg = PhtmMessageBox(self, "Validation Error", "Invalid JSON:\n" + str(err))
-            error_msg.exec_()
+            errorMessage = PhtmMessageBox(self, "Validation Error", "Invalid JSON:\n" + str(err))
+            errorMessage.exec_()
             return False
 
-        self.__currScript.set_script(self.toPlainText())
-        self.__currScript.set_modified_by(user)
-        self.__currScript.update_date_time_modified()
+        self.__currScript.setScript(self.toPlainText())
+        self.__currScript.setModifiedBy(user)
+        self.__currScript.updateDateTimeModified()
 
         self.isChanged = False
 
         self.saved.emit(self.__currScript.getTitle())
         return True
 
-    def get_treeItem(self):
+    def getTreeItem(self):
         return self.treeItem
 
     def setTreeItem(self, item):

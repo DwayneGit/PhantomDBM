@@ -7,7 +7,7 @@ from phantom.database import DatabaseHandler
 
 from phantom.applicationSettings import settings
 
-class database_tab(QWidget):
+class DatabaseTab(QWidget):
     def __init__(self, instancesPrefDict):
         super().__init__()
         
@@ -15,7 +15,7 @@ class database_tab(QWidget):
 
         self.__colList = self.__getListOfCollections()
 
-        self.__dbForm = QFormLayout()
+        self.__databaseForm = QFormLayout()
 
         dbW = QWidget()
         dbHBox = QHBoxLayout()
@@ -90,18 +90,18 @@ class database_tab(QWidget):
 
         #---------------------------------- add widgets to form
 
-        self.__dbForm.addRow(dbLabel, dbW)
-        self.__dbForm.addRow(dbNameLabel, dbNameBox)
-        self.__dbForm.addRow(hostLabel, hostBox)
-        self.__dbForm.addRow(portNumLabel, portNumBox)
-        # self.__dbForm.addRow(tbSizeLabel, tbSizeBox)
-        self.__dbForm.addRow(colLabel, self.__colEditBtn)
-        self.__dbForm.addWidget(reloadBtn)
+        self.__databaseForm.addRow(dbLabel, dbW)
+        self.__databaseForm.addRow(dbNameLabel, dbNameBox)
+        self.__databaseForm.addRow(hostLabel, hostBox)
+        self.__databaseForm.addRow(portNumLabel, portNumBox)
+        # self.__databaseForm.addRow(tbSizeLabel, tbSizeBox)
+        self.__databaseForm.addRow(colLabel, self.__colEditBtn)
+        self.__databaseForm.addWidget(reloadBtn)
 
-        self.setLayout(self.__dbForm)
+        self.setLayout(self.__databaseForm)
 
-    def get_db_form(self):
-        return self.__dbForm
+    def getDatabaseForm(self):
+        return self.__databaseForm
 
     def __changeHost(self, host):
         self.instancesPrefDict.setHostName(host)
@@ -162,5 +162,5 @@ class database_tab(QWidget):
         settings.__DATABASE__.setHostName(self.instancesPrefDict.getHostName())
         settings.__DATABASE__.setPortNumber(int(self.instancesPrefDict.getPortNumber()))
         
-        # prefs['mongodb']['tableSize'] = int(self.__dbForm.itemAt(9).widget().text())
+        # prefs['mongodb']['tableSize'] = int(self.__databaseForm.itemAt(9).widget().text())
 

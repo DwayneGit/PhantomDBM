@@ -9,7 +9,7 @@ from PyQt5.QtCore import Qt
 
 from phantom.applicationSettings import settings
 
-class theme_tab(QWidget):
+class ThemeTab(QWidget):
     def __init__(self):
         super().__init__()
         self.setLayout(QVBoxLayout())
@@ -20,7 +20,7 @@ class theme_tab(QWidget):
 
         onlyfiles = [f for f in listdir(mypath) if isfile(join(mypath, f))]
 
-        self.selected_theme = None
+        self.selectedTheme = None
 
         for f in onlyfiles:
             try:
@@ -52,7 +52,7 @@ class _ThemeBlock(QGraphicsView):
         
         block.setObjectName("scheme")
         block.setFocusPolicy(Qt.ClickFocus)
-        block.mousePressEvent = (lambda e: self.load_theme(fp))
+        block.mousePressEvent = (lambda e: self.loadTheme(fp))
 
         for key in self.__theme["color_scheme"]:
             b = QGraphicsWidget()
@@ -73,5 +73,5 @@ class _ThemeBlock(QGraphicsView):
         scene.addItem(block)
         # scene.addItem(name)
 
-    def load_theme(self, file):
-        self.parent.selected_theme = file
+    def loadTheme(self, file):
+        self.parent.selectedTheme = file

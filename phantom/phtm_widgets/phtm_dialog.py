@@ -7,10 +7,10 @@ from phantom.utility import centerWindow
 from . import PhtmTitleBar
 
 class PhtmDialog(QDialog):
-    def __init__(self, title, geometry, parent, central_dialog=None):
+    def __init__(self, title, geometry, parent, centralDialog=None):
         super().__init__() # set screen size (left, top, width, height
 
-        # if not isinstance(central_dialog, QDialog):
+        # if not isinstance(centralDialog, QDialog):
         #     return "Pass central dialog is not of type QDialog"
         self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint)
         self.setAttribute(Qt.WA_NoSystemBackground)
@@ -18,7 +18,7 @@ class PhtmDialog(QDialog):
 
         self.setWindowModality(Qt.ApplicationModal)
 
-        self.__central_dialog = central_dialog
+        self.__centralDialog = centralDialog
 
         self.windowTitle = title
 
@@ -33,8 +33,8 @@ class PhtmDialog(QDialog):
         self.__layout.setSpacing(0)
 
         self.__layout.addWidget(self.titleBar)
-        if self.__central_dialog:
-            self.__layout.addWidget(self.__central_dialog)
+        if self.__centralDialog:
+            self.__layout.addWidget(self.__centralDialog)
 
         self.setLayout(self.__layout)
 
@@ -56,15 +56,15 @@ class PhtmDialog(QDialog):
     def getWindowTitle(self):
         return self.titleBar.windowTitle
 
-    def get_layout(self):
+    def getLayout(self):
         return self.__layout
 
     def setCentralDialog(self, dialog):
-        # if not isinstance(central_dialog, QDialog):
+        # if not isinstance(centralDialog, QDialog):
         #    throw  "Pass central dialog is not of type QDialog"
-        if not self.__central_dialog:
+        if not self.__centralDialog:
             self.__layout.addWidget(dialog)
-        self.__central_dialog = dialog
+        self.__centralDialog = dialog
 
-    def get_central_dialog(self):
-        return self.__central_dialog
+    def getCentralDialog(self):
+        return self.__centralDialog

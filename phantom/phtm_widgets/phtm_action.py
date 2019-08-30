@@ -5,8 +5,8 @@ from PyQt5.QtWidgets import QAction
 class PhtmAction(QAction):
     def __init__(self, signal, icon=None, text=None, parent=None):
         super().__init__(QIcon(icon()), text, parent)
-        signal.connect(lambda: self.change_Icon(icon))
+        signal.connect(lambda: self.changeIcon(icon))
 
     @pyqtSlot()
-    def change_Icon(self, icon):
+    def changeIcon(self, icon):
         self.setIcon(QIcon(icon()))

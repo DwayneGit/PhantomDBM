@@ -4,21 +4,21 @@ from copy import deepcopy
 
 from PyQt5.QtWidgets import QMessageBox
 
-from phantom.preferences import default_settings
+from phantom.preferences import defaultSettings
 
 from phantom.utility import validateJsonScript
 
 from phantom.phtmWidgets import PhtmMessageBox
 
 from .json_script import JsonScript
-from .phm import phm as phm_file
+from .phm import phm as PhmFile
 
-from phantom.database.database_handler import DatabaseHandler
+from phantom.database.databaseHandler import DatabaseHandler
 from phantom.applicationSettings import settings
 
 class PhmFileHandler():
 
-    def __init__(self, phm=None, db_handler=None):
+    def __init__(self, phm=None, databaseHandler=None):
         self.__class__ = PhmFileHandler
         self.__class__.__name__ = "PhmFileHandler"
 
@@ -27,34 +27,34 @@ class PhmFileHandler():
         if phm:
             self.__phm = phm
         else:
-            self.__phm = phm_file("New Cluster")
-            self.addScript(str(default_settings()), "__settings__")
+            self.__phm = PhmFile("New Cluster")
+            self.addScript(str(defaultSettings()), "__settings__")
             self.addScript("{}", "__schema__")
             self.getPhmScripts()["__dmi_instr__"] = {"instr" : "", "name" : "" }
 
-        self.load_settings()
-        self.__db_handler = db_handler
+        self.loadSettings()
+        self.__databaseHandler = databaseHandler
         self.__children = []
 
     def save(self, filePath, user=None):
-        self.save_settings()
+        self.saveSettings()
         tmp = deepcopy(filePath)
         if tmp[-4:] == ".phm":
             tmp = tmp[0:-4]
         pickle.dump(self.__phm, open(tmp + ".phm", "wb"))
 
         self.__filePath = filePath
-        self.__phm.modified_by(user)
+        self.__phm.modifiedBy(user)
 
     def load(self, filePath):
         del self.__phm
         self.__phm = pickle.load(open(filePath, "rb"))
-        self.load_settings()
+        self.loadSettings()
         self.__filePath = filePath
 
-    def load_settings(self):
-        self.phm_settings = json.loads(self.getScript("__settings__").getScript())
-        settings.__DATABASE__ = DatabaseHandler(self.phm_settings['mongodb'])
+    def loadSettings(self):
+        self.PhmSettings = json.loads(self.getScript("__settings__").getScript())
+        settings.__DATABASE__ = DatabaseHandler(self.PhmSettings['mongodb'])
 
 #------------------------- script methods --------------------------
     def addScript(self, script, title=None, creator=None):
@@ -75,15 +75,15 @@ class PhmFileHandler():
 
         return newScript
 
-    def save_settings(self):
+    def saveSettings(self):
 
-        self.phm_settings["mongodb"]["host"] = settings.__DATABASE__.getHostName()
-        self.phm_settings["mongodb"]["port"] = settings.__DATABASE__.getPortNumber()
-        self.phm_settings["mongodb"]["dbname"] = settings.__DATABASE__.getDatabaseName()
-        self.phm_settings["mongodb"]["collection"] = settings.__DATABASE__.getCollectionName()
+        self.PhmSettings["mongodb"]["host"] = settings.__DATABASE__.getHostName()
+        self.PhmSettings["mongodb"]["port"] = settings.__DATABASE__.getPortNumber()
+        self.PhmSettings["mongodb"]["dbname"] = settings.__DATABASE__.getDatabaseName()
+        self.PhmSettings["mongodb"]["collection"] = settings.__DATABASE__.getCollectionName()
 
-        sett_str = default_settings.to_str(self.phm_settings)
-        self.getScript("__settings__").set_script(sett_str)
+        settingsStr = defaultSettings.toStr(self.PhmSettings)
+        self.getScript("__settings__").setScript(settingsStr)
 
     def getScript(self, title):
         if title in self.getPhmScripts():
@@ -102,18 +102,18 @@ class PhmFileHandler():
     def getFilePath(self):
         return self.__filePath
 
-    def set_filePath(self, filePath):
+    def setFilePath(self, filePath):
         self.__filePath = filePath
 
-    def get_children(self):
+    def getChildren(self):
         return self.__children
 
-    def set_children(self, chlds):
+    def setChildren(self, chlds):
         self.__children = chlds
 
 #---------------------------- Database Methods ------------------------------
-    def get_db_handler(self, user=None):
-        return self.__db_handler
+    def getDatabaseHandler(self, user=None):
+        return self.__databaseHandler
 
-    def set_db_handler(self, handler, user=None):
-        self.__db_handler = handler
+    def setDatabaseHandler(self, handler, user=None):
+        self.__databaseHandler = handler

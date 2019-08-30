@@ -9,37 +9,37 @@ import untangle
 from phantom.applicationSettings import settings
 
 class DmiHandler():
-    def __init__(self, db_handler, dmi_instr):
+    def __init__(self, databaseHandler, dmiInstr):
         try:
-            self.xml_object = untangle.parse(dmi_instr)
+            self.xmlObject = untangle.parse(dmiInstr)
         except Exception as err:
             settings.__LOG__.logError("DMI_ERR: Error untangleing xml document.\n" + str(err))
             return
-        self.db_handler = db_handler
-        self.root = self.xml_object.root
+        self.databaseHandler = databaseHandler
+        self.root = self.xmlObject.root
 
-        self.configure_instruction_settings()
+        self.configureInstructionSettings()
 
-    def configure_instruction_settings(self):
+    def configureInstructionSettings(self):
         pass
 
-    def __multiple_elements(self, key):
+    def __multipleElements(self, key):
         if isinstance(key, list):
             return True
         return False
 
     def manipulate(self, data):
-        temp_data = copy.deepcopy(data) # deep copy data to be manipulated
+        tempData = copy.deepcopy(data) # deep copy data to be manipulated
         for link in self.root.link:
             # print("hello")
-            self.__handle_link(link, temp_data)
-        # pprint.pprint(temp_data)
-        return temp_data
+            self.__handleLink(link, tempData)
+        # pprint.pprint(tempData)
+        return tempData
 
-    def __handle_link(self, link, data):
-        direct_queue = None
-        pattern_queue = None
-        pattern_lkup_key = None
+    def __handleLink(self, link, data):
+        directQueue = None
+        patternQueue = None
+        patternLookupKey = None
         queryData = {}
 
         try:
@@ -53,57 +53,57 @@ class DmiHandler():
             pass
 
         for srch in getattr(link, 'search', []):
-            for lkup in getattr(srch, 'look_up', []):
-                if not isinstance(lkup.from_key.cdata, str):
+            for lookup in getattr(srch, 'look_up', []):
+                if not isinstance(lookup.from_key.cdata, str):
                     settings.__LOG__.logError("DMI_ERR: Value to look up is not a string")
                     return
 
-                elif not lkup.from_key.cdata in data:
+                elif not lookup.from_key.cdata in data:
                     return
 
                 # if more than one look_ups return error
-                if lkup['method'] == "pattern":
-                    pattern_lkup_key = lkup
-                    if not lkup['pattern'] or lkup['pattern'] == "":
-                        pattern_queue = list(data[lkup.from_key.cdata])
+                if lookup['method'] == "pattern":
+                    patternLookupKey = lookup
+                    if not lookup['pattern'] or lookup['pattern'] == "":
+                        patternQueue = list(data[lookup.from_key.cdata])
                     else:
-                        pattern_queue = re.split(lkup['pattern'], lkup.from_key.cdata)
-                    # pprint.pprint(pattern_queue)
+                        patternQueue = re.split(lookup['pattern'], lookup.from_key.cdata)
+                    # pprint.pprint(patternQueue)
 
-                elif lkup['method'] == "direct":
-                    if not direct_queue:
-                        direct_queue = {}
-                    direct_queue[lkup.in_key.cdata] = lkup.from_key.cdata
-                    print(str(direct_queue)+"57")
+                elif lookup['method'] == "direct":
+                    if not directQueue:
+                        directQueue = {}
+                    directQueue[lookup.in_key.cdata] = lookup.from_key.cdata
+                    print(str(directQueue)+"57")
 
             queryData['store'] = link['store']
 
-            if not pattern_queue:
-                queryData['criteria'] = direct_queue
-                self.__search_db(queryData, data, link, srch)
+            if not patternQueue:
+                queryData['criteria'] = directQueue
+                self.__searchDatabase(queryData, data, link, srch)
 
             else:
-                for item in pattern_queue:
+                for item in patternQueue:
                     '''
                         form search critera by setting the key search in as value to find
                         if more than one keys to search in follow the formate in the following link:
                         https://stackoverflow.com/questions/8859874/pymongo-search-dict-or-operation
                     '''
                     criteria = {}
-                    if isinstance(pattern_lkup_key.in_key, list):
+                    if isinstance(patternLookupKey.in_key, list):
                         criteria['$or'] = []
-                        for key in pattern_lkup_key.in_key:
+                        for key in patternLookupKey.in_key:
                             temp = {}
                             point = re.split(r"\W+", key.cdata)
-                            new_key = ""
+                            newKey = ""
                             for path in point:
-                                new_key += "." + path
-                            temp[new_key[1:]] = item
+                                newKey += "." + path
+                            temp[newKey[1:]] = item
                             criteria['$or'].append(temp)
-                    elif isinstance(pattern_lkup_key.in_key, untangle.Element):
-                        criteria[pattern_lkup_key.in_key.cdata] = item
+                    elif isinstance(patternLookupKey.in_key, untangle.Element):
+                        criteria[patternLookupKey.in_key.cdata] = item
 
-                    for filt in getattr(lkup, 'filter', []):
+                    for filt in getattr(lookup, 'filter', []):
                         temp = {}
                         temp['$and'] = []
                         temp['$and'].append(criteria)
@@ -111,37 +111,37 @@ class DmiHandler():
                         criteria = temp
                         # pprint.pprint(criteria)
 
-                    if direct_queue:
+                    if directQueue:
                         queryData['criteria'] = criteria.copy()
-                        queryData['criteria'].update(direct_queue)
+                        queryData['criteria'].update(directQueue)
                     else:
                         queryData['criteria'] = criteria
                         
-                    self.__search_db(queryData, data, link, srch)
+                    self.__searchDatabase(queryData, data, link, srch)
 
 
-    def __search_db(self, queryData, data, link, search):
+    def __searchDatabase(self, queryData, data, link, search):
 
-        found_doc = self.db_handler.findDoc(**queryData)
+        foundDocument = self.databaseHandler.findDoc(**queryData)
 
-        if found_doc:
+        if foundDocument:
             if link['format'] == 'list':
                 if search['add_key'] not in data:
                     data[search['add_key']] = []
-                    data[search['add_key']].append(found_doc)
+                    data[search['add_key']].append(foundDocument)
                 else:
-                    data[search['add_key']].append(found_doc)
+                    data[search['add_key']].append(foundDocument)
 
             elif link['format'] == 'auto':
                 if search['add_key'] not in data:
-                    data[search['add_key']] = found_doc
+                    data[search['add_key']] = foundDocument
                 elif data[search['add_key']] and not isinstance(data[search['key']], list):
-                    temp_list = []
-                    temp_list.append(data[search['add_key']])
-                    data[search['add_key']] = temp_list
-                    data[search['add_key']].append(found_doc)
+                    tempList = []
+                    tempList.append(data[search['add_key']])
+                    data[search['add_key']] = tempList
+                    data[search['add_key']].append(foundDocument)
                 else:
-                    data[search['add_key']].append(found_doc)
+                    data[search['add_key']].append(foundDocument)
 
             else:
-                data[search['add_key']] = found_doc
+                data[search['add_key']] = foundDocument

@@ -1,6 +1,6 @@
 schema_addr = "./js/src/schemas/"
 
-def generate_mongoose_schema(schema):
+def generateMongooseSchema(schema):
     fp = open(schema_addr+schema["name"]+".js", "w+")
 
     fp.write('const mongoose = require("mongoose")\n')
@@ -23,4 +23,4 @@ schema_data = {
     "model": "testTooHello"
 }
 
-generate_mongoose_schema(schema_data)
+generateMongooseSchema(schema_data)

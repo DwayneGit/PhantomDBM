@@ -11,10 +11,10 @@ from phantom.applicationSettings import settings
 
 from phantom.utility import centerWindow
 
-from .tabs.database_tab import database_tab
-from .tabs.dmi_tab import dmi_tab
-from .tabs.schema_tab import schema_tab
-from .tabs.theme_tab import theme_tab
+from .tabs.DatabaseTab import DatabaseTab
+from .tabs.DmiTab import DmiTab
+from .tabs.SchemaTab import SchemaTab
+from .tabs.ThemeTab import ThemeTab
 
 class PreferenceBody(QDialog):
     def __init__(self, cluster, user=None):
@@ -41,9 +41,9 @@ class PreferenceBody(QDialog):
 
         self.__layout.addWidget(self.titleBar)
 
-        self.pref_body = QDialog()
-        self.init_PreferenceBody()
-        self.__layout.addWidget(self.pref_body)
+        self.prefBody = QDialog()
+        self.initPreferenceBody()
+        self.__layout.addWidget(self.prefBody)
 
         self.setLayout(self.__layout)
 
@@ -65,20 +65,20 @@ class PreferenceBody(QDialog):
     def getWindowTitle(self):
         return self.titleBar.windowTitle
 
-    def get_layout(self):
+    def getLayout(self):
         return self.__layout
 
-    def init_PreferenceBody(self):
+    def initPreferenceBody(self):
         vBox = QVBoxLayout()
 
         self.svd = False
  
         self.instancesPrefDict = deepcopy(settings.__DATABASE__)
 
-        self.dmiTab = dmi_tab(self.__cluster)
-        self.schemaTab = schema_tab(self.__cluster.getPhmScripts()["__schema__"])
-        self.databaseTab = database_tab(self.instancesPrefDict)
-        self.themeTab = theme_tab()
+        self.dmiTab = DmiTab(self.__cluster)
+        self.schemaTab = SchemaTab(self.__cluster.getPhmScripts()["__schema__"])
+        self.databaseTab = DatabaseTab(self.instancesPrefDict)
+        self.themeTab = ThemeTab()
 
         self.tabW = PhtmTabWidget(self)
         self.tabW.setTabPosition(QTabWidget.North)
@@ -92,7 +92,7 @@ class PreferenceBody(QDialog):
         vBox.addWidget(self.tabW)
         vBox.addWidget(self.buttons())
 
-        self.pref_body.setLayout(vBox)
+        self.prefBody.setLayout(vBox)
 
     def buttons(self):
         btnWidget = QWidget()
@@ -117,17 +117,17 @@ class PreferenceBody(QDialog):
     def savePreferences(self):
         self.databaseTab.save()
 
-        self.dmiTab.save_dmi()
+        self.dmiTab.saveDmi()
         
-        if not self.schemaTab.save_schemas():
+        if not self.schemaTab.saveSchemas():
             return False
-        self.__cluster.set_children(self.schemaTab.children)
+        self.__cluster.setChildren(self.schemaTab.children)
 
         self.svd = True
 
-        if self.themeTab.selected_theme and settings.__THEME__["file"] != self.themeTab.selected_theme:
-            settings.styleSignal.styleChanged.emit(self.themeTab.selected_theme)
-            settings.__APPLICATION_SETTINGS__.getSettings()["theme"] = self.themeTab.selected_theme
+        if self.themeTab.selectedTheme and settings.__THEME__["file"] != self.themeTab.selectedTheme:
+            settings.styleSignal.styleChanged.emit(self.themeTab.selectedTheme)
+            settings.__APPLICATION_SETTINGS__.getSettings()["theme"] = self.themeTab.selectedTheme
             settings.__APPLICATION_SETTINGS__.updateSettings()
 
         return True

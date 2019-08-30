@@ -9,6 +9,6 @@ def test_PreferenceBody():
 
     p = PhtmDialog("Preferences", QRect(10, 10, 450, 500), self)
     p.setCentralDialog(body(None, p))
-    p.get_central_dialog().tabW.setCurrentIndex(0)
+    p.getCentralDialog().tabW.setCurrentIndex(0)
 
     p.show()

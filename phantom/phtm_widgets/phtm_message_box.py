@@ -10,7 +10,7 @@ class PhtmMessageBox(QDialog):
     def __init__(self, parent, title, msg=None, buttons=None):
         super().__init__(parent) # set screen size (left, top, width, height
 
-        # if not isinstance(central_dialog, QDialog):
+        # if not isinstance(centralDialog, QDialog):
         #     return "Pass central dialog is not of type QDialog"
         self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint)
         self.setAttribute(Qt.WA_NoSystemBackground)
@@ -31,21 +31,21 @@ class PhtmMessageBox(QDialog):
         self.__layout.setSpacing(0)
 
         self.__layout.addWidget(self.titleBar)
-        self.__message_box = QMessageBox()
+        self.__messageBox = QMessageBox()
         if msg:
-            self.__message_box.setText(msg)
-        self.__button_set = {}
+            self.__messageBox.setText(msg)
+        self.__buttonSet = {}
         if buttons:
             for btn in buttons:
-                push_btn = self.__message_box.addButton(btn)
-                self.__button_set[str(push_btn)] = btn
+                pushButton = self.__messageBox.addButton(btn)
+                self.__buttonSet[str(pushButton)] = btn
 
-        self.__layout.addWidget(self.__message_box)
+        self.__layout.addWidget(self.__messageBox)
 
         self.setLayout(self.__layout)
-        self.msg_selection = None
+        self.messageSelection = None
 
-        self.__message_box.buttonClicked.connect(self.close_box)
+        self.__messageBox.buttonClicked.connect(self.closeBox)
 
         # self.setGeometry(geometry)
         # self.move(centerWindow(self))
@@ -58,9 +58,9 @@ class PhtmMessageBox(QDialog):
 
         self.setWindowTitle(self.windowTitle)
 
-    def close_box(self, button):
-        if str(button) in self.__button_set:
-            self.msg_selection = self.__button_set[str(button)]
+    def closeBox(self, button):
+        if str(button) in self.__buttonSet:
+            self.messageSelection = self.__buttonSet[str(button)]
         self.accept()
 
     def setWindowTitle(self, text):
@@ -70,8 +70,8 @@ class PhtmMessageBox(QDialog):
     def getWindowTitle(self):
         return self.titleBar.windowTitle
 
-    def get_layout(self):
+    def getLayout(self):
         return self.__layout
 
-    def get_message_box(self):
-        return self.__message_box
+    def getMessageBox(self):
+        return self.__messageBox

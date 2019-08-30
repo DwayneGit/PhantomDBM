@@ -25,23 +25,23 @@ test = """
 }
 """
 
-def get_keys(json_data, start=0):
-    key = regex.search("[^\[\]{}\s:\"]+", json_data[start:])
+def getKeys(jsonData, start=0):
+    key = regex.search("[^\[\]{}\s:\"]+", jsonData[start:])
     if not key: return
-    data, index = get_object(json_data, key.group(0))
+    data, index = getObject(jsonData, key.group(0))
     print( data)
     
-    if start < len(json_data):
-        get_keys(json_data, index)
+    if start < len(jsonData):
+        getKeys(jsonData, index)
 
-def get_object(json_data, *keydata):
+def getObject(jsonData, *keydata):
     index = 0
     for val in keydata:
-        index = json_data.find(val, index)
-    index = json_data.find("{", index)
-    return __bracket_parse(json_data, index)
+        index = jsonData.find(val, index)
+    index = jsonData.find("{", index)
+    return __bracketParse(jsonData, index)
     
-def __bracket_parse(strg, start):
+def __bracketParse(strg, start):
     out = ""
     bracket = 0
     i = 0
@@ -56,6 +56,6 @@ def __bracket_parse(strg, start):
 
     return out, i
 
-# print(get_object(test, "json")[0])
-get_keys(get_object(test, "json")[0])
+# print(getObject(test, "json")[0])
+getKeys(getObject(test, "json")[0])
 

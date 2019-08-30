@@ -7,10 +7,10 @@ from phantom.utility import centerWindow
 from . import PhtmTitleBar
 
 class PhtmInputDialog(QDialog):
-    def __init__(self, parent, title, msg, echo_mode, text=None):
+    def __init__(self, parent, title, msg, echoMode, text=None):
         super().__init__(parent) # set screen size (left, top, width, height
 
-        # if not isinstance(central_dialog, QDialog):
+        # if not isinstance(centralDialog, QDialog):
         #     return "Pass central dialog is not of type QDialog"
         self.setWindowFlags(Qt.Window | Qt.FramelessWindowHint)
         self.setAttribute(Qt.WA_NoSystemBackground)
@@ -31,17 +31,17 @@ class PhtmInputDialog(QDialog):
         self.__layout.setSpacing(0)
 
         self.__layout.addWidget(self.titleBar)
-        self.__input_dialog = QInputDialog()
+        self.__inputDialog = QInputDialog()
 
-        self.selected_value = None
+        self.selectedValue = None
         if msg:
-            self.__input_dialog.setLabelText(msg)
-        self.__input_dialog.setTextEchoMode(echo_mode)
+            self.__inputDialog.setLabelText(msg)
+        self.__inputDialog.setTextEchoMode(echoMode)
 
-        self.__input_dialog.textValueSelected.connect(self.value_selected)
-        self.__input_dialog.rejected.connect(self.reject)
+        self.__inputDialog.textValueSelected.connect(self.valueSelected)
+        self.__inputDialog.rejected.connect(self.reject)
 
-        self.__layout.addWidget(self.__input_dialog)
+        self.__layout.addWidget(self.__inputDialog)
 
         self.setLayout(self.__layout)
 
@@ -56,8 +56,8 @@ class PhtmInputDialog(QDialog):
 
         self.setWindowTitle(self.windowTitle)
 
-    def value_selected(self, value):
-        self.selected_value = value
+    def valueSelected(self, value):
+        self.selectedValue = value
         self.accept()
 
     def setWindowTitle(self, text):
@@ -67,8 +67,8 @@ class PhtmInputDialog(QDialog):
     def getWindowTitle(self):
         return self.titleBar.windowTitle
 
-    def get_layout(self):
+    def getLayout(self):
         return self.__layout
 
-    def get_input_dialog(self):
-        return self.__input_box
+    def getInputDialog(self):
+        return self.__inputBox

@@ -59,8 +59,8 @@ class User:
         usrList = {}
         if (os.path.isfile(User.__usrFile) and
             os.stat(User.__usrFile).st_size != 0): #check if file exists and is not empty
-            with open(User.__usrFile) as json_data_file:
-                usrList = json.load(json_data_file)
+            with open(User.__usrFile) as jsonDataFile:
+                usrList = json.load(jsonDataFile)
                 return usrList
 
         else:

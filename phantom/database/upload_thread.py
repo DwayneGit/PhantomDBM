@@ -25,17 +25,17 @@ class uploadScriptThread(QObject):
 
     threadDone = pyqtSignal(str) # done signal
 
-    def __init__(self, script_s, dbHandler, dmiInstr=None):
+    def __init__(self, script_s, databaseHandler, dmiInstr=None):
         QObject.__init__(self)
         self.script_s = script_s
-        self.dbHandler = dbHandler
+        self.databaseHandler = databaseHandler
         self.pauseFlag = False
         self.stopFlag = False
 
         self.threadId = int(QThread.currentThreadId())  # cast to int() is necessary
 
         if dmiInstr:
-            self.dmi = DmiHandler(self.dbHandler, dmiInstr)
+            self.dmi = DmiHandler(self.databaseHandler, dmiInstr)
         else:
             self.dmi = None
 

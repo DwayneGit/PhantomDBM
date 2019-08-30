@@ -13,8 +13,8 @@ class Preferences():
         if (os.path.isfile(self.configFile) and
             os.stat(self.configFile).st_size != 0): #check if file exists and is not empty
 
-            with open(self.configFile) as json_data_file:
-                self.prefDict = json.load(json_data_file)
+            with open(self.configFile) as jsonDataFile:
+                self.prefDict = json.load(jsonDataFile)
                 return self.prefDict
         else:
             if not self.prefDict == None:

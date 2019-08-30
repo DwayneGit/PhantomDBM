@@ -85,10 +85,10 @@ class FileHandler():
             cluster = self.parent.getEditorWidget().getCluster()
             filePath = cluster.getFilePath()
             if not filePath:
-                save_msg = PhtmMessageBox(None, "Save PHM", "Cluster file not saved. would you like to save?",
+                saveMessage = PhtmMessageBox(None, "Save PHM", "Cluster file not saved. would you like to save?",
                                             [QMessageBox.Yes, QMessageBox.Cancel])
-                if save_msg.exec_():
-                    if save_msg.msg_selection == QMessageBox.Yes:
+                if saveMessage.exec_():
+                    if saveMessage.messageSelection == QMessageBox.Yes:
                         filePath = self.exportPhm(self.parent.getEditorWidget())
                         if not filePath:
                             return False
@@ -113,18 +113,18 @@ class FileHandler():
             return
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        dialog = PhtmFileDialog(None, "Save File", QFileDialog.AnyFile, "JSON files (*.json)", options=options, accept_mode=QFileDialog.AcceptSave)
+        dialog = PhtmFileDialog(None, "Save File", QFileDialog.AnyFile, "JSON files (*.json)", options=options, acceptMode=QFileDialog.AcceptSave)
         if dialog.exec_():
             if dialog.saveName:
                 if dialog.saveName[-5:] != ".json":
                     dialog.saveName = dialog.saveName + ".json"
-                with open(dialog.saveName, "w") as write_file:
-                    write_file.write(eval(json.dumps(currScript.toPlainText(), indent=4)))
+                with open(dialog.saveName, "w") as writeFile:
+                    writeFile.write(eval(json.dumps(currScript.toPlainText(), indent=4)))
 
     def exportPhm(self, editorWidget):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        dialog = PhtmFileDialog(None, "Save Cluster", QFileDialog.AnyFile, "Cluster files (*.phm)", options=options, accept_mode=QFileDialog.AcceptSave)
+        dialog = PhtmFileDialog(None, "Save Cluster", QFileDialog.AnyFile, "Cluster files (*.phm)", options=options, acceptMode=QFileDialog.AcceptSave)
         if dialog.exec_():
             if dialog.saveName:
                 return dialog.saveName

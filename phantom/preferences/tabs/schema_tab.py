@@ -7,29 +7,29 @@ from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLineEdit, QMessageBox, QVBoxL
 
 from phantom.phtmWidgets import PhtmComboBox, PhtmPushButton, PhtmPlainTextEdit, PhtmMessageBox, PhtmInputDialog
 
-from phantom.preferences.default_settings import default_schema_template
+from phantom.preferences.defaultSettings import defaultSchemaTemplate
 
 from phantom.utility import textStyle, validateJsonScript
 
 from phantom.applicationSettings import settings
 
-class schema_tab(QWidget):
+class SchemaTab(QWidget):
     def __init__(self, schema):
         super().__init__()
 
         self.__schema = schema
         # self.__ref_schemas = ref_schemas
-        self.__schema_editor = PhtmPlainTextEdit()
-        self.__schema_editor.showLineNumbers()
-        # self.__schema_editor.setPlainText("// Schemas use the keywords found in mongoengine.\n// For Details go to https://www.blahblahblah.com.")
+        self.__schemaEditor = PhtmPlainTextEdit()
+        self.__schemaEditor.showLineNumbers()
+        # self.__schemaEditor.setPlainText("// Schemas use the keywords found in mongoengine.\n// For Details go to https://www.blahblahblah.com.")
 
         schemaVBox = QVBoxLayout()
 
         spBottm = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
         spBottm.setVerticalStretch(10)
 
-        self.__schema_editor.setSizePolicy(spBottm)
-        schemaVBox.addWidget(self.__schema_editor)
+        self.__schemaEditor.setSizePolicy(spBottm)
+        schemaVBox.addWidget(self.__schemaEditor)
         schemaVBox.setContentsMargins(0, 0, 0, 0)
 
         self.setLayout(schemaVBox)
@@ -38,35 +38,35 @@ class schema_tab(QWidget):
         self.__collection = settings.__DATABASE__.getCollectionName()
         self.children = []
 
-        self.__curr_item = "main"
-        self.__curr_item_changed = False
+        self.__currItem = "main"
+        self.__currItemChanged = False
 
         if not self.__collection:
-            self.__schema_editor.setReadOnly(True)
+            self.__schemaEditor.setReadOnly(True)
             return
 
         self.db = settings.__DATABASE__.getDatabaseName()
         if schema.getScript() == "{}":
-            self.schema = default_schema_template(self.__collection)
+            self.schema = defaultSchemaTemplate(self.__collection)
         else:
             self.schema = schema.getScript()
-        self.__schema_editor.appendPlainText(self.schema)
+        self.__schemaEditor.appendPlainText(self.schema)
 
         # if self.__schema.getScript():
-        #     self.__schema_editor.appendPlainText(self.__schema.getScript())
-            # self.schema_box.setPlainText(self.schema)
+        #     self.__schemaEditor.appendPlainText(self.__schema.getScript())
+            # self.schemaBox.setPlainText(self.schema)
 
-        # self.schema_box = PhtmComboBox()
-        # self.schema_box.setFixedSize(QSize(175, 31))
-        # self.schema_box.addItem(self.__curr_item)
+        # self.schemaBox = PhtmComboBox()
+        # self.schemaBox.setFixedSize(QSize(175, 31))
+        # self.schemaBox.addItem(self.__currItem)
 
-        # self.schema_box.setContextMenuPolicy(Qt.CustomContextMenu)
-        # self.schema_box.customContextMenuRequested.connect(lambda p: self.on_schemaBox_customContextMenuRequested(p))
+        # self.schemaBox.setContextMenuPolicy(Qt.CustomContextMenu)
+        # self.schemaBox.customContextMenuRequested.connect(lambda p: self.on_schemaBox_customContextMenuRequested(p))
 
         # self.__load_reference_schemas()
 
-        self.__schema_editor.textChanged.connect(self.__schema_changed)
-        # self.schema_box.currentIndexChanged.connect(lambda i: self.__edit_schema(self.__curr_item, self.schema_box.itemText(i)))
+        self.__schemaEditor.textChanged.connect(self.__schemaChanged)
+        # self.schemaBox.currentIndexChanged.connect(lambda i: self.__editSchema(self.__currItem, self.schemaBox.itemText(i)))
 
         # schemaVBox.addWidget(self.btn_row_1())
         # schemaVBox.addWidget(self.btn_row_2())
@@ -75,7 +75,7 @@ class schema_tab(QWidget):
     # def on_schemaBox_customContextMenuRequested(self, pos):
     #     menu = QMenu(self)
 
-    #     index = self.schema_box.view().indexAt(pos)
+    #     index = self.schemaBox.view().indexAt(pos)
 
     #     renameAction = QAction("Rename", self)
     #     renameAction.triggered.connect(lambda x: self.__renameScript(1))
@@ -86,7 +86,7 @@ class schema_tab(QWidget):
     #     menu.addAction(renameAction)
     #     menu.addAction(deleteAction)
 
-    #     menu.popup(self.schema_box.view().mapToGlobal(pos))
+    #     menu.popup(self.schemaBox.view().mapToGlobal(pos))
 
     # def __renameScript(self, x):
     #     pass
@@ -95,137 +95,137 @@ class schema_tab(QWidget):
     #     pass
 
     # def btn_row_1(self):
-    #     load_widget = QWidget()
+    #     loadWidget = QWidget()
     #     spTop = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
     #     spTop.setVerticalStretch(1)
-    #     load_widget.setSizePolicy(spTop)
-    #     load_widget_layout = QHBoxLayout()
+    #     loadWidget.setSizePolicy(spTop)
+    #     loadWidgetLayout = QHBoxLayout()
 
     #     import_ref_schema_btn = PhtmPushButton("Import Reference Schema")
     #     import_primary_schema_btn = PhtmPushButton("Import Primary Schema")
 
-    #     load_widget_layout.addWidget(import_primary_schema_btn)
-    #     load_widget_layout.addWidget(import_ref_schema_btn)
-    #     load_widget_layout.setContentsMargins(0, 0, 0, 0)
+    #     loadWidgetLayout.addWidget(import_primary_schema_btn)
+    #     loadWidgetLayout.addWidget(import_ref_schema_btn)
+    #     loadWidgetLayout.setContentsMargins(0, 0, 0, 0)
 
-    #     load_widget.setLayout(load_widget_layout)
+    #     loadWidget.setLayout(loadWidgetLayout)
 
-    #     import_ref_schema_btn.clicked.connect(lambda: self.__import_ref_schema(self.schema_box))
+    #     import_ref_schema_btn.clicked.connect(lambda: self.__import_ref_schema(self.schemaBox))
     #     import_primary_schema_btn.clicked.connect(self.__import_primary_schema)
 
-    #     return load_widget
+    #     return loadWidget
 
     # def btn_row_2(self):
-    #     load_widget = QWidget()
+    #     loadWidget = QWidget()
     #     spTop = QSizePolicy(QSizePolicy.Preferred, QSizePolicy.Preferred)
     #     spTop.setVerticalStretch(1)
-    #     load_widget.setSizePolicy(spTop)
-    #     load_widget_layout = QHBoxLayout()
+    #     loadWidget.setSizePolicy(spTop)
+    #     loadWidgetLayout = QHBoxLayout()
 
     #     new_ref_btn = PhtmPushButton("Add Child Schema")
 
-    #     load_widget_layout.addWidget(self.schema_box)
-    #     load_widget_layout.addWidget(new_ref_btn)
-    #     load_widget_layout.setContentsMargins(0, 0, 0, 0)
+    #     loadWidgetLayout.addWidget(self.schemaBox)
+    #     loadWidgetLayout.addWidget(new_ref_btn)
+    #     loadWidgetLayout.setContentsMargins(0, 0, 0, 0)
 
-    #     load_widget.setLayout(load_widget_layout)
+    #     loadWidget.setLayout(loadWidgetLayout)
 
     #     new_ref_btn.clicked.connect(self.__new_ref_script)
 
-    #     return load_widget
+    #     return loadWidget
 
-    def __schema_changed(self):
-        self.__curr_item_changed = True
+    def __schemaChanged(self):
+        self.__currItemChanged = True
 
-    def save_schemas(self):
-        return self.__save_schema(self.__curr_item)
+    def saveSchemas(self):
+        return self.__saveSchema(self.__currItem)
 
-    def __save_schema(self, schema):
-        self.__schema.set_script(self.__schema_editor.toPlainText())
-        if self.__curr_item_changed:
-            self.__curr_item_changed = False
-            self.generate_mongoose_schema(self.__schema_editor.toPlainText())
+    def __saveSchema(self, schema):
+        self.__schema.setScript(self.__schemaEditor.toPlainText())
+        if self.__currItemChanged:
+            self.__currItemChanged = False
+            self.generateMongooseSchema(self.__schemaEditor.toPlainText())
 
         return True
 
-    def __edit_schema(self, curr, schema):
+    def __editSchema(self, curr, schema):
         if curr == schema:
             return
 
-        if self.__curr_item_changed:
+        if self.__currItemChanged:
             errorMessage = PhtmMessageBox(self, 'Save Changes', "Do you want to save changes made to this schema?",
                                      [QMessageBox.Yes, QMessageBox.No])
             if errorMessage.exec_():
-                if errorMessage.msg_selection == QMessageBox.Yes:
-                    if not self.__save_schema(curr):
-                        self.schema_box.setCurrentIndex(self.schema_box.setCurrentIndex(self.__index_of_child(schema)))
+                if errorMessage.messageSelection == QMessageBox.Yes:
+                    if not self.__saveSchema(curr):
+                        self.schemaBox.setCurrentIndex(self.schemaBox.setCurrentIndex(self.__indexOfChild(schema)))
                         return
 
         if schema == "main":
-            self.__schema_editor.setPlainText(self.__schema.getScript())
+            self.__schemaEditor.setPlainText(self.__schema.getScript())
 
-        self.__curr_item = schema
-        self.__curr_item_changed = False
+        self.__currItem = schema
+        self.__currItemChanged = False
 
-    def generate_mongoose_schema(self, schemas, schema_addr="./phantom/database/js/src/schemas/"):
+    def generateMongooseSchema(self, schemas, schema_addr="./phantom/database/js/src/schemas/"):
         # print(os.getcwd())
         col_key = "__" + self.__collection
 
-        collection_dir = schema_addr + self.db + "_" + self.__collection + "/"
-        if not os.path.exists(collection_dir):
-            os.makedirs(collection_dir)
+        collectionDirectory = schema_addr + self.db + "_" + self.__collection + "/"
+        if not os.path.exists(collectionDirectory):
+            os.makedirs(collectionDirectory)
 
-        fp = open(collection_dir + self.__collection +".js", "w+")
+        fp = open(collectionDirectory + self.__collection +".js", "w+")
         fp.write('const mongoose = require("mongoose")\n\n')
         fp.write("var " + self.__collection + "Schema = new mongoose.Schema(")
 
-        schm = self.__get_object(schemas, col_key, "__schema")[0]
+        schm = self.__getObject(schemas, col_key, "__schema")[0]
         if schm:
-            fp.write(schm + ", " + self.__get_object(schemas, col_key, "__options")[0] + ")\n\n")
+            fp.write(schm + ", " + self.__getObject(schemas, col_key, "__options")[0] + ")\n\n")
         else:
-            fp.write(self.__get_object(schemas, col_key) + ")\n\n" )
+            fp.write(self.__getObject(schemas, col_key) + ")\n\n" )
         fp.write("module.exports = mongoose.model(\""+ self.__collection + 'Model' +"\", " + self.__collection + "Schema" +")")
         fp.close()
 
         if schemas.find("__children"):
-            self.children = (self.__get_keys(collection_dir, self.__get_object(schemas, "__children")[0]))
+            self.children = (self.__getKeys(collectionDirectory, self.__getObject(schemas, "__children")[0]))
             print(self.children)
                 
-    def __get_keys(self, collection_dir, json_data, start=0, key_list=[]):
-        key = regex.search("[^\[\]{}\s:\",]+", json_data[start:])
+    def __getKeys(self, collectionDirectory, jsonData, start=0, keyList=[]):
+        key = regex.search("[^\[\]{}\s:\",]+", jsonData[start:])
 
         if not key: 
-            return key_list
+            return keyList
 
-        data, index = self.__get_object(json_data, key.group(0))
-        key_list.append(key.group(0))
+        data, index = self.__getObject(jsonData, key.group(0))
+        keyList.append(key.group(0))
 
-        fp2 = open(collection_dir + key.group(0) + ".js", "w+")
+        fp2 = open(collectionDirectory + key.group(0) + ".js", "w+")
         fp2.write('const mongoose = require("mongoose")\n')
         fp2.write('const ' + self.__collection + 'Model = require("./'+ self.__collection +'")\n')
 
         fp2.write("\nmodule.exports = " + self.__collection + "Model.discriminator('" + key.group(0) + "',")
         fp2.write("\n\tnew mongoose.Schema(")
-        chld = self.__get_object(data, '__schema')[0]
+        chld = self.__getObject(data, '__schema')[0]
         if chld:
-            fp2.write(chld + ", " + self.__get_object(data, '__options')[0] + "))\n")
+            fp2.write(chld + ", " + self.__getObject(data, '__options')[0] + "))\n")
         else:
-            fp2.write(self.__get_object(data)[0] + "))\n")
+            fp2.write(self.__getObject(data)[0] + "))\n")
 
         fp2.close()
-        if start < len(json_data):
-            return self.__get_keys(collection_dir, json_data, index, key_list)
+        if start < len(jsonData):
+            return self.__getKeys(collectionDirectory, jsonData, index, keyList)
 
-    def __get_object(self, json_data, *keydata):
+    def __getObject(self, jsonData, *keydata):
         index = 0
         for val in keydata:
-            index = json_data.find(val, index)
+            index = jsonData.find(val, index)
             if index == -1:
                 return "", 0
-        index = json_data.find("{", index)
-        return self.__bracket_parse(json_data, index)
+        index = jsonData.find("{", index)
+        return self.__bracketParse(jsonData, index)
         
-    def __bracket_parse(self, strg, start):
+    def __bracketParse(self, strg, start):
         out = ""
         bracket = 0
         i = 0
