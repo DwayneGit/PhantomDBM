@@ -2,7 +2,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QGraphicsDropShadowEffect
 from PyQt5.QtGui import QColor
 
-from phantom.utility import center_window
+from phantom.utility import centerWindow
 
 from . import PhtmTitleBar
 
@@ -20,26 +20,26 @@ class PhtmDialog(QDialog):
 
         self.__central_dialog = central_dialog
 
-        self.window_title = title
+        self.windowTitle = title
 
         self.parent = parent
 
         self.oldPos = self.pos()
 
-        self.title_bar = PhtmTitleBar(self)
-        self.title_bar.generate_title_bar()
+        self.titleBar = PhtmTitleBar(self)
+        self.titleBar.generateTitleBar()
 
         self.__layout = QVBoxLayout()
         self.__layout.setSpacing(0)
 
-        self.__layout.addWidget(self.title_bar)
+        self.__layout.addWidget(self.titleBar)
         if self.__central_dialog:
             self.__layout.addWidget(self.__central_dialog)
 
         self.setLayout(self.__layout)
 
         self.setGeometry(geometry)
-        self.move(center_window(self))
+        self.move(centerWindow(self))
 
         self.shadow = QGraphicsDropShadowEffect(self)
         self.shadow.setColor(QColor(30, 30, 30))
@@ -47,19 +47,19 @@ class PhtmDialog(QDialog):
         self.shadow.setOffset(3)
         self.setGraphicsEffect(self.shadow)
 
-        self.set_window_title(self.window_title)
+        self.setWindowTitle(self.windowTitle)
 
-    def set_window_title(self, text):
-        self.title_bar.set_window_title(text)
+    def setWindowTitle(self, text):
+        self.titleBar.setWindowTitle(text)
         self.setWindowTitle(text)
 
     def getWindowTitle(self):
-        return self.title_bar.window_title
+        return self.titleBar.windowTitle
 
     def get_layout(self):
         return self.__layout
 
-    def set_central_dialog(self, dialog):
+    def setCentralDialog(self, dialog):
         # if not isinstance(central_dialog, QDialog):
         #    throw  "Pass central dialog is not of type QDialog"
         if not self.__central_dialog:

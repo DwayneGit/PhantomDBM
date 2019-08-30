@@ -1,10 +1,10 @@
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QSizePolicy, QHBoxLayout
 from PyQt5.QtCore import QSize
 
-from phantom.utility import text_style
+from phantom.utility import textStyle
 from phantom.file_stuff import file_ctrl as f_ctrl
-from phantom.phtm_widgets import PhtmPushButton
-from phantom.phtm_widgets import PhtmPlainTextEdit
+from phantom.phtmWidgets import PhtmPushButton
+from phantom.phtmWidgets import PhtmPlainTextEdit
 
 class dmi_tab(QWidget):
     def __init__(self, cluster):
@@ -20,16 +20,16 @@ class dmi_tab(QWidget):
         load_widget_layout = QHBoxLayout()
 
         self.__dmi_editor = PhtmPlainTextEdit()
-        self.__dmi_instr = self.__cluster.get_phm_scripts()["__dmi_instr__"]
+        self.__dmi_instr = self.__cluster.getPhmScripts()["__dmi_instr__"]
 
         load_dmi_btn = PhtmPushButton("Open Instruction Doc")
 
-        self.__curr_dmi = PhtmPlainTextEdit()
-        self.__curr_dmi.setFixedSize(QSize(175, 31))
-        self.__curr_dmi.setReadOnly(True)
+        self.__currDmi = PhtmPlainTextEdit()
+        self.__currDmi.setFixedSize(QSize(175, 31))
+        self.__currDmi.setReadOnly(True)
 
         load_widget_layout.addWidget(load_dmi_btn)
-        load_widget_layout.addWidget(self.__curr_dmi)
+        load_widget_layout.addWidget(self.__currDmi)
         load_widget_layout.setContentsMargins(0, 0, 0, 0)
 
         load_widget.setLayout(load_widget_layout)
@@ -38,11 +38,11 @@ class dmi_tab(QWidget):
         spBottm.setVerticalStretch(10)
         self.__dmi_editor.setSizePolicy(spBottm)
 
-        load_dmi_btn.clicked.connect(lambda: self.__load_dmi_instr(self.__curr_dmi, self.__dmi_editor))
+        load_dmi_btn.clicked.connect(lambda: self.__load_dmi_instr(self.__currDmi, self.__dmi_editor))
 
         if self.__dmi_instr["instr"]:
             self.__dmi_editor.setPlainText(self.__dmi_instr["instr"])
-            self.__curr_dmi.setPlainText(self.__dmi_instr["name"])
+            self.__currDmi.setPlainText(self.__dmi_instr["name"])
             
         dmiVBox.addWidget(load_widget)
         dmiVBox.addWidget(self.__dmi_editor)
@@ -51,10 +51,10 @@ class dmi_tab(QWidget):
         self.setLayout(dmiVBox)
 
     def __load_dmi_instr(self, dmi, editor):
-        name, file_path = f_ctrl.load_instructions()
-        if file_path:
+        name, filePath = f_ctrl.loadInstructions()
+        if filePath:
             dmi.setPlainText(name)
-            instr = text_style.read_text(file_path)
+            instr = textStyle.readText(filePath)
             editor.setPlainText(instr)
             self.__dmi_instr["instr"] = instr
             self.__dmi_instr["name"] = name

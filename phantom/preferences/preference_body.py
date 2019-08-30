@@ -5,18 +5,18 @@ from PyQt5.QtCore import Qt, QRect
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QTabWidget, QWidget, QHBoxLayout, QGraphicsDropShadowEffect
 from PyQt5.QtGui import QColor
 
-from phantom.phtm_widgets import PhtmPushButton, PhtmTabWidget, PhtmTitleBar
+from phantom.phtmWidgets import PhtmPushButton, PhtmTabWidget, PhtmTitleBar
 
-from phantom.application_settings import settings
+from phantom.applicationSettings import settings
 
-from phantom.utility import center_window
+from phantom.utility import centerWindow
 
 from .tabs.database_tab import database_tab
 from .tabs.dmi_tab import dmi_tab
 from .tabs.schema_tab import schema_tab
 from .tabs.theme_tab import theme_tab
 
-class preference_body(QDialog):
+class PreferenceBody(QDialog):
     def __init__(self, cluster, user=None):
         super().__init__() # set screen size (left, top, width, height
 
@@ -26,29 +26,29 @@ class preference_body(QDialog):
 
         self.setWindowModality(Qt.ApplicationModal)
 
-        self.window_title = "Preferences"
+        self.windowTitle = "Preferences"
         
         self.__cluster = cluster
         self.user = user
 
         self.oldPos = self.pos()
 
-        self.title_bar = PhtmTitleBar(self)
-        self.title_bar.generate_title_bar()
+        self.titleBar = PhtmTitleBar(self)
+        self.titleBar.generateTitleBar()
 
         self.__layout = QVBoxLayout()
         self.__layout.setSpacing(0)
 
-        self.__layout.addWidget(self.title_bar)
+        self.__layout.addWidget(self.titleBar)
 
         self.pref_body = QDialog()
-        self.init_preference_body()
+        self.init_PreferenceBody()
         self.__layout.addWidget(self.pref_body)
 
         self.setLayout(self.__layout)
 
         self.setGeometry(QRect(10, 10, 450, 500),)
-        self.move(center_window(self))
+        self.move(centerWindow(self))
 
         self.shadow = QGraphicsDropShadowEffect(self)
         self.shadow.setColor(QColor(30, 30, 30))
@@ -56,19 +56,19 @@ class preference_body(QDialog):
         self.shadow.setOffset(3)
         self.setGraphicsEffect(self.shadow)
 
-        self.set_window_title(self.window_title)
+        self.setWindowTitle(self.windowTitle)
 
-    def set_window_title(self, text):
-        self.title_bar.set_window_title(text)
+    def setWindowTitle(self, text):
+        self.titleBar.setWindowTitle(text)
         self.setWindowTitle(text)
     
     def getWindowTitle(self):
-        return self.title_bar.window_title
+        return self.titleBar.windowTitle
 
     def get_layout(self):
         return self.__layout
 
-    def init_preference_body(self):
+    def init_PreferenceBody(self):
         vBox = QVBoxLayout()
 
         self.svd = False
@@ -76,7 +76,7 @@ class preference_body(QDialog):
         self.instancesPrefDict = deepcopy(settings.__DATABASE__)
 
         self.dmiTab = dmi_tab(self.__cluster)
-        self.schemaTab = schema_tab(self.__cluster.get_phm_scripts()["__schema__"])
+        self.schemaTab = schema_tab(self.__cluster.getPhmScripts()["__schema__"])
         self.databaseTab = database_tab(self.instancesPrefDict)
         self.themeTab = theme_tab()
 
@@ -126,9 +126,9 @@ class preference_body(QDialog):
         self.svd = True
 
         if self.themeTab.selected_theme and settings.__THEME__["file"] != self.themeTab.selected_theme:
-            settings.style_signal.style_change.emit(self.themeTab.selected_theme)
-            settings.__APPLICATION_SETTINGS__.get_settings()["theme"] = self.themeTab.selected_theme
-            settings.__APPLICATION_SETTINGS__.update_settings()
+            settings.styleSignal.styleChanged.emit(self.themeTab.selected_theme)
+            settings.__APPLICATION_SETTINGS__.getSettings()["theme"] = self.themeTab.selected_theme
+            settings.__APPLICATION_SETTINGS__.updateSettings()
 
         return True
 

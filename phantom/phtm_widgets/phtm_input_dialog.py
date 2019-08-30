@@ -2,7 +2,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog, QInputDialog, QVBoxLayout, QGraphicsDropShadowEffect
 from PyQt5.QtGui import QColor
 
-from phantom.utility import center_window
+from phantom.utility import centerWindow
 
 from . import PhtmTitleBar
 
@@ -18,19 +18,19 @@ class PhtmInputDialog(QDialog):
 
         self.setWindowModality(Qt.ApplicationModal)
 
-        self.window_title = title
+        self.windowTitle = title
 
         self.parent = parent
 
         self.oldPos = self.pos()
 
-        self.title_bar = PhtmTitleBar(self)
-        self.title_bar.generate_title_bar()
+        self.titleBar = PhtmTitleBar(self)
+        self.titleBar.generateTitleBar()
 
         self.__layout = QVBoxLayout()
         self.__layout.setSpacing(0)
 
-        self.__layout.addWidget(self.title_bar)
+        self.__layout.addWidget(self.titleBar)
         self.__input_dialog = QInputDialog()
 
         self.selected_value = None
@@ -46,7 +46,7 @@ class PhtmInputDialog(QDialog):
         self.setLayout(self.__layout)
 
         # self.setGeometry(geometry)
-        # self.move(center_window(self))
+        # self.move(centerWindow(self))
 
         self.shadow = QGraphicsDropShadowEffect(self)
         self.shadow.setColor(QColor(30, 30, 30))
@@ -54,18 +54,18 @@ class PhtmInputDialog(QDialog):
         self.shadow.setOffset(3)
         self.setGraphicsEffect(self.shadow)
 
-        self.set_window_title(self.window_title)
+        self.setWindowTitle(self.windowTitle)
 
     def value_selected(self, value):
         self.selected_value = value
         self.accept()
 
-    def set_window_title(self, text):
-        self.title_bar.set_window_title(text)
+    def setWindowTitle(self, text):
+        self.titleBar.setWindowTitle(text)
         self.setWindowTitle(text)
     
     def getWindowTitle(self):
-        return self.title_bar.window_title
+        return self.titleBar.windowTitle
 
     def get_layout(self):
         return self.__layout

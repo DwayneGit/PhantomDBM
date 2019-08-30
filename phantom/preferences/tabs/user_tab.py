@@ -2,8 +2,8 @@ from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import * 
 
-from phantom.phtm_widgets import PhtmPushButton
-from phantom.phtm_widgets import PhtmComboBox
+from phantom.phtmWidgets import PhtmPushButton
+from phantom.phtmWidgets import PhtmComboBox
 
 from phantom.users import Users
 

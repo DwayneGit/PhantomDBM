@@ -5,37 +5,37 @@ from PyQt5.QtWidgets import QAction, QMenuBar
 from PyQt5.QtCore import Qt, QUrl, pyqtSignal, pyqtSlot, QFileInfo
 from PyQt5.QtGui import QDesktopServices
 
-from phantom.phtm_widgets import PhtmMessageBox
+from phantom.phtmWidgets import PhtmMessageBox
 
-from phantom.utility import validate_json_script
+from phantom.utility import validateJsonScript
 
 
-from phantom.application_settings import settings
+from phantom.applicationSettings import settings
 
-class phtm_menu_bar(QMenuBar):
+class PhtmMenuBar(QMenuBar):
 
     adjust = pyqtSignal(str)
 
-    def __init__(self, file_handler, parent):
+    def __init__(self, fileHandler , parent):
         super().__init__()
         self.parent = parent
         self.adjust.connect(lambda x: self.adjustForCurrentFile(x))
         self.setContextMenuPolicy(Qt.PreventContextMenu)
 
-        self.file_handler = file_handler
+        self.fileHandler  = fileHandler 
 
         self.maxFileNum = 4
         self.recentFileActionList = []
         self.createActionsAndConnections()
 
-    def init_menu_bar(self):
+    def initMenuBar(self):
         self.fileMenu()
         self.editMenu()
         self.runMenu()
         self.searchMenu()
         self.helpMenu()
 
-    def get_adjust_signal(self):
+    def getAdjustSignal(self):
         return self.adjust
 
     def searchMenu(self):
@@ -46,12 +46,12 @@ class phtm_menu_bar(QMenuBar):
 
         newJsonAction = QAction("New Script", self.parent)
         newJsonAction.setShortcut("Ctrl+N")
-        newJsonAction.triggered.connect(self.parent.get_editor_widget().add_new_script)
+        newJsonAction.triggered.connect(self.parent.getEditorWidget().addNewScript)
         fileMenu.addAction(newJsonAction)
 
         newPhmAction = QAction("New PHM", self.parent)
         newPhmAction.setShortcut("Ctrl+N+P")
-        newPhmAction.triggered.connect(self.parent.new_editor_widget)
+        newPhmAction.triggered.connect(self.parent.newEditorWidget)
         fileMenu.addAction(newPhmAction)
         
         fileMenu.addSeparator()
@@ -59,13 +59,13 @@ class phtm_menu_bar(QMenuBar):
         openJsonAction = QAction("Open Script", self.parent)
         openJsonAction.setShortcut("Ctrl+O")
         openJsonAction.setStatusTip('Open a Script File')
-        openJsonAction.triggered.connect(self.parent.get_editor_widget().load_script)
+        openJsonAction.triggered.connect(self.parent.getEditorWidget().loadScript)
         fileMenu.addAction(openJsonAction)
 
         openPhmAction = QAction("Open PHM", self.parent)
         openPhmAction.setShortcut("Ctrl+P")
         openPhmAction.setStatusTip('Load a Cluster File')
-        openPhmAction.triggered.connect(lambda: self.file_handler.load_phm())
+        openPhmAction.triggered.connect(lambda: self.fileHandler.loadPhm())
         fileMenu.addAction(openPhmAction)
 
         openRecentMenu = fileMenu.addMenu("Open Recent")
@@ -76,23 +76,23 @@ class phtm_menu_bar(QMenuBar):
         savePAction = QAction("Save PHM", self.parent)
         savePAction.setShortcut("Ctrl+S")
         savePAction.setStatusTip('Save Cluster File')
-        savePAction.triggered.connect(lambda: self.file_handler.save_phm())
+        savePAction.triggered.connect(lambda: self.fileHandler.savePhm())
         fileMenu.addAction(savePAction)
 
         savePAsAction = QAction("Save PHM As...", self.parent)
         savePAsAction.setStatusTip('Save Script File')
-        savePAsAction.triggered.connect(lambda: self.file_handler.export_phm())
+        savePAsAction.triggered.connect(lambda: self.fileHandler.exportPhm())
         fileMenu.addAction(savePAsAction)
         fileMenu.addSeparator()
 
         importAction = QAction("Import Script", self.parent)
         importAction.setStatusTip('Save Script File')
-        importAction.triggered.connect(self.parent.get_editor_widget().load_script)
+        importAction.triggered.connect(self.parent.getEditorWidget().loadScript)
         fileMenu.addAction(importAction)
 
         exportAction = QAction("Export Script", self.parent)
         exportAction.setStatusTip('Save Script File')
-        exportAction.triggered.connect(lambda: self.file_handler.export_script())
+        exportAction.triggered.connect(lambda: self.fileHandler.exportScript())
         fileMenu.addAction(exportAction)
 
         exittAction = QAction("Exit", self.parent)
@@ -146,20 +146,20 @@ class phtm_menu_bar(QMenuBar):
         editMenu.addAction(findAction)
         editMenu.addAction(replaceAction)
 
-    def edit_operations(self, op):
-        curr_wid = self.parent.get_editor_widget().get_editor_tabs().currentWidget()
-        if not curr_wid:
+    def editOperations(self, op):
+        currWidget = self.parent.getEditorWidget().getEditorTabs().currentWidget()
+        if not currWidget:
             return
         if op == 0:
-            curr_wid.undo()
+            currWidget.undo()
         if op == 1:
-            curr_wid.redo()
+            currWidget.redo()
         if op == 2:
-            curr_wid.cut()
+            currWidget.cut()
         if op == 3:
-            curr_wid.copy()
+            currWidget.copy()
         if op == 4:
-            curr_wid.paste()
+            currWidget.paste()
 
     def runMenu(self):
         runMenu = self.addMenu("Run")
@@ -183,16 +183,16 @@ class phtm_menu_bar(QMenuBar):
 
         validateAction = QAction("Validate", self.parent)
         validateAction.setShortcut("Ctrl+D")
-        validateAction.triggered.connect(self.validate_script)
+        validateAction.triggered.connect(self.validateScript)
         runMenu.addAction(validateAction)
 
-    def validate_script(self):
+    def validateScript(self):
         try:
-            validate_json_script(self, self.parent.get_editor_widget().get_editor_tabs().currentWidget().toPlainText())
+            validateJsonScript(self, self.parent.getEditorWidget().getEditorTabs().currentWidget().toPlainText())
         except Exception as err:
-            err_msg = PhtmMessageBox(self, "Invalid Json Error",
+            errorMessage = PhtmMessageBox(self, "Invalid Json Error",
                             "Invalid Json Format\n" + str(err))
-            err_msg.exec_()
+            errorMessage.exec_()
     
     def helpMenu(self):
         helpMenu = self.addMenu('Help')
@@ -221,7 +221,7 @@ class phtm_menu_bar(QMenuBar):
     @pyqtSlot()
     def adjustForCurrentFile(self, filePath):
 
-        recentFilePaths = settings.__APPLICATION_SETTINGS__.get_settings()['recent_files']
+        recentFilePaths = settings.__APPLICATION_SETTINGS__.getSettings()['recent_files']
 
         try:
             recentFilePaths.remove(filePath)
@@ -237,7 +237,7 @@ class phtm_menu_bar(QMenuBar):
 
     def updateRecentActionList(self):
 
-        recentFilePaths = settings.__APPLICATION_SETTINGS__.get_settings()['recent_files']
+        recentFilePaths = settings.__APPLICATION_SETTINGS__.getSettings()['recent_files']
 
         itEnd = 0
         if len(recentFilePaths) <= self.maxFileNum:
@@ -254,7 +254,7 @@ class phtm_menu_bar(QMenuBar):
         for j in range(itEnd, self.maxFileNum):
             self.recentFileActionList[j].setVisible(False)
 
-        settings.__APPLICATION_SETTINGS__.update_settings()
+        settings.__APPLICATION_SETTINGS__.updateSettings()
 
     def createActionsAndConnections(self):
         recentFileAction = None
@@ -266,8 +266,8 @@ class phtm_menu_bar(QMenuBar):
             self.recentFileActionList.append(recentFileAction)
 
     def openRecent(self):
-        if not self.file_handler.load_phm(self.sender().data()):
-            recentFilePaths = settings.__APPLICATION_SETTINGS__.get_settings()['recent_files']
+        if not self.fileHandler.loadPhm(self.sender().data()):
+            recentFilePaths = settings.__APPLICATION_SETTINGS__.getSettings()['recent_files']
 
             try:
                 recentFilePaths.remove(self.sender().data())

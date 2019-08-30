@@ -8,96 +8,96 @@ from PyQt5.QtWidgets import QApplication
 from phantom.logging_stuff import PhtmLogger
 
 from .phtm_icons import PhtmIcons
-from .themes.template import style_sheet_template as sst
+from .themes.template import styleSheetTemplate as sst
 
-def init(app, sttngs_file):
+def init(app, settingsFile):
 
     global __LOG__, __ICONS__, __THEME__
-    global __STYLESHEET__, __APPLICATION_SETTINGS__, style_signal
+    global __STYLESHEET__, __APPLICATION_SETTINGS__, styleSignal
     global __DATABASE__
 
     __LOG__ = PhtmLogger()
     __ICONS__ = PhtmIcons()
-    __APPLICATION_SETTINGS__ = _Settings(sttngs_file)
-    __STYLESHEET__, __THEME__ = build_theme(__APPLICATION_SETTINGS__ .get_settings()["theme"])
+    __APPLICATION_SETTINGS__ = _Settings(settingsFile)
+    __STYLESHEET__, __THEME__ = build_theme(__APPLICATION_SETTINGS__.getSettings()["theme"])
     __DATABASE__ = None
 
-    style_signal = _StyleChanged(app)
+    styleSignal = _StyleChanged(app)
 
     try:
-        user_paths = os.environ['PYTHONPATH'].split(os.pathsep)
+        userPaths = os.environ['PYTHONPATH'].split(os.pathsep)
     except KeyError as err:
         __LOG__.logError(str(err))
-        user_paths = []
+        userPaths = []
 
-    __LOG__.logDebug(user_paths)
+    __LOG__.logDebug(userPaths)
 
 class _Settings():
-    def __init__(self, sttngs_file):
-        self.sttngs_file = sttngs_file
-        if not os.path.exists(self.sttngs_file):
-            self.__set_default_settings()
+    def __init__(self, settingsFile):
+        self.settingsFile = settingsFile
+        if not os.path.exists(self.settingsFile):
+            self.__setDefaultSettings()
             
-        self.sttngs_json = json.load(open(self.sttngs_file))
+        self.settingsJson = json.load(open(self.settingsFile))
 
-    def get_settings(self):
-        return self.sttngs_json
+    def getSettings(self):
+        return self.settingsJson
 
-    def update_settings(self):
-        with open(self.sttngs_file, 'w+') as sttngs:
-            json.dump(self.sttngs_json,
+    def updateSettings(self):
+        with open(self.settingsFile, 'w+') as sttngs:
+            json.dump(self.settingsJson,
                       sttngs,
                       indent=4,
                       separators=(',', ': '))
 
-    def __set_default_settings(self):
+    def __setDefaultSettings(self):
         sttngs = {
             'theme':"phantom/application_settings/themes/1_dark.json", 
             "recent_files":[]
         }
-        json.dump(sttngs, open(self.sttngs_file, 'w+'), indent=4, separators=(',', ': '))
+        json.dump(sttngs, open(self.settingsFile, 'w+'), indent=4, separators=(',', ': '))
 
 def build_theme(fp):
-    style_sheet = ""
+    styleSheet = ""
 
     try:
         theme = json.load(open(fp))
     except FileNotFoundError as err:
         __LOG__.logError(str(err))
-        __ICONS__.set_icons_set("std_black")
+        __ICONS__.setIconSet("std_black")
         return "", {"file":"", "color_scheme": ""}
 
     theme["file"] = fp
 
-    __ICONS__.set_icons_set(theme["icon_set"])
+    __ICONS__.setIconSet(theme["icon_set"])
 
     p = re.compile('@\w+')
 
     for line in sst.STYLESHEETTEMPLATE.splitlines():
         if p.search(line):
             if p.search(line).group() == "@close_icon":
-                style_sheet += line.replace("@close_icon", __ICONS__.get_close_tab())
+                styleSheet += line.replace("@close_icon", __ICONS__.getCloseTab())
             else:
                 key = p.search(line).group()
-                style_sheet += line.replace(key, theme["color_scheme"][key[1:]])
+                styleSheet += line.replace(key, theme["color_scheme"][key[1:]])
         else:
-            style_sheet += line
+            styleSheet += line
 
-    return style_sheet, theme
+    return styleSheet, theme
 
 class _StyleChanged(QObject):
-    style_change = pyqtSignal(str)
-    icon_signal = pyqtSignal()
+    styleChanged = pyqtSignal(str)
+    iconSignal = pyqtSignal()
     def __init__(self, app):
         super().__init__()
-        self.connect_signal(app)
+        self.connectSignal(app)
 
-    def connect_signal(self, app):
-        self.style_change.connect(lambda theme: self.set_theme(app, theme))
+    def connectSignal(self, app):
+        self.styleChanged.connect(lambda theme: self.setTheme(app, theme))
 
     @pyqtSlot(QApplication, str)
-    def set_theme(self, app, theme):
+    def setTheme(self, app, theme):
         global __STYLESHEET__, __THEME__ 
         __STYLESHEET__, __THEME__ = build_theme(theme)
         app.setStyleSheet(__STYLESHEET__)
-        self.icon_signal.emit()
+        self.iconSignal.emit()

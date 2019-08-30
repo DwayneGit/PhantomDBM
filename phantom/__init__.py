@@ -1,3 +1,3 @@
 
-from .application_settings import settings
-from .core import main_window
+from .applicationSettings import settings
+from .core import MainWindow

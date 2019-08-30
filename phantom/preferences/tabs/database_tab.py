@@ -1,11 +1,11 @@
 from PyQt5.QtWidgets import QWidget, QFormLayout, QHBoxLayout, QRadioButton, QLabel, QButtonGroup, QLineEdit
 
-from phantom.phtm_widgets import PhtmComboBox
-from phantom.phtm_widgets import PhtmPushButton
+from phantom.phtmWidgets import PhtmComboBox
+from phantom.phtmWidgets import PhtmPushButton
 
 from phantom.database import DatabaseHandler
 
-from phantom.application_settings import settings
+from phantom.applicationSettings import settings
 
 class database_tab(QWidget):
     def __init__(self, instancesPrefDict):
@@ -44,7 +44,7 @@ class database_tab(QWidget):
         self.__colEditBtn = PhtmComboBox()
 
         self.__colEditBtn.addItems(self.__colList)
-        index = self.__colEditBtn.findText(self.instancesPrefDict.get_collection_name())
+        index = self.__colEditBtn.findText(self.instancesPrefDict.getCollectionName())
         self.__colEditBtn.setCurrentIndex(index)
 
         self.__colEditBtn.currentTextChanged.connect(lambda a: self.__changeColl(self.__colEditBtn.currentText()))
@@ -53,9 +53,9 @@ class database_tab(QWidget):
 
         dbNameLabel = QLabel("Database Name: ")
         dbNameBox = PhtmComboBox()
-        dbNameBox.addItems(DatabaseHandler.getDatabaseList(self.instancesPrefDict.get_host_name(), self.instancesPrefDict.get_port_number()))
+        dbNameBox.addItems(DatabaseHandler.getDatabaseList(self.instancesPrefDict.getHostName(), self.instancesPrefDict.getPortNumber()))
 
-        index = dbNameBox.findText(self.instancesPrefDict.get_database_name())
+        index = dbNameBox.findText(self.instancesPrefDict.getDatabaseName())
         dbNameBox.setCurrentIndex(index)
 
         self.__dbChanged(dbNameBox.currentText())
@@ -66,14 +66,14 @@ class database_tab(QWidget):
 
         hostLabel = QLabel("Host: ")
         hostBox = QLineEdit()
-        hostBox.setText(str(self.instancesPrefDict.get_host_name()))
+        hostBox.setText(str(self.instancesPrefDict.getHostName()))
         hostBox.textChanged.connect(lambda a : self.__changeHost(hostBox.text()))
 
         #------------------------------ Port Number --------------------------------
 
         portNumLabel = QLabel("Port Number: ")
         portNumBox = QLineEdit()
-        portNumBox.setText(str(self.instancesPrefDict.get_port_number()))
+        portNumBox.setText(str(self.instancesPrefDict.getPortNumber()))
         portNumBox.textChanged.connect(lambda a : self.__changePort(portNumBox.text()))
 
         #------------------------------ database name --------------------------------
@@ -104,10 +104,10 @@ class database_tab(QWidget):
         return self.__dbForm
 
     def __changeHost(self, host):
-        self.instancesPrefDict.set_host_name(host)
+        self.instancesPrefDict.setHostName(host)
 
     def __changePort(self, port):
-        self.instancesPrefDict.set_port_number(port)
+        self.instancesPrefDict.setPortNumber(port)
 
     # def __changeTbSize(self, port):
     #     self.instancesPrefDict['mongodb']['tableSize'] = port
@@ -121,17 +121,17 @@ class database_tab(QWidget):
         if not coll:
             return
 
-        self.instancesPrefDict.set_collection_name(coll)
+        self.instancesPrefDict.setCollectionName(coll)
 
-        index = self.__colEditBtn.findText(self.instancesPrefDict.get_collection_name())
+        index = self.__colEditBtn.findText(self.instancesPrefDict.getCollectionName())
         self.__colEditBtn.setCurrentIndex(index)
 
     def __getListOfCollections(self):
-        if not self.instancesPrefDict.get_database_name() or self.instancesPrefDict.get_database_name() == "":
+        if not self.instancesPrefDict.getDatabaseName() or self.instancesPrefDict.getDatabaseName() == "":
             return []
 
-        return DatabaseHandler.getCollectionList(self.instancesPrefDict.get_host_name(), int(self.instancesPrefDict.get_port_number()),
-                                                 self.instancesPrefDict.get_database_name())
+        return DatabaseHandler.getCollectionList(self.instancesPrefDict.getHostName(), int(self.instancesPrefDict.getPortNumber()),
+                                                 self.instancesPrefDict.getDatabaseName())
 
     def __reloadSettings(self):
         print(self.instancesPrefDict)
@@ -141,7 +141,7 @@ class database_tab(QWidget):
 
     def __dbChanged(self, name):
         
-        self.instancesPrefDict.set_database_name(name)
+        self.instancesPrefDict.setDatabaseName(name)
         self.__colList = self.__getListOfCollections()
         
         self.__colEditBtn.disconnect()
@@ -150,17 +150,17 @@ class database_tab(QWidget):
 
         self.__colEditBtn.addItems(self.__colList)
 
-        index = self.__colEditBtn.findText(self.instancesPrefDict.get_collection_name())
+        index = self.__colEditBtn.findText(self.instancesPrefDict.getCollectionName())
         self.__colEditBtn.setCurrentIndex(index)
 
         self.__colEditBtn.currentTextChanged.connect(lambda a: self.__changeColl(self.__colEditBtn.currentText()))
 
     def save(self):
 
-        settings.__DATABASE__.set_database_name(self.instancesPrefDict.get_database_name())
-        settings.__DATABASE__.set_collection_name(self.instancesPrefDict.get_collection_name())
-        settings.__DATABASE__.set_host_name(self.instancesPrefDict.get_host_name())
-        settings.__DATABASE__.set_port_number(int(self.instancesPrefDict.get_port_number()))
+        settings.__DATABASE__.setDatabaseName(self.instancesPrefDict.getDatabaseName())
+        settings.__DATABASE__.setCollectionName(self.instancesPrefDict.getCollectionName())
+        settings.__DATABASE__.setHostName(self.instancesPrefDict.getHostName())
+        settings.__DATABASE__.setPortNumber(int(self.instancesPrefDict.getPortNumber()))
         
         # prefs['mongodb']['tableSize'] = int(self.__dbForm.itemAt(9).widget().text())
 

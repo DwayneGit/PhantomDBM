@@ -2,7 +2,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog, QMessageBox, QVBoxLayout, QGraphicsDropShadowEffect
 from PyQt5.QtGui import QColor
 
-from phantom.utility import center_window
+from phantom.utility import centerWindow
 
 from . import PhtmTitleBar
 
@@ -18,19 +18,19 @@ class PhtmMessageBox(QDialog):
 
         self.setWindowModality(Qt.ApplicationModal)
 
-        self.window_title = title
+        self.windowTitle = title
 
         self.parent = parent
 
         self.oldPos = self.pos()
 
-        self.title_bar = PhtmTitleBar(self)
-        self.title_bar.generate_title_bar()
+        self.titleBar = PhtmTitleBar(self)
+        self.titleBar.generateTitleBar()
 
         self.__layout = QVBoxLayout()
         self.__layout.setSpacing(0)
 
-        self.__layout.addWidget(self.title_bar)
+        self.__layout.addWidget(self.titleBar)
         self.__message_box = QMessageBox()
         if msg:
             self.__message_box.setText(msg)
@@ -48,7 +48,7 @@ class PhtmMessageBox(QDialog):
         self.__message_box.buttonClicked.connect(self.close_box)
 
         # self.setGeometry(geometry)
-        # self.move(center_window(self))
+        # self.move(centerWindow(self))
 
         self.shadow = QGraphicsDropShadowEffect(self)
         self.shadow.setColor(QColor(30, 30, 30))
@@ -56,19 +56,19 @@ class PhtmMessageBox(QDialog):
         self.shadow.setOffset(3)
         self.setGraphicsEffect(self.shadow)
 
-        self.set_window_title(self.window_title)
+        self.setWindowTitle(self.windowTitle)
 
     def close_box(self, button):
         if str(button) in self.__button_set:
             self.msg_selection = self.__button_set[str(button)]
         self.accept()
 
-    def set_window_title(self, text):
-        self.title_bar.set_window_title(text)
+    def setWindowTitle(self, text):
+        self.titleBar.setWindowTitle(text)
         self.setWindowTitle(text)
     
     def getWindowTitle(self):
-        return self.title_bar.window_title
+        return self.titleBar.windowTitle
 
     def get_layout(self):
         return self.__layout

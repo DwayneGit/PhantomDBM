@@ -8,25 +8,25 @@ from PyQt5.QtWidgets import QMainWindow, QSplitter, QProgressBar, QMessageBox, Q
 
 from phantom.users import loginScreen
 from phantom.database import DatabaseHandler
-from phantom.utility import center_window
+from phantom.utility import centerWindow
 
-from phantom.preferences import preference_body
-from phantom.application_settings import settings
+from phantom.preferences import PreferenceBody
+from phantom.applicationSettings import settings
 
-from phantom.phtm_widgets import PhtmDialog, PhtmPlainTextEdit, PhtmTitleBar
+from phantom.phtmWidgets import PhtmDialog, PhtmPlainTextEdit, PhtmTitleBar
 
 from phantom.file_stuff import FileHandler
 
-from . import run_ctrl
-from . import phtm_menu_bar
-from . import main_tool_bar
+from . import RunCtrl
+from . import PhtmMenuBar
+from . import MainToolBar
 from . import PhtmEditorWidget
 
 BUFFERSIZE = 1000
 
-class main_window(QMainWindow):
+class MainWindow(QMainWindow):
     runs = 0
-    completed_run_counter = 0
+    completedRunCounter = 0
     def __init__(self, parent=None):
         super().__init__()
 
@@ -37,36 +37,36 @@ class main_window(QMainWindow):
         self.changed = False
         self.filePath = None
         self.fileLoaded = True
-        self.window_title = ''
-        self.dmi_settings = None
-        self.__editor_widget = None
+        self.windowTitle = ''
+        self.DmiSettings = None
+        self.__editorWidget = None
 
-        self.title_bar = PhtmTitleBar(self, True)
-        self.title_bar.generate_title_bar()
+        self.titleBar = PhtmTitleBar(self, True)
+        self.titleBar.generateTitleBar()
 
-        self.__program_title = "Phantom DBM"
-        self.set_window_title(self.__program_title)
+        self.__programTitle = "Phantom DBM"
+        self.setWindowTitle(self.__programTitle)
 
         self.oldPos = self.pos()
         self.setWindowIcon(QIcon("icons/logo.png"))
 
         self.setGeometry(QRect(10, 10, 1100, 620)) # left, top, width, height
-        self.move(center_window(self))
+        self.move(centerWindow(self))
 
         self.layout().setSpacing(0)
 
         self.setWindowFlags(Qt.FramelessWindowHint)
 
-        self.addToolBar(Qt.TopToolBarArea, self.title_bar)
+        self.addToolBar(Qt.TopToolBarArea, self.titleBar)
 
-        self.r_ctrl = run_ctrl(self)
+        self.r_ctrl = RunCtrl(self)
 
         self.body = QMainWindow()
         self.setCentralWidget(self.body)
 
-        self.file_handler = FileHandler(self)
+        self.fileHandler  = FileHandler(self)
         login = PhtmDialog("Login", QRect(10, 10, 260, 160), self)
-        login.set_central_dialog(loginScreen(login))
+        login.setCentralDialog(loginScreen(login))
 
         self.__initUI()
 
@@ -80,26 +80,26 @@ class main_window(QMainWindow):
 
     def __initUI(self):
 
-        self.currTitle = self.window_title
+        self.currTitle = self.windowTitle
 
-        self.__brd_widget = QWidget()
-        self.__brd_widget_lay = QHBoxLayout()
+        self.__boardWidget = QWidget()
+        self.__boardWidgetLayout = QHBoxLayout()
 
         self.__brd = PhtmPlainTextEdit()
         self.__brd.setReadOnly(True)
         self.__brd.insertPlainText("Welcome to Phantom Database Manager (DBM).")
 
-        self.__brd_widget_lay.addWidget(self.__brd)
-        self.__brd_widget_lay.setContentsMargins(0, 0, 0, 0)
+        self.__boardWidgetLayout.addWidget(self.__brd)
+        self.__boardWidgetLayout.setContentsMargins(0, 0, 0, 0)
 
-        self.__brd_widget.setLayout(self.__brd_widget_lay)
+        self.__boardWidget.setLayout(self.__boardWidgetLayout)
         self.__brd.setObjectName("brd")
 
-        self.__editor_widget = PhtmEditorWidget(self.file_handler, self)
+        self.__editorWidget = PhtmEditorWidget(self.fileHandler , self)
 
         self.__splitter1 = QSplitter(Qt.Horizontal)
-        self.__splitter1.addWidget(self.__brd_widget)
-        self.__splitter1.addWidget(self.__editor_widget)
+        self.__splitter1.addWidget(self.__boardWidget)
+        self.__splitter1.addWidget(self.__editorWidget)
         self.__splitter1.setHandleWidth(1)
         self.__splitter1.setSizes([300, 325])
 
@@ -114,35 +114,35 @@ class main_window(QMainWindow):
         self.body.statusBar().addPermanentWidget(self.progressBar)
         self.progressBar.setFixedWidth(200)
 
-        self.main_tool_bar = main_tool_bar(self.file_handler, self)
-        self.main_tool_bar.setUpToolBar()
+        self.MainToolBar = MainToolBar(self.fileHandler , self)
+        self.MainToolBar.setUpToolBar()
 
-        self.menu_bar = phtm_menu_bar(self.file_handler, self)
-        self.menu_bar.init_menu_bar()
-        self.file_handler.set_adjust_signal(self.menu_bar.get_adjust_signal())
+        self.menuBar = PhtmMenuBar(self.fileHandler , self)
+        self.menuBar.initMenuBar()
+        self.fileHandler.setAdjustSignal(self.menuBar.getAdjustSignal())
 
-        self.body.setMenuWidget(self.menu_bar)
+        self.body.setMenuWidget(self.menuBar)
 
         self.show()
 
-    def set_window_title(self, text):
-        self.title_bar.set_window_title(text)
+    def setWindowTitle(self, text):
+        self.titleBar.setWindowTitle(text)
         self.setWindowTitle(text)
 
     def getWindowTitle(self):
         return self.getWindowTitle()
 
     def updateWindowTitle(self, newTitle):
-        self.set_window_title(newTitle + " - " + self.getPermanentTitle())
+        self.setWindowTitle(newTitle + " - " + self.getPermanentTitle())
 
-    def get_main_toolbar(self):
-        return self.main_tool_bar
+    def getMainToolbar(self):
+        return self.MainToolBar
 
-    def get_menubar(self):
-        return self.menu_bar
+    def getMenubar(self):
+        return self.menuBar
 
     def getPermanentTitle(self):
-        return self.__program_title
+        return self.__programTitle
 
     @pyqtSlot(str)
     def appendToBoard(self, message):
@@ -152,8 +152,8 @@ class main_window(QMainWindow):
 
     def closeEvent(self, event):
         if self.changed:
-            quit_msg = "Your changes have not been saved.\nAre you sure you want to exit the program?"
-            reply = QMessageBox.question(self, 'Message', quit_msg, QMessageBox.Yes, QMessageBox.No)
+            quitMessage = "Your changes have not been saved.\nAre you sure you want to exit the program?"
+            reply = QMessageBox.question(self, 'Message', quitMessage, QMessageBox.Yes, QMessageBox.No)
 
             if reply == QMessageBox.Yes:
                 event.accept()
@@ -163,33 +163,33 @@ class main_window(QMainWindow):
             settings.__LOG__.logInfo("Program Ended")
 
     def showPref(self, index=0):
-        pref_dialog = preference_body(self.get_editor_widget().get_cluster(), self.user)
-        pref_dialog.tabW.setCurrentIndex(index)
+        preferenceDialog = PreferenceBody(self.getEditorWidget().getCluster(), self.user)
+        preferenceDialog.tabW.setCurrentIndex(index)
 
-        if pref_dialog.exec_():
-            self.reload_curr_dmi()
+        if preferenceDialog.exec_():
+            self.reloadCurrDmi()
             self.reloadDbNames()
 
     def reloadDbNames(self):
-        self.main_tool_bar.dbnameMenu.currentTextChanged.disconnect()
-        self.main_tool_bar.dbnameMenu.clear()
+        self.MainToolBar.dbnameMenu.currentTextChanged.disconnect()
+        self.MainToolBar.dbnameMenu.clear()
 
-        self.main_tool_bar.dbnameMenu.addItems(DatabaseHandler.getDatabaseList(settings.__DATABASE__.get_host_name(), settings.__DATABASE__.get_port_number()))
-        self.main_tool_bar.dbnameMenu.currentTextChanged.connect(self.main_tool_bar.databaseNameChanged)
+        self.MainToolBar.dbnameMenu.addItems(DatabaseHandler.getDatabaseList(settings.__DATABASE__.getHostName(), settings.__DATABASE__.getPortNumber()))
+        self.MainToolBar.dbnameMenu.currentTextChanged.connect(self.MainToolBar.databaseNameChanged)
 
-        index = self.main_tool_bar.dbnameMenu.findText(settings.__DATABASE__.get_database_name())
-        self.main_tool_bar.dbnameMenu.setCurrentIndex(index)
+        index = self.MainToolBar.dbnameMenu.findText(settings.__DATABASE__.getDatabaseName())
+        self.MainToolBar.dbnameMenu.setCurrentIndex(index)
 
-    def reload_curr_dmi(self):
-        self.main_tool_bar.curr_dmi.setPlainText(self.get_editor_widget().get_cluster().get_phm_scripts()["__dmi_instr__"]["name"])
+    def reloadCurrDmi(self):
+        self.MainToolBar.currDmi.setPlainText(self.getEditorWidget().getCluster().getPhmScripts()["__dmi_instr__"]["name"])
 
-    def get_editor_widget(self):
-        return self.__editor_widget
+    def getEditorWidget(self):
+        return self.__editorWidget
 
-    def new_editor_widget(self):
-        if self.file_handler.save_phm(self.menu_bar.get_adjust_signal()):
-            new_ew = PhtmEditorWidget(self)
-            self.set_window_title(self.__program_title)
-            self.__splitter1.replaceWidget(self.__splitter1.indexOf(self.__editor_widget), new_ew)
-            self.__editor_widget = new_ew
-            self.main_tool_bar.dbnameMenu.setCurrentIndex(0)
+    def newEditorWidget(self):
+        if self.fileHandler.savePhm(self.menuBar.getAdjustSignal()):
+            editorWidget = PhtmEditorWidget(self)
+            self.setWindowTitle(self.__programTitle)
+            self.__splitter1.replaceWidget(self.__splitter1.indexOf(self.__editorWidget), editorWidget)
+            self.__editorWidget = editorWidget
+            self.MainToolBar.dbnameMenu.setCurrentIndex(0)

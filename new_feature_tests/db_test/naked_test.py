@@ -1,6 +1,6 @@
 import sys, os, signal, socket
 import time
-from Naked.toolshed.shell import execute_js, muterun_js
+from Naked.toolshed.shell import executeJScript, muterun_js
 
 newpid = os.fork()
 s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
@@ -13,7 +13,7 @@ script = [
 
 try:
     if newpid == 0:
-        execute_js('./js/index.js',
+        executeJScript('./js/index.js',
                    arguments='mongodb://localhost:27017/test ' + 'testTooSchema')
 
         # if response.exitcode == 0:
@@ -22,14 +22,14 @@ try:
         #     sys.stderr.write(response.stderr)
 
     else:
-        server_addr = "./js/src/tmp/db.sock"
+        serverAddress = "./js/src/tmp/db.sock"
 
-        print('Connecting to %s' % server_addr)
+        print('Connecting to %s' % serverAddress)
 
         time.sleep(3)
 
         try:
-            s.connect(server_addr)
+            s.connect(serverAddress)
 
         except socket.error as err:
             print(str(err))

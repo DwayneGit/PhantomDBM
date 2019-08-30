@@ -3,9 +3,9 @@ import os.path
 
 from PyQt5.QtWidgets import QDialog, QLineEdit, QLabel, QFormLayout, QWidget, QVBoxLayout, QComboBox
 
-from phantom.utility import center_window
+from phantom.utility import centerWindow
 
-from phantom.phtm_widgets import PhtmPushButton
+from phantom.phtmWidgets import PhtmPushButton
 
 class User:
     __usrFile = "users.json"

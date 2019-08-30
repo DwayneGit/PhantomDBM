@@ -3,11 +3,11 @@ import re
 from PyQt5.QtCore import pyqtSignal
 from PyQt5.QtWidgets import QTabWidget, QMessageBox
 
-from phantom.utility import validate_json_script
+from phantom.utility import validateJsonScript
 
-from phantom.phtm_widgets import PhtmPlainTextEdit, PhtmMessageBox
+from phantom.phtmWidgets import PhtmPlainTextEdit, PhtmMessageBox
 
-from phantom.application_settings import settings
+from phantom.applicationSettings import settings
 
 class PhtmTabWidget(QTabWidget):
     clearTabsRequested = pyqtSignal(bool)
@@ -22,9 +22,9 @@ class PhtmTabWidget(QTabWidget):
         self.default_tab_count = 1
         self.tab_data = {}
         self.script_set = {}
-        self.tabCloseRequested.connect(self.close_tab)
+        self.tabCloseRequested.connect(self.closeTab)
 
-    def tab_by_text(self, text):
+    def tabByText(self, text):
         tab_index_found = -1
         for i in range(self.count()):
             if text == self.tabText(i):
@@ -33,8 +33,8 @@ class PhtmTabWidget(QTabWidget):
                 break
         return tab_index_found
 
-    def save_editor(self, index):
-        if not self.widget(index).is_changed:
+    def saveEditor(self, index):
+        if not self.widget(index).isChanged:
             return
 
         save_msg = "The current script is not saved. Do you want to save?"
@@ -49,9 +49,9 @@ class PhtmTabWidget(QTabWidget):
 
         return True
 
-    def close_tab(self, index):
-        if self.widget(index).is_changed:
-            if not self.save_editor(index):
+    def closeTab(self, index):
+        if self.widget(index).isChanged:
+            if not self.saveEditor(index):
                 return
 
         self.removeTab(index)
@@ -62,7 +62,7 @@ class PhtmTabWidget(QTabWidget):
         for index in range(self.count()):
             self.tabCloseRequested.emit(0)
 
-    def add_editor(self, script=None):
+    def addEditor(self, script=None):
         if script:
             editor = _PhtmEditor(script)
             editor.showLineNumbers()
@@ -82,17 +82,17 @@ class PhtmTabWidget(QTabWidget):
         return index
 
     def is_saved(self, title, index):
-        self.widget(index).is_changed = False
+        self.widget(index).isChanged = False
         self.setTabText(index, title)
 
-        self.widget(index).get_tree_item().setText(0, title)
+        self.widget(index).get_treeItem().setText(0, title)
 
     def isChanged(self, index):
-        if not self.widget(index).is_changed and self.tabText(index):
-            self.widget(index).is_changed = True
+        if not self.widget(index).isChanged and self.tabText(index):
+            self.widget(index).isChanged = True
             self.setTabText(index, "* " + self.tabText(index))
 
-            self.widget(index).get_tree_item().setText(0, self.tabText(index))
+            self.widget(index).get_treeItem().setText(0, self.tabText(index))
 
     def get_index(self, editor):
         return self.indexOf(editor)
@@ -109,42 +109,42 @@ class _PhtmEditor(PhtmPlainTextEdit):
     def __init__(self, script=None):
         super(_PhtmEditor, self).__init__()
 
-        self.file_path = None
-        self.is_changed = False
-        self.tree_item = None
+        self.filePath = None
+        self.isChanged = False
+        self.treeItem = None
 
-        self.__curr_script = script
-        self.title = self.__curr_script.get_title()
-        self.setPlainText(self.__curr_script.get_script())
+        self.__currScript = script
+        self.title = self.__currScript.getTitle()
+        self.setPlainText(self.__currScript.getScript())
 
-    def set_curr_script(self, script):
-        self.__curr_script = script
-        self.title = self.__curr_script.get_title()
-        self.setPlainText(self.__curr_script.get_script())
-        self.is_changed = False
+    def set_currScript(self, script):
+        self.__currScript = script
+        self.title = self.__currScript.getTitle()
+        self.setPlainText(self.__currScript.getScript())
+        self.isChanged = False
 
-    def get_curr_script(self):
-        return self.__curr_script
+    def getCurrScript(self):
+        return self.__currScript
 
     def save_script(self, user="Daru"):
         try:
-            validate_json_script(self, self.toPlainText())
+            validateJsonScript(self, self.toPlainText())
         except Exception as err:
             error_msg = PhtmMessageBox(self, "Validation Error", "Invalid JSON:\n" + str(err))
             error_msg.exec_()
             return False
 
-        self.__curr_script.set_script(self.toPlainText())
-        self.__curr_script.set_modified_by(user)
-        self.__curr_script.update_date_time_modified()
+        self.__currScript.set_script(self.toPlainText())
+        self.__currScript.set_modified_by(user)
+        self.__currScript.update_date_time_modified()
 
-        self.is_changed = False
+        self.isChanged = False
 
-        self.saved.emit(self.__curr_script.get_title())
+        self.saved.emit(self.__currScript.getTitle())
         return True
 
-    def get_tree_item(self):
-        return self.tree_item
+    def get_treeItem(self):
+        return self.treeItem
 
-    def set_tree_item(self, item):
-        self.tree_item = item
+    def setTreeItem(self, item):
+        self.treeItem = item

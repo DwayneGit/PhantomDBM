@@ -53,11 +53,11 @@ QLineEdit {
 
 
 QMenuBar {
-    background-color: @menu_bar;
+    background-color: @menuBar;
     color: @text;
 }
 QMenuBar::item:selected {
-    background: @title_bar;
+    background: @titleBar;
 }
 
 QLabel{
@@ -73,11 +73,11 @@ QRadioButton::indicator {
 
 
 QMenu {
-    background: @menu_bar;
+    background: @menuBar;
     color: @text;
 }
 QMenu::item:selected {
-    background: @title_bar;
+    background: @titleBar;
 }
 
 QStatusBar {
@@ -94,7 +94,7 @@ QProgressBar {
     background-color: @progress_bar;
 }
 QProgressBar::chunk {
-    background-color: @title_bar;
+    background-color: @titleBar;
     width: 10px;
 }
 
@@ -216,15 +216,15 @@ QPushButton:pressed {
 
 
 QToolButton#title_button {
-    background-color: @title_bar;
+    background-color: @titleBar;
     border-width: 0px;
 }
 QToolButton#exit {
-    background-color: @title_bar;
+    background-color: @titleBar;
     border-width: 0px;
 }
 QToolButton#logo {
-    background-color: @title_bar;
+    background-color: @titleBar;
     border-width: 0px;
 }
 QToolButton#tab_button {
@@ -253,8 +253,8 @@ QToolBar#tool_bar {
     border-width: 0px;
     background-color: @main2;
 }
-QToolBar#title_bar {
-    background-color: @title_bar;
+QToolBar#titleBar {
+    background-color: @titleBar;
     color: @text;
     border-style: none;
     border-radius: 0px;

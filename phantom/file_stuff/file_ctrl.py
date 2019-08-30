@@ -5,67 +5,67 @@ from time import gmtime, strftime
 
 from PyQt5.QtWidgets import QFileDialog, QMessageBox
 
-from phantom.phtm_widgets import PhtmMessageBox, PhtmFileDialog
+from phantom.phtmWidgets import PhtmMessageBox, PhtmFileDialog
 
-from phantom.application_settings import settings
+from phantom.applicationSettings import settings
 class FileHandler():
     def __init__(self, parent):
         self.parent = parent
         self.adjustSignal = None
 
-    def set_adjust_signal(self, signal):
+    def setAdjustSignal(self, signal):
         self.adjustSignal = signal
 
-    def load_instructions(self):
-        dlg = PhtmFileDialog(None, "Open", QFileDialog.AnyFile, "XML files (*.xml)", options=QFileDialog.DontUseNativeDialog|QFileDialog.DontUseCustomDirectoryIcons)
+    def loadInstructions(self):
+        dialog = PhtmFileDialog(None, "Open", QFileDialog.AnyFile, "XML files (*.xml)", options=QFileDialog.DontUseNativeDialog|QFileDialog.DontUseCustomDirectoryIcons)
         filenames = []
 
-        if dlg.exec_():
-            filenames = dlg.selectedFiles
+        if dialog.exec_():
+            filenames = dialog.selectedFiles
 
-            filename_w_ext = os.path.basename(filenames[0])
-            filename = os.path.splitext(filename_w_ext)[0]
+            filenameWithExtension = os.path.basename(filenames[0])
+            filename = os.path.splitext(filenameWithExtension)[0]
 
             return filename, filenames[0]
         return "", None
 
-    def load_script(self):
-        dlg = PhtmFileDialog(None, "Open", QFileDialog.AnyFile, "JSON files (*.json)", options=QFileDialog.DontUseNativeDialog|QFileDialog.DontUseCustomDirectoryIcons)
+    def loadScript(self):
+        dialog = PhtmFileDialog(None, "Open", QFileDialog.AnyFile, "JSON files (*.json)", options=QFileDialog.DontUseNativeDialog|QFileDialog.DontUseCustomDirectoryIcons)
         filenames = []
 
-        if dlg.exec_():
-            filenames = dlg.selectedFiles
+        if dialog.exec_():
+            filenames = dialog.selectedFiles
 
-            filename_w_ext = os.path.basename(filenames[0])
-            filename = os.path.splitext(filename_w_ext)[0]
+            filenameWithExtension = os.path.basename(filenames[0])
+            filename = os.path.splitext(filenameWithExtension)[0]
 
             return filename, filenames[0]
         return False, False
 
-    def load_phm(self, file_path=None):
+    def loadPhm(self, filePath=None):
 
         def load(path):
             if not os.path.exists(path):
                 raise Exception("PathError: No such file or directory: '" + path + "'")
 
-            filename_w_ext = os.path.basename(path)
-            filename = os.path.splitext(filename_w_ext)[0]
+            filenameWithExtension = os.path.basename(path)
+            filename = os.path.splitext(filenameWithExtension)[0]
 
             self.parent.updateWindowTitle(filename)
-            self.parent.get_editor_widget().clear_tabs()
-            self.parent.get_editor_widget().load_cluster(path, filename)
+            self.parent.getEditorWidget().clearTabs()
+            self.parent.getEditorWidget().loadCluster(path, filename)
 
-            self.parent.get_menubar().get_adjust_signal().emit(path)
-            self.parent.reload_curr_dmi()
+            self.parent.getMenubar().getAdjustSignal().emit(path)
+            self.parent.reloadCurrDmi()
             self.parent.reloadDbNames()
 
-        if not file_path:
-            dlg = PhtmFileDialog(self.parent, "Open", QFileDialog.AnyFile, "Cluster files (*.phm)", options=QFileDialog.DontUseNativeDialog|QFileDialog.DontUseCustomDirectoryIcons)
+        if not filePath:
+            dialog = PhtmFileDialog(self.parent, "Open", QFileDialog.AnyFile, "Cluster files (*.phm)", options=QFileDialog.DontUseNativeDialog|QFileDialog.DontUseCustomDirectoryIcons)
             filenames = []
 
-            if dlg.exec_():
+            if dialog.exec_():
                 try:
-                    filenames = dlg.selectedFiles
+                    filenames = dialog.selectedFiles
                     load(filenames[0])
                     return True
                 except Exception as err:
@@ -73,33 +73,33 @@ class FileHandler():
 
         else:
             try:
-                load(file_path)
+                load(filePath)
                 return True
             except Exception as err:
                 settings.__LOG__.logError("LDERR: " + str(err))
 
         return False
 
-    def save_phm(self, file_path=None):
+    def savePhm(self, filePath=None):
         try:
-            cluster = self.parent.get_editor_widget().get_cluster()
-            file_path = cluster.get_file_path()
-            if not file_path:
+            cluster = self.parent.getEditorWidget().getCluster()
+            filePath = cluster.getFilePath()
+            if not filePath:
                 save_msg = PhtmMessageBox(None, "Save PHM", "Cluster file not saved. would you like to save?",
                                             [QMessageBox.Yes, QMessageBox.Cancel])
                 if save_msg.exec_():
                     if save_msg.msg_selection == QMessageBox.Yes:
-                        file_path = self.export_phm(self.parent.get_editor_widget())
-                        if not file_path:
+                        filePath = self.exportPhm(self.parent.getEditorWidget())
+                        if not filePath:
                             return False
                         
-                        if cluster.get_phm().get_name() == "New Cluster":
-                            cluster.get_phm().set_name(os.path.basename(file_path)[:-4])
+                        if cluster.getPhm().getName() == "New Cluster":
+                            cluster.getPhm().setName(os.path.basename(filePath)[:-4])
 
                     else: return False
                         
-            self.adjustSignal.emit(file_path if file_path[-4:] == ".phm" else file_path+".phm")
-            self.parent.get_editor_widget().save_phm(file_path)
+            self.adjustSignal.emit(filePath if filePath[-4:] == ".phm" else filePath+".phm")
+            self.parent.getEditorWidget().savePhm(filePath)
             
             return True
 
@@ -107,25 +107,25 @@ class FileHandler():
             print("Error Here " + str(err))
             return False
 
-    def export_script(self):
-        curr_script = self.parent.get_editor_widget().get_editor_tabs().currentWidget()
-        if not curr_script:
+    def exportScript(self):
+        currScript = self.parent.getEditorWidget().getEditorTabs().currentWidget()
+        if not currScript:
             return
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        dlg = PhtmFileDialog(None, "Save File", QFileDialog.AnyFile, "JSON files (*.json)", options=options, accept_mode=QFileDialog.AcceptSave)
-        if dlg.exec_():
-            if dlg.save_name:
-                if dlg.save_name[-5:] != ".json":
-                    dlg.save_name = dlg.save_name + ".json"
-                with open(dlg.save_name, "w") as write_file:
-                    write_file.write(eval(json.dumps(curr_script.toPlainText(), indent=4)))
+        dialog = PhtmFileDialog(None, "Save File", QFileDialog.AnyFile, "JSON files (*.json)", options=options, accept_mode=QFileDialog.AcceptSave)
+        if dialog.exec_():
+            if dialog.saveName:
+                if dialog.saveName[-5:] != ".json":
+                    dialog.saveName = dialog.saveName + ".json"
+                with open(dialog.saveName, "w") as write_file:
+                    write_file.write(eval(json.dumps(currScript.toPlainText(), indent=4)))
 
-    def export_phm(self, editor_widget):
+    def exportPhm(self, editorWidget):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        dlg = PhtmFileDialog(None, "Save Cluster", QFileDialog.AnyFile, "Cluster files (*.phm)", options=options, accept_mode=QFileDialog.AcceptSave)
-        if dlg.exec_():
-            if dlg.save_name:
-                return dlg.save_name
+        dialog = PhtmFileDialog(None, "Save Cluster", QFileDialog.AnyFile, "Cluster files (*.phm)", options=options, accept_mode=QFileDialog.AcceptSave)
+        if dialog.exec_():
+            if dialog.saveName:
+                return dialog.saveName
         return False

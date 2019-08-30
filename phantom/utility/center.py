@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QApplication
 
-def center_window(Obj):
+def centerWindow(Obj):
     '''
     place window at the center of the screen
     '''

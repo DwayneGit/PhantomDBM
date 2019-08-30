@@ -2,7 +2,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QDialog, QFileDialog, QVBoxLayout, QGraphicsDropShadowEffect
 from PyQt5.QtGui import QColor
 
-from phantom.utility import center_window
+from phantom.utility import centerWindow
 
 from . import PhtmTitleBar
 
@@ -18,23 +18,23 @@ class PhtmFileDialog(QDialog):
 
         self.setWindowModality(Qt.ApplicationModal)
 
-        self.window_title = title
+        self.windowTitle = title
 
         self.parent = parent
 
         self.oldPos = self.pos()
         self.accept_mode = accept_mode
 
-        self.title_bar = PhtmTitleBar(self)
-        self.title_bar.generate_title_bar()
+        self.titleBar = PhtmTitleBar(self)
+        self.titleBar.generateTitleBar()
 
         self.__layout = QVBoxLayout()
         self.__layout.setSpacing(0)
 
-        self.__layout.addWidget(self.title_bar)
+        self.__layout.addWidget(self.titleBar)
 
         self.selectedFiles = None
-        self.save_name = None
+        self.saveName = None
         
         self.__file_dialog = QFileDialog()
         self.__file_dialog.setOptions(options)
@@ -51,7 +51,7 @@ class PhtmFileDialog(QDialog):
         self.msg_selection = None
 
         # self.setGeometry(geometry)
-        # self.move(center_window(self))
+        # self.move(centerWindow(self))
 
         self.shadow = QGraphicsDropShadowEffect(self)
         self.shadow.setColor(QColor(30, 30, 30))
@@ -59,7 +59,7 @@ class PhtmFileDialog(QDialog):
         self.shadow.setOffset(3)
         self.setGraphicsEffect(self.shadow)
 
-        self.set_window_title(self.window_title)
+        self.setWindowTitle(self.windowTitle)
 
     def url_selected(self, result):
             self.accept()
@@ -67,15 +67,15 @@ class PhtmFileDialog(QDialog):
     def file_selected(self, selected_file):
         self.selectedFiles = self.__file_dialog.selectedFiles()
         if self.accept_mode == QFileDialog.AcceptSave:
-            self.save_name = self.__file_dialog.selectedUrls()[0].path()
+            self.saveName = self.__file_dialog.selectedUrls()[0].path()
         self.accept()
 
-    def set_window_title(self, text):
-        self.title_bar.set_window_title(text)
+    def setWindowTitle(self, text):
+        self.titleBar.setWindowTitle(text)
         self.setWindowTitle(text)
     
     def getWindowTitle(self):
-        return self.title_bar.window_title
+        return self.titleBar.windowTitle
 
     def get_layout(self):
         return self.__layout

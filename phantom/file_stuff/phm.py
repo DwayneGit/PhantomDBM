@@ -35,13 +35,13 @@ class phm():
             self.__scripts = OrderedDict()
 
 #---------------------------- Access Functions ------------------------------
-    def get_name(self):
+    def getName(self):
         return self.__name
         
-    def set_name(self, name):
+    def setName(self, name):
         self.__name = name
 
-    def get_scripts(self):
+    def getScripts(self):
         return self.__scripts
 
     def modified_by(self, user, script_title=None):
@@ -53,7 +53,7 @@ class phm():
 
     def get_last_modified_by(self, script_title=None):
         if script_title:
-            return self.__scripts[script_title].get_modified_by()
+            return self.__scripts[script_title].getModifiedBy()
         return self.__last_modified_by
 
     def get_access(self, user):

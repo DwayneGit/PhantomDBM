@@ -3,7 +3,7 @@ from .phtm_plain_text_edit import PhtmPlainTextEdit
 from .phtm_tool_bar import PhtmToolBar
 from .phtm_action import PhtmAction
 from .phtm_combo_box import PhtmComboBox
-from .phtm_title_bar import PhtmTitleBar
+from .phtm_titleBar import PhtmTitleBar
 from .phtm_message_box import PhtmMessageBox
 from .phtm_input_dialog import PhtmInputDialog
 from .phtm_file_dialog import PhtmFileDialog

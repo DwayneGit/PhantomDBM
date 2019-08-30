@@ -4,19 +4,19 @@ import re
 from datetime import datetime
 
 from PyQt5.QtCore import QObject, QThread
-from phantom.application_settings import settings
+from phantom.applicationSettings import settings
 
 class cleanTmpScripts(QThread):
     def __init__(self, length_days=0):
         QObject.__init__(self)
         
         self.length_days = length_days
-        self.thread_id = int(QThread.currentThreadId())  # cast to int() is necessary
+        self.threadId = int(QThread.currentThreadId())  # cast to int() is necessary
 
 
     def clean(self):
         num_deleted = 0
-        settings.__LOG__.logInfo(str(self.thread_id) + ": Cleaning temporary scripts...")
+        settings.__LOG__.logInfo(str(self.threadId) + ": Cleaning temporary scripts...")
 
         if not os.path.isdir('./tmp'):
             os.mkdir("tmp") # create folder fo temporary scripts
@@ -32,10 +32,10 @@ class cleanTmpScripts(QThread):
 
                 if datetime_object.day > self.length_days:
                     os.remove("tmp/" + file) # if file is longer than a day remove it
-                    settings.__LOG__.logInfo(str(self.thread_id) + ": " + file + " has been deleted")
+                    settings.__LOG__.logInfo(str(self.threadId) + ": " + file + " has been deleted")
                     num_deleted += 1
 
-        settings.__LOG__.logInfo(str(self.thread_id) + ": " + str(num_deleted) + " files deleted")
+        settings.__LOG__.logInfo(str(self.threadId) + ": " + str(num_deleted) + " files deleted")
 
     def run(self):
         self.clean()

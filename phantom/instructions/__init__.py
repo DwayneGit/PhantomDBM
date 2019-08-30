@@ -1,1 +1,1 @@
-from .dmi_handler import dmi_handler
+from .DmiHandler import DmiHandler

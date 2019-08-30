@@ -1,81 +1,82 @@
 class PhtmIcons():
-    def __init__(self, icon_set=None):
-        self.icon_set = icon_set
-        if self.icon_set:
-            self.set_icons()
+    def __init__(self, iconSet=None):
+        self.iconSet = None
+        self.setIconSet(iconSet)
+        if self.iconSet:
+            self.setIcons()
 
-    def set_icons_set(self, icon_set):
-        self.icon_set = icon_set
-        self.set_icons()
+    def setIconSet(self, iconSet):
+        self.iconSet = "icons/" + iconSet
+        self.setIcons()
 
-    def set_icons(self):
-        self.app_icon = "icons/" + self.icon_set + "/phantom.png"
-        self.play = "icons/" + self.icon_set +"/play.png"
-        self.pause = "icons/" + self.icon_set +"/pause.png"
-        self.save = "icons/" + self.icon_set +"/save.png"
-        self.stop = "icons/" + self.icon_set +"/stop.png"
-        self.edit = "icons/" + self.icon_set +"/edit.png"
-        self.sync = "icons/" + self.icon_set +"/sync.png"
-        self.info = "icons/" + self.icon_set +"/info.png"
-        self.warning = "icons/" + self.icon_set +"/warning.png"
-        self.close = "icons/" + self.icon_set +"/close.png"
-        self.add = "icons/" + self.icon_set +"/add.png"
-        self.settings = "icons/" + self.icon_set +"/settings.png"
-        self.load_file = "icons/" + self.icon_set +"/load-file.png"
-        self.import_file = "icons/" + self.icon_set +"/import_file.png"
-        self.export = "icons/" + self.icon_set +"/export.png"
-        self.close_tab = "icons/" + self.icon_set + "/close.png"
+    def setIcons(self):
+        self.appIcon = self.iconSet + "/phantom.png"
+        self.play = self.iconSet + "/play.png"
+        self.pause = self.iconSet + "/pause.png"
+        self.save = self.iconSet + "/save.png"
+        self.stop = self.iconSet + "/stop.png"
+        self.edit = self.iconSet + "/edit.png"
+        self.sync = self.iconSet + "/sync.png"
+        self.info = self.iconSet + "/info.png"
+        self.warning = self.iconSet + "/warning.png"
+        self.close = self.iconSet + "/close.png"
+        self.add = self.iconSet + "/add.png"
+        self.settings = self.iconSet + "/settings.png"
+        self.loadFile = self.iconSet + "/load-file.png"
+        self.importFile = self.iconSet + "/import_file.png"
+        self.export = self.iconSet + "/export.png"
+        self.closeTab = self.iconSet + "/close.png"
 
-        self.white_dot = "icons/white.png"
+        self.whiteDot = "icons/white.png"
         self.maximize = "icons/window_icons/icons8-maximize-window-48.png"
         self.minimze = "icons/window_icons/icons8-minimize-window-48.png"
         self.restore = "icons/window_icons/icons8-restore-window-100.png"
         self.close = "icons/window_icons/icons8-close-window-96.png"
 
-    def get_play(self):
+    def getPlay(self):
         return self.play
 
-    def get_pause(self):
+    def getPause(self):
         return self.pause
 
-    def get_save(self):
+    def getSave(self):
         return self.save
 
-    def get_app_icon(self):
-        return self.app_icon
+    def getAppIcon(self):
+        return self.appIcon
 
-    def get_stop(self):
+    def getStop(self):
         return self.stop
 
-    def get_edit(self):
+    def getEdit(self):
         return self.edit
 
-    def get_sync(self):
+    def getSync(self):
         return self.sync
 
-    def get_warning(self):
+    def getWarning(self):
         return self.warning
 
-    def get_info(self):
+    def getInfo(self):
         return self.info
 
-    def get_close(self):
+    def getClose(self):
         return self.close
 
-    def get_close_tab(self):
-        return self.close_tab
+    def getCloseTab(self):
+        return self.closeTab
 
-    def get_add(self):
+    def getAdd(self):
         return self.add
 
-    def get_settings(self):
+    def getSettings(self):
         return self.settings
 
-    def get_load_file(self):
-        return self.load_file
+    def getLoadFile(self):
+        return self.loadFile
 
-    def get_import_file(self):
-        return self.import_file
+    def getImportFile(self):
+        return self.importFile
 
-    def get_export(self):
+    def getExport(self):
         return self.export

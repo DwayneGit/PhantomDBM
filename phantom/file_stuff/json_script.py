@@ -30,31 +30,31 @@ class JsonScript():
 
         return to_str
 
-    def get_creator(self):
+    def getCreator(self):
         return self.__creator
 
-    def get_script(self):
+    def getScript(self):
         return self.__script
 
     def set_script(self, script):
         self.__script = script
 
-    def get_date_time_created(self):
+    def getDateTimeCreated(self):
         return self.__date_time_created
 
-    def get_date_time_modified(self):
+    def getDateTimeModified(self):
         return self.__date_time_modified
 
     def set_modified_by(self, modifier):
         self.__modified_by = modifier
 
-    def get_modified_by(self):
+    def getModifiedBy(self):
         return self.__modified_by
 
-    def set_title(self, title):
+    def setTitle(self, title):
         self.__title = title
 
-    def get_title(self):
+    def getTitle(self):
         return self.__title
 
     def update_date_time_modified(self):

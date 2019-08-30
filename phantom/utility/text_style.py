@@ -18,7 +18,7 @@ def translate_text(xfile, text_edit=None):
 
     return text_edit
 
-def read_text(xfile):
+def readText(xfile):
     if not xfile:
         raise Exception("File does not exist")
         

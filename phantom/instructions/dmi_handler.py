@@ -6,9 +6,9 @@ import pprint
 
 import untangle
 
-from phantom.application_settings import settings
+from phantom.applicationSettings import settings
 
-class dmi_handler():
+class DmiHandler():
     def __init__(self, db_handler, dmi_instr):
         try:
             self.xml_object = untangle.parse(dmi_instr)
@@ -40,15 +40,15 @@ class dmi_handler():
         direct_queue = None
         pattern_queue = None
         pattern_lkup_key = None
-        search_data = {}
+        queryData = {}
 
         try:
-            search_data['db_name'] = link.from_db.cdata
+            queryData['db_name'] = link.from_db.cdata
         except:
             pass
 
         try:
-            search_data['collection_name'] = link.from_collection.cdata
+            queryData['collection_name'] = link.from_collection.cdata
         except:
             pass
 
@@ -76,11 +76,11 @@ class dmi_handler():
                     direct_queue[lkup.in_key.cdata] = lkup.from_key.cdata
                     print(str(direct_queue)+"57")
 
-            search_data['store'] = link['store']
+            queryData['store'] = link['store']
 
             if not pattern_queue:
-                search_data['criteria'] = direct_queue
-                self.__search_db(search_data, data, link, srch)
+                queryData['criteria'] = direct_queue
+                self.__search_db(queryData, data, link, srch)
 
             else:
                 for item in pattern_queue:
@@ -112,17 +112,17 @@ class dmi_handler():
                         # pprint.pprint(criteria)
 
                     if direct_queue:
-                        search_data['criteria'] = criteria.copy()
-                        search_data['criteria'].update(direct_queue)
+                        queryData['criteria'] = criteria.copy()
+                        queryData['criteria'].update(direct_queue)
                     else:
-                        search_data['criteria'] = criteria
+                        queryData['criteria'] = criteria
                         
-                    self.__search_db(search_data, data, link, srch)
+                    self.__search_db(queryData, data, link, srch)
 
 
-    def __search_db(self, search_data, data, link, search):
+    def __search_db(self, queryData, data, link, search):
 
-        found_doc = self.db_handler.findDoc(**search_data)
+        found_doc = self.db_handler.findDoc(**queryData)
 
         if found_doc:
             if link['format'] == 'list':

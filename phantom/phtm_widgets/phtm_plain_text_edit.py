@@ -4,7 +4,7 @@ from PyQt5.QtCore import QSize, Qt, QRect, Qt
 from PyQt5.QtGui import QFont, QFontMetrics,  QPainter, QColor, QTextFormat
 from PyQt5.QtWidgets import QWidget, QTextEdit, QPlainTextEdit, QScrollBar
 
-from phantom.application_settings import settings
+from phantom.applicationSettings import settings
 
 class PhtmPlainTextEdit(QPlainTextEdit):
     def __init__(self, text=""):
@@ -108,11 +108,11 @@ class PhtmPlainTextEdit(QPlainTextEdit):
         for line in htmlText.splitlines():
             self.appendHtml(line)
 
-    def set_file_path(self, path):
-        self.file_path = path
+    def set_filePath(self, path):
+        self.filePath = path
 
-        file_name = re.split('^(.+)\/([^\/]+)$', path)
-        self.title = file_name[2]
+        fileName = re.split('^(.+)\/([^\/]+)$', path)
+        self.title = fileName[2]
 
 class _LineNumberArea(QWidget):
     def __init__(self, editor):

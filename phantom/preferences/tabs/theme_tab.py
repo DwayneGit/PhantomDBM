@@ -7,7 +7,7 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QGraphicsView, QGraphicsScene,
 from PyQt5.QtGui import QPalette, QColor
 from PyQt5.QtCore import Qt
 
-from phantom.application_settings import settings
+from phantom.applicationSettings import settings
 
 class theme_tab(QWidget):
     def __init__(self):

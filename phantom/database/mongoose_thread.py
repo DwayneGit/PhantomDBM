@@ -1,9 +1,9 @@
 import os
 from PyQt5.QtCore import pyqtSlot, pyqtSignal, QObject, QThread
 
-from Naked.toolshed.shell import execute_js
+from Naked.toolshed.shell import executeJScript
 
-from phantom.application_settings import settings
+from phantom.applicationSettings import settings
 
 class mongoose_thread(QObject):
     start = pyqtSignal(int) # signal data ready to be appended to th board
@@ -13,10 +13,10 @@ class mongoose_thread(QObject):
         QObject.__init__(self)
         self.dbHandler = dbHandler
 
-    def insert_docs(self):
+    def insertDocs(self):
         try:
-            execute_js('./phantom/database/js/index.js',
-                       arguments="insert " + self.dbHandler.get_uri() + " " + self.dbHandler.get_collection())
+            executeJScript('./phantom/database/js/index.js',
+                       arguments="insert " + self.dbHandler.getUri() + " " + self.dbHandler.getCollection())
             print(os.getpid())
 
         except Exception as err:
@@ -25,8 +25,8 @@ class mongoose_thread(QObject):
 
     def find_docs(self):
         try:
-            execute_js('./phantom/database/js/index.js',
-                       arguments="find " + self.dbHandler.get_uri() + " " + self.dbHandler.get_collection() + 'Schema')
+            executeJScript('./phantom/database/js/index.js',
+                       arguments="find " + self.dbHandler.getUri() + " " + self.dbHandler.getCollection() + 'Schema')
             print(os.getpid())
 
         except Exception as err:

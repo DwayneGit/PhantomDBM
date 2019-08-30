@@ -4,22 +4,22 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import QSize, QPoint, Qt
 from PyQt5.QtWidgets import QToolBar, QToolButton, QWidget, QAction, QLabel, QSizePolicy
 
-from phantom.application_settings import settings
+from phantom.applicationSettings import settings
 
 class PhtmTitleBar(QToolBar):
-    def __init__(self, window, is_main_window=False):
+    def __init__(self, window, is_MainWindow=False):
         super().__init__()
         
         self.window = window
-        self.window_title = ""
+        self.windowTitle = ""
         self.is_max = False
-        self.is_main_window = is_main_window
-        self.window_title = ""
-        self.setObjectName("title_bar")
+        self.is_MainWindow = is_MainWindow
+        self.windowTitle = ""
+        self.setObjectName("titleBar")
 
         self.setContextMenuPolicy(Qt.PreventContextMenu)
 
-    def generate_title_bar(self):
+    def generateTitleBar(self):
 
         self.setMovable(False)
         self.setFixedHeight(36)
@@ -28,14 +28,14 @@ class PhtmTitleBar(QToolBar):
         exit_bttn = QToolButton()
         exit_bttn.setDefaultAction(QAction(QIcon(settings.__ICONS__.close), "", self))
 
-        if self.is_main_window:
+        if self.is_MainWindow:
             # logo_bttn = QToolButton()
-            # logo_bttn.setDefaultAction(QAction(QIcon(settings.__ICONS__.app_icon), "phantom", self))
+            # logo_bttn.setDefaultAction(QAction(QIcon(settings.__ICONS__.appIcon), "phantom", self))
             # logo_bttn.setObjectName("logo")
             # self.addWidget(logo_bttn)
 
-            self.window_title = QLabel()
-            self.addWidget(self.window_title)
+            self.windowTitle = QLabel()
+            self.addWidget(self.windowTitle)
 
             spacer = QWidget()
             spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
@@ -60,8 +60,8 @@ class PhtmTitleBar(QToolBar):
             spacer = QWidget()
             spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
-            self.window_title = QLabel()
-            self.addWidget(self.window_title)
+            self.windowTitle = QLabel()
+            self.addWidget(self.windowTitle)
 
             self.addWidget(spacer)
 
@@ -92,5 +92,5 @@ class PhtmTitleBar(QToolBar):
         self.window.move(self.window.x() + delta.x(), self.window.y() + delta.y())
         self.window.oldPos = event.globalPos()
 
-    def set_window_title(self, title):
-        self.window_title.setText(title)
+    def setWindowTitle(self, title):
+        self.windowTitle.setText(title)

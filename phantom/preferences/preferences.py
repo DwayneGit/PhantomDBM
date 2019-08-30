@@ -2,7 +2,7 @@ import sys
 import os.path
 import json
 
-from phantom.application_settings import settings
+from phantom.applicationSettings import settings
 
 class Preferences():
     def __init__(self, configFileName, prefDict = None):

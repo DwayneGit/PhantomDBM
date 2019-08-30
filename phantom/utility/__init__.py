@@ -1,3 +1,3 @@
-from .validate_json import validate_json_script
-from .center import center_window
-from .text_style import *
+from .validate_json import validateJsonScript
+from .center import centerWindow
+from .textStyle import *

@@ -5,13 +5,13 @@ import regex
 from PyQt5.QtCore import QSize, Qt
 from PyQt5.QtWidgets import QWidget, QHBoxLayout, QLineEdit, QMessageBox, QVBoxLayout, QSizePolicy, QMenu, QAction
 
-from phantom.phtm_widgets import PhtmComboBox, PhtmPushButton, PhtmPlainTextEdit, PhtmMessageBox, PhtmInputDialog
+from phantom.phtmWidgets import PhtmComboBox, PhtmPushButton, PhtmPlainTextEdit, PhtmMessageBox, PhtmInputDialog
 
 from phantom.preferences.default_settings import default_schema_template
 
-from phantom.utility import text_style, validate_json_script
+from phantom.utility import textStyle, validateJsonScript
 
-from phantom.application_settings import settings
+from phantom.applicationSettings import settings
 
 class schema_tab(QWidget):
     def __init__(self, schema):
@@ -35,7 +35,7 @@ class schema_tab(QWidget):
         self.setLayout(schemaVBox)
 
 
-        self.__collection = settings.__DATABASE__.get_collection_name()
+        self.__collection = settings.__DATABASE__.getCollectionName()
         self.children = []
 
         self.__curr_item = "main"
@@ -45,15 +45,15 @@ class schema_tab(QWidget):
             self.__schema_editor.setReadOnly(True)
             return
 
-        self.db = settings.__DATABASE__.get_database_name()
-        if schema.get_script() == "{}":
+        self.db = settings.__DATABASE__.getDatabaseName()
+        if schema.getScript() == "{}":
             self.schema = default_schema_template(self.__collection)
         else:
-            self.schema = schema.get_script()
+            self.schema = schema.getScript()
         self.__schema_editor.appendPlainText(self.schema)
 
-        # if self.__schema.get_script():
-        #     self.__schema_editor.appendPlainText(self.__schema.get_script())
+        # if self.__schema.getScript():
+        #     self.__schema_editor.appendPlainText(self.__schema.getScript())
             # self.schema_box.setPlainText(self.schema)
 
         # self.schema_box = PhtmComboBox()
@@ -78,20 +78,20 @@ class schema_tab(QWidget):
     #     index = self.schema_box.view().indexAt(pos)
 
     #     renameAction = QAction("Rename", self)
-    #     renameAction.triggered.connect(lambda x: self.__rename_script(1))
+    #     renameAction.triggered.connect(lambda x: self.__renameScript(1))
 
     #     deleteAction = QAction("Delete", self)
-    #     deleteAction.triggered.connect(lambda x: self.__delete_script(1))
+    #     deleteAction.triggered.connect(lambda x: self.__deleteScript(1))
 
     #     menu.addAction(renameAction)
     #     menu.addAction(deleteAction)
 
     #     menu.popup(self.schema_box.view().mapToGlobal(pos))
 
-    # def __rename_script(self, x):
+    # def __renameScript(self, x):
     #     pass
 
-    # def __delete_script(self, x):
+    # def __deleteScript(self, x):
     #     pass
 
     # def btn_row_1(self):
@@ -153,16 +153,16 @@ class schema_tab(QWidget):
             return
 
         if self.__curr_item_changed:
-            err_msg = PhtmMessageBox(self, 'Save Changes', "Do you want to save changes made to this schema?",
+            errorMessage = PhtmMessageBox(self, 'Save Changes', "Do you want to save changes made to this schema?",
                                      [QMessageBox.Yes, QMessageBox.No])
-            if err_msg.exec_():
-                if err_msg.msg_selection == QMessageBox.Yes:
+            if errorMessage.exec_():
+                if errorMessage.msg_selection == QMessageBox.Yes:
                     if not self.__save_schema(curr):
                         self.schema_box.setCurrentIndex(self.schema_box.setCurrentIndex(self.__index_of_child(schema)))
                         return
 
         if schema == "main":
-            self.__schema_editor.setPlainText(self.__schema.get_script())
+            self.__schema_editor.setPlainText(self.__schema.getScript())
 
         self.__curr_item = schema
         self.__curr_item_changed = False

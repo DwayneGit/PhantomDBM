@@ -9,74 +9,74 @@ import socket
 from collections import OrderedDict
 
 from PyQt5.QtCore import pyqtSlot, pyqtSignal, QObject, QThread
-from phantom.instructions import dmi_handler
+from phantom.instructions import DmiHandler
 
-from phantom.utility import validate_json_script
+from phantom.utility import validateJsonScript
 
-from phantom.application_settings import settings
+from phantom.applicationSettings import settings
 
-from Naked.toolshed.shell import execute_js
+from Naked.toolshed.shell import executeJScript
 
-class upload_thread(QObject):
-    update_s = pyqtSignal(str) # signal data ready to be appended to th board
-    update_b = pyqtSignal(str) # signal data ready to be appended to th board
+class uploadScriptThread(QObject):
+    updateStatus = pyqtSignal(str) # signal data ready to be appended to th board
+    updateBoard = pyqtSignal(str) # signal data ready to be appended to th board
     start = pyqtSignal(int) # signal data ready to be appended to th board
     done = pyqtSignal(str)
 
-    thrd_done = pyqtSignal(str) # done signal
+    threadDone = pyqtSignal(str) # done signal
 
-    def __init__(self, script_s, dbHandler, dmi_instr=None):
+    def __init__(self, script_s, dbHandler, dmiInstr=None):
         QObject.__init__(self)
         self.script_s = script_s
         self.dbHandler = dbHandler
         self.pauseFlag = False
         self.stopFlag = False
 
-        self.thread_id = int(QThread.currentThreadId())  # cast to int() is necessary
+        self.threadId = int(QThread.currentThreadId())  # cast to int() is necessary
 
-        if dmi_instr:
-            self.dmi = dmi_handler(self.dbHandler, dmi_instr)
+        if dmiInstr:
+            self.dmi = DmiHandler(self.dbHandler, dmiInstr)
         else:
             self.dmi = None
 
     @pyqtSlot()
     def addToDatabase(self):
-        settings.__LOG__.logInfo(str(self.thread_id) + ": Running JSON Script...")
+        settings.__LOG__.logInfo(str(self.threadId) + ": Running JSON Script...")
         time.sleep(1)
 
         try:
             if isinstance(self.script_s, str):
-                self.__run_script(validate_json_script(self, self.script_s))
+                self.__runScript(validateJsonScript(self, self.script_s))
 
             elif isinstance(self.script_s, OrderedDict):
                 for key, value in self.script_s.items():
                     if key[:1] != "__" and key[-2:] != "__":
-                        self.__run_script(validate_json_script(None, value.get_script()))
-                        self.done.emit(value.get_title())
+                        self.__runScript(validateJsonScript(None, value.getScript()))
+                        self.done.emit(value.getTitle())
 
         except json.decoder.JSONDecodeError as err:
-            err_msg = "UPLD_ERR: Failed Sending Document(s) To Database.\nBuild Interrupted With Error:\n" + str(err)
-            self.update_b.emit(str(self.thread_id) + ": UPLD_ERR: Failed Sending Document To Database.\nBuild Interrupted With Error:\n" + str(err))
-            settings.__LOG__.logError("RUN_ERR:" + str(err_msg))
-            self.thrd_done.emit(str(self.thread_id) + ": Run failed. See log for details.")
+            errorMessage = "UPLD_ERR: Failed Sending Document(s) To Database.\nBuild Interrupted With Error:\n" + str(err)
+            self.updateBoard.emit(str(self.threadId) + ": UPLD_ERR: Failed Sending Document To Database.\nBuild Interrupted With Error:\n" + str(err))
+            settings.__LOG__.logError("RUN_ERR:" + str(errorMessage))
+            self.threadDone.emit(str(self.threadId) + ": Run failed. See log for details.")
             return False
 
         if not self.stopFlag:
-            self.thrd_done.emit(str(self.thread_id) + ": Run Complete.")
+            self.threadDone.emit(str(self.threadId) + ": Run Complete.")
         time.sleep(1)
 
-    def __run_script(self, script):
+    def __runScript(self, script):
         s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 
-        server_addr = "./phantom/database/js/src/tmp/db.sock"
-        settings.__LOG__.logInfo('Connecting to %s' % server_addr)
+        serverAddress = "./phantom/database/js/src/tmp/db.sock"
+        settings.__LOG__.logInfo('Connecting to %s' % serverAddress)
 
         try:
-            s.connect(server_addr)
+            s.connect(serverAddress)
 
         except socket.error as err:
             settings.__LOG__.logError(str(err))
-            self.thrd_done.emit(str(self.thread_id) + ": " + str(err))
+            self.threadDone.emit(str(self.threadId) + ": " + str(err))
             self.setStopFlag()
 
         if isinstance(script, dict):
@@ -89,14 +89,14 @@ class upload_thread(QObject):
                 data = s.recv(1024)
                 print(data.decode("utf-8"))
                 time.sleep(1)
-                self.__docs_to_run(s, docs)
+                self.__docsToRun(s, docs)
         else:
             s.sendall(bytes("set_model", encoding='utf-8'))
             data = s.recv(1024)
             time.sleep(1)
-            s.sendall(bytes(settings.__DATABASE__.get_collection_name(), encoding='utf-8'))
+            s.sendall(bytes(settings.__DATABASE__.getCollectionName(), encoding='utf-8'))
             time.sleep(1)
-            self.__docs_to_run(s, script)
+            self.__docsToRun(s, script)
 
         settings.__LOG__.logInfo('Client closing socket...')
         
@@ -105,35 +105,35 @@ class upload_thread(QObject):
         s.shutdown(1)
         s.close()
 
-    def __docs_to_run(self, s, docs):
+    def __docsToRun(self, s, docs):
         for i in range(0, len(docs)):
             self.start.emit(len(docs))
             if self.stopFlag:
                 return
             elif not self.pauseFlag:
-                send_data = docs[i]
+                sendData = docs[i]
                 if self.dmi:
-                    send_data = self.dmi.manipulate(docs[i])
+                    sendData = self.dmi.manipulate(docs[i])
                 try:
-                    s.sendall(bytes(json.dumps(send_data), encoding='utf-8'))
+                    s.sendall(bytes(json.dumps(sendData), encoding='utf-8'))
                     data = s.recv(1024)
                     if data.decode("utf-8") == "err":
                         raise Exception
                 except Exception as err:
-                    self.update_b.emit("Failed to upload document %d/%d" %(i+1, len(docs)) + "\n" + str(err))
+                    self.updateBoard.emit("Failed to upload document %d/%d" %(i+1, len(docs)) + "\n" + str(err))
                     continue
                 finally:
                     # print(data.decode("utf-8") + str(i))
-                    self.update_s.emit("Sending Objects to Database... %d/%d" %(i+1, len(docs)))
+                    self.updateStatus.emit("Sending Objects to Database... %d/%d" %(i+1, len(docs)))
                     time.sleep(1)
             else:
                 continue
 
-        self.thrd_done.emit(str(self.thread_id) + ": Complete")
+        self.threadDone.emit(str(self.threadId) + ": Complete")
 
     def setStopFlag(self):
-        settings.__LOG__.logInfo(str(self.thread_id) + ": Run Terminated Before Completion")
-        self.thrd_done.emit(str(self.thread_id) + ": Run Terminated Before Completion")
+        settings.__LOG__.logInfo(str(self.threadId) + ": Run Terminated Before Completion")
+        self.threadDone.emit(str(self.threadId) + ": Run Terminated Before Completion")
         self.stopFlag = True
 
     def togglePauseFlag(self):

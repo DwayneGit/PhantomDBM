@@ -6,19 +6,19 @@ from PyQt5.QtWidgets import QAction, QWidget, QSizePolicy
 
 from phantom.database import DatabaseHandler
 
-from phantom.phtm_widgets import PhtmToolBar, PhtmComboBox, PhtmPlainTextEdit, PhtmAction
+from phantom.phtmWidgets import PhtmToolBar, PhtmComboBox, PhtmPlainTextEdit, PhtmAction
 
-from phantom.application_settings import settings
+from phantom.applicationSettings import settings
 
-class main_tool_bar():
+class MainToolBar():
     """ application toolbars class """
-    def __init__(self, file_handler, parent):
+    def __init__(self, fileHandler , parent):
         self.parent = parent
 
-        self.instr_filepath = None
-        self.instr_filename = None
+        self.instrFilepath = None
+        self.instrFilename = None
 
-        self.file_handler = file_handler
+        self.fileHandler  = fileHandler 
 
         self.isRunning = False
         self.isPaused = True
@@ -28,23 +28,23 @@ class main_tool_bar():
         topTBar = PhtmToolBar()
         topTBar.setMovable(False)
 
-        tbadd = PhtmAction(settings.style_signal.icon_signal, settings.__ICONS__.get_add, "Add Script", self.parent)
-        tbadd.triggered.connect(self.parent.get_editor_widget().add_new_script)
+        tbadd = PhtmAction(settings.styleSignal.iconSignal, settings.__ICONS__.getAdd, "Add Script", self.parent)
+        tbadd.triggered.connect(self.parent.getEditorWidget().addNewScript)
         topTBar.addAction(tbadd)
 
-        tbsave = PhtmAction(settings.style_signal.icon_signal, settings.__ICONS__.get_save, "Save", self.parent)
-        tbsave.triggered.connect(lambda: self.file_handler.save_phm())
+        tbsave = PhtmAction(settings.styleSignal.iconSignal, settings.__ICONS__.getSave, "Save", self.parent)
+        tbsave.triggered.connect(lambda: self.fileHandler.savePhm())
         topTBar.addAction(tbsave)
 
-        tbphm = PhtmAction(settings.style_signal.icon_signal, settings.__ICONS__.get_import_file, "Open PHM", self.parent)
-        tbphm.triggered.connect(lambda:self.file_handler.load_phm())
+        tbphm = PhtmAction(settings.styleSignal.iconSignal, settings.__ICONS__.getImportFile, "Open PHM", self.parent)
+        tbphm.triggered.connect(lambda:self.fileHandler.loadPhm())
         topTBar.addAction(tbphm)
 
-        tbfiles = PhtmAction(settings.style_signal.icon_signal, settings.__ICONS__.get_export, "Export Script", self.parent)
-        tbfiles.triggered.connect(lambda: self.file_handler.export_script())
+        tbfiles = PhtmAction(settings.styleSignal.iconSignal, settings.__ICONS__.getExport, "Export Script", self.parent)
+        tbfiles.triggered.connect(lambda: self.fileHandler.exportScript())
         topTBar.addAction(tbfiles)
 
-        tbsettings = PhtmAction(settings.style_signal.icon_signal, settings.__ICONS__.get_settings, "Settings", self.parent)
+        tbsettings = PhtmAction(settings.styleSignal.iconSignal, settings.__ICONS__.getSettings, "Settings", self.parent)
         tbsettings.triggered.connect(self.parent.showPref)
         topTBar.addAction(tbsettings)
 
@@ -52,7 +52,7 @@ class main_tool_bar():
         spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         topTBar.addWidget(spacer)
 
-        tbinfo = PhtmAction(settings.style_signal.icon_signal, settings.__ICONS__.get_info, "Info", self.parent)
+        tbinfo = PhtmAction(settings.styleSignal.iconSignal, settings.__ICONS__.getInfo, "Info", self.parent)
         tbinfo.triggered.connect(lambda: QDesktopServices.openUrl(QUrl("https://github.com/DwayneGit/PhantomDBM/wiki")))
         topTBar.addAction(tbinfo)
 
@@ -60,7 +60,7 @@ class main_tool_bar():
         sideTBar = PhtmToolBar()
         sideTBar.setMovable(False)
 
-        blank = PhtmAction(settings.style_signal.icon_signal, settings.__ICONS__.get_app_icon, "", self.parent)
+        blank = PhtmAction(settings.styleSignal.iconSignal, settings.__ICONS__.getAppIcon, "", self.parent)
         blank.triggered.connect(lambda: QDesktopServices.openUrl(QUrl("https://github.com/DwayneGit/PhantomDBM")))
         sideTBar.addAction(blank)
 
@@ -68,24 +68,24 @@ class main_tool_bar():
         self.setRunBtnAction(False)
         sideTBar.addAction(self.tbrun)
 
-        settings.style_signal.icon_signal.connect(lambda: self.setRunBtnAction(self.isRunning))
+        settings.styleSignal.iconSignal.connect(lambda: self.setRunBtnAction(self.isRunning))
 
-        tbstop = PhtmAction(settings.style_signal.icon_signal, settings.__ICONS__.get_stop, "Stop Run", self.parent)
+        tbstop = PhtmAction(settings.styleSignal.iconSignal, settings.__ICONS__.getStop, "Stop Run", self.parent)
         tbstop.triggered.connect(lambda: self.setIsRunning(self.parent.r_ctrl.stopRun(self.isRunning)))
         sideTBar.addAction(tbstop)
 
-        self.curr_dmi = PhtmPlainTextEdit(self.parent.get_editor_widget().get_cluster().get_phm_scripts()["__dmi_instr__"]["name"])
-        self.curr_dmi.setObjectName("dmi_edit")
-        self.curr_dmi.setFixedSize(QSize(175, 31))
-        self.curr_dmi.setReadOnly(True)
-        self.curr_dmi.mouseDoubleClickEvent = self.__open_dmi_prefs
-        sideTBar.addWidget(self.curr_dmi)
+        self.currDmi = PhtmPlainTextEdit(self.parent.getEditorWidget().getCluster().getPhmScripts()["__dmi_instr__"]["name"])
+        self.currDmi.setObjectName("dmi_edit")
+        self.currDmi.setFixedSize(QSize(175, 31))
+        self.currDmi.setReadOnly(True)
+        self.currDmi.mouseDoubleClickEvent = self.__openDmiPrefs
+        sideTBar.addWidget(self.currDmi)
 
-        # tbload = PhtmAction(settings.style_signal.icon_signal, settings.__ICONS__.get_load_file), "load", self.parent)
+        # tbload = PhtmAction(settings.styleSignal.iconSignal, settings.__ICONS__.getLoadFile), "load", self.parent)
         # # tbload.triggered.connect()
         # sideTBar.addAction(tbload)
 
-        # tbedit = PhtmAction(settings.style_signal.icon_signal, settings.__ICONS__.get_edit), "edit", self.parent)
+        # tbedit = PhtmAction(settings.styleSignal.iconSignal, settings.__ICONS__.getEdit), "edit", self.parent)
         # # tbedit.triggered.connect()
         # sideTBar.addAction(tbedit)
 
@@ -94,7 +94,7 @@ class main_tool_bar():
         # toolBar is a pointer to an existing toolbar
         sideTBar.addWidget(spacer)
 
-        tbreload = PhtmAction(settings.style_signal.icon_signal, settings.__ICONS__.get_sync, "Sync To Client", self.parent)
+        tbreload = PhtmAction(settings.styleSignal.iconSignal, settings.__ICONS__.getSync, "Sync To Client", self.parent)
         tbreload.triggered.connect(self.parent.reloadDbNames)
         sideTBar.addAction(tbreload)
 
@@ -102,9 +102,9 @@ class main_tool_bar():
 
         self.dbnameMenu = PhtmComboBox()
         self.dbnameMenu.setFixedSize(dropdownSize)
-        self.dbnameMenu.addItems(DatabaseHandler.getDatabaseList(settings.__DATABASE__.get_host_name(), settings.__DATABASE__.get_port_number()))
+        self.dbnameMenu.addItems(DatabaseHandler.getDatabaseList(settings.__DATABASE__.getHostName(), settings.__DATABASE__.getPortNumber()))
 
-        index = self.dbnameMenu.findText(settings.__DATABASE__.get_database_name())
+        index = self.dbnameMenu.findText(settings.__DATABASE__.getDatabaseName())
         self.dbnameMenu.setCurrentIndex(index)
         self.dbnameMenu.currentTextChanged.connect(lambda: self.databaseNameChanged())
 
@@ -113,32 +113,32 @@ class main_tool_bar():
         self.collnameMenu = PhtmComboBox()
         self.collnameMenu.setFixedSize(dropdownSize)
         try:
-            self.collnameMenu.addItems(DatabaseHandler.getCollectionList(settings.__DATABASE__.get_host_name(), settings.__DATABASE__.get_port_number(), settings.__DATABASE__.get_database_name()))
+            self.collnameMenu.addItems(DatabaseHandler.getCollectionList(settings.__DATABASE__.getHostName(), settings.__DATABASE__.getPortNumber(), settings.__DATABASE__.getDatabaseName()))
         except:
             settings.__LOG__.logError("No collections found in database")
 
-        index = self.collnameMenu.findText(settings.__DATABASE__.get_collection_name())
+        index = self.collnameMenu.findText(settings.__DATABASE__.getCollectionName())
         self.collnameMenu.setCurrentIndex(index)
         self.collnameMenu.currentTextChanged.connect(lambda: self.collectionNameChanged())
         
         sideTBar.addWidget(self.collnameMenu)
 
-        # tbalert = PhtmAction(settings.style_signal.icon_signal, settings.__ICONS__.get_warning, "Schema Alert", self.parent)
+        # tbalert = PhtmAction(settings.styleSignal.iconSignal, settings.__ICONS__.getWarning, "Schema Alert", self.parent)
         # tbalert.triggered.connect(lambda: print())
         # sideTBar.addAction(tbalert)
 
         self.parent.body.addToolBar(Qt.TopToolBarArea, sideTBar)
         self.parent.body.addToolBar(Qt.LeftToolBarArea, topTBar)
 
-    def set_instructions(self):
-        self.instr_filename, self.instr_filepath = self.file_handler.load_instructions()
+    def setInstructions(self):
+        self.instrFilename, self.instrFilepath = self.fileHandler.loadInstructions()
         # self.dmi_selected.setDisabled(False)
-        self.curr_dmi.setPlainText(self.instr_filename)
+        self.currDmi.setPlainText(self.instrFilename)
 
-    def get_instr_filepath(self):
-        return self.instr_filepath
+    def getInstrFilepath(self):
+        return self.instrFilepath
 
-    def __open_dmi_prefs(self, e):
+    def __openDmiPrefs(self, e):
         self.parent.showPref(1)
 
     def setRunState(self, state):
@@ -154,35 +154,35 @@ class main_tool_bar():
     @pyqtSlot()
     def setRunBtnAction(self, state):
         if not state:
-            self.setRunBtnIcon(QIcon(settings.__ICONS__.get_play()))
+            self.setRunBtnIcon(QIcon(settings.__ICONS__.getPlay()))
             self.tbrun.setIconText("run")
             # if self.parent.runs > 0:
             #     self.tbrun.triggered.disconnect()
             self.tbrun.triggered.connect(self.__run)
 
         elif state:
-            self.setRunBtnIcon(QIcon(settings.__ICONS__.get_pause()))
+            self.setRunBtnIcon(QIcon(settings.__ICONS__.getPause()))
             self.tbrun.setIconText("pause")
             self.tbrun.triggered.disconnect()
     #         self.tbrun.triggered.connect(self.pauseRun)
 
     def __run(self): 
-        if self.parent.get_editor_widget().get_editor_tabs().currentWidget():
+        if self.parent.getEditorWidget().getEditorTabs().currentWidget():
             self.parent.r_ctrl.run(0)
 
     def databaseNameChanged(self):
         self.reloadCollectionNames()
-        settings.__DATABASE__.set_database_name(self.dbnameMenu.currentText())
+        settings.__DATABASE__.setDatabaseName(self.dbnameMenu.currentText())
 
     def collectionNameChanged(self):
-        settings.__DATABASE__.set_collection_name(self.collnameMenu.currentText())
+        settings.__DATABASE__.setCollectionName(self.collnameMenu.currentText())
 
     def reloadCollectionNames(self):
         self.collnameMenu.currentTextChanged.disconnect()
         self.collnameMenu.clear()
 
-        self.collnameMenu.addItems(DatabaseHandler.getCollectionList(settings.__DATABASE__.get_host_name(), settings.__DATABASE__.get_port_number(), self.dbnameMenu.currentText()))
+        self.collnameMenu.addItems(DatabaseHandler.getCollectionList(settings.__DATABASE__.getHostName(), settings.__DATABASE__.getPortNumber(), self.dbnameMenu.currentText()))
         self.collnameMenu.currentTextChanged.connect(lambda: self.collectionNameChanged())
 
-        index = self.collnameMenu.findText(settings.__DATABASE__.get_collection_name())
+        index = self.collnameMenu.findText(settings.__DATABASE__.getCollectionName())
         self.collnameMenu.setCurrentIndex(index)
