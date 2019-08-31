@@ -2,8 +2,8 @@ from pytestqt import qtbot
 
 from PyQt5.QtCore import QRect
 
-from phantom.phtmWidgets.phtm_dialog import PhtmDialog
-from phantom.preferences import PreferenceBody as body
+from Phantom.PhtmWidgets.phtm_dialog import PhtmDialog
+from Phantom.Preferences import PreferenceBody as body
 
 def test_PreferenceBody():
 
