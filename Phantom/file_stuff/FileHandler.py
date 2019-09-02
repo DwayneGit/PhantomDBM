@@ -121,7 +121,8 @@ class FileHandler(QWidget):
     def exportScript(self):
         try:
             currScript = self.__editorWidget.getEditorTabs().currentWidget()
-        except:
+        except Exception as err:
+            Settings.__LOG__.logError("EXPORT_ERR: " + str(err))
             return
 
         if not currScript:

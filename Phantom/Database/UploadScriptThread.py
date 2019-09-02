@@ -68,7 +68,7 @@ class UploadScriptThread(QObject):
     def __runScript(self, script):
         s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 
-        serverAddress = "./phantom/database/js/src/tmp/db.sock"
+        serverAddress = "./Phantom/Database/js/src/tmp/db.sock"
         Settings.__LOG__.logInfo('Connecting to %s' % serverAddress)
 
         try:

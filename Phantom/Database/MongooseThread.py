@@ -15,7 +15,7 @@ class MongooseThread(QObject):
 
     def insertDocs(self):
         try:
-            execute_js('./phantom/database/js/index.js',
+            execute_js('./Phantom/Database/js/index.js',
                        arguments="insert " + self.databaseHandler.getUri() + " " + self.databaseHandler.getCollection())
             print(os.getpid())
 
@@ -25,7 +25,7 @@ class MongooseThread(QObject):
 
     def find_docs(self):
         try:
-            execute_js('./phantom/database/js/index.js',
+            execute_js('./Phantom/Database/js/index.js',
                        arguments="find " + self.databaseHandler.getUri() + " " + self.databaseHandler.getCollection() + 'Schema')
             print(os.getpid())
 

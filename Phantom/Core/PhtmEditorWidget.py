@@ -321,7 +321,7 @@ class PhtmEditorWidget(QWidget):
         return self.__cluster
 
     def savePhm(self, filePath):
-        self.statusSignal.emit("Saving PHM ...")
+        self.statusSignal.emit("Saving PHM ...", 2000)
         for i in range(self.__editorTabs.count()):
             self.__editorTabs.saveEditor(i)
 

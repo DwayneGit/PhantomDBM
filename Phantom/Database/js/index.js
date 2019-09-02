@@ -17,7 +17,7 @@ try{
     fs.mkdirSync(path.join(__dirname, "src/tmp"))
 }
 catch(err){
-    console.error(err.message)
+    // console.error(err.message)
 }
 
 var server = null

@@ -130,6 +130,7 @@ class MainWindow(QMainWindow):
         self.__body.addToolBar(Qt.LeftToolBarArea, self.__mainToolBar.getSideToolBar())
 
         self.__r_ctrl.setMainToolbar(self.__mainToolBar)
+        self.__r_ctrl.setEditorWidget(self.__editorWidget)
 
         self.__menuBar = PhtmMenuBar(self.fileHandler, self)
         self.__menuBar.initMenuBar()
@@ -180,7 +181,7 @@ class MainWindow(QMainWindow):
 
     @pyqtSlot(int)
     def setProgressMax(self, max):
-        self.__progressBar.setMaximum(value)
+        self.__progressBar.setMaximum(max)
 
     @pyqtSlot(int)
     def updateProgress(self, value):

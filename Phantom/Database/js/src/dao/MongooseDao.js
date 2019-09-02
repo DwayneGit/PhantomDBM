@@ -46,6 +46,9 @@ class MongooseDOA {
                     test.save().then((err) => {
                         socket.write("Document saved")
                     })
+                    .catch(err=>{
+                        socket.write(err.message)
+                    })
                 }
                 catch (err) {
                     console.error(err)

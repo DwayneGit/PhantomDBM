@@ -24,13 +24,16 @@ class RunCtrl(QWidget):
         self.progressMaxSignal = parent.progressMaxSignal
 
         self.__mainToolbar = None
-        self.__editorWidget = parent.getEditorWidget()
+        self.__editorWidget = None
 
         self.__uploadThread = None
         self.__mongooseThread = None
 
     def setMainToolbar(self, mainToolbar):
         self.__mainToolbar = mainToolbar
+
+    def setEditorWidget(self, editorWidget):
+        self.__editorWidget = editorWidget
 
     def __runScript(self, script_s):
         self.__mainToolbar.setRunState(True)
