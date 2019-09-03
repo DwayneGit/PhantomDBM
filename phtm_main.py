@@ -4,15 +4,14 @@ import json
 
 from PyQt5.QtWidgets import QApplication
 
-from phantom import PhtmMainWindow, settings
+from Phantom import MainWindow, Settings
 
 if __name__ == '__main__':
     APP = QApplication(sys.argv)
 
-    settings.init(APP, "phantom/application_settings/app_settings.json")
-    APP.setStyleSheet(settings.__STYLESHEET__)
+    Settings.init(APP, "Phantom/ApplicationSettings/app_settings.json")
+    APP.setStyleSheet(Settings.__STYLESHEET__)
 
-    MANAGER = PhtmMainWindow()
-
+    MANAGER = MainWindow()
     MANAGER.show()
     sys.exit(APP.exec_())
