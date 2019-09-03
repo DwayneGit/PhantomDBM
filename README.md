@@ -24,7 +24,7 @@ Features
 Installation
 ------------
 
-Install $project by running:
+Install project by running:
 
     install project
 
