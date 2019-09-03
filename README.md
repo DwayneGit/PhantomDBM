@@ -30,12 +30,9 @@ Install $project by running:
 
 To start program run the build.sh file:  
   
-$ chmod 770 build.sh  
-$ ./build.sh  
-$ python3 phtm_main.py
-=======
-    chmod 770 build.sh  
-    ./build.sh  
+    $ chmod 770 build.sh  
+    $ ./build.sh  
+    $ python3 phtm_main.py
 
 Contribute
 ----------
