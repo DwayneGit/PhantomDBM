@@ -11,7 +11,7 @@ from Phantom.ApplicationSettings import Settings
 class FileHandler(QWidget):
     @staticmethod
     def loadInstructions():
-        dialog = PhtmFileDialog(None, "Open", QFileDialog.AnyFile, "XML files (*.xml)", options=QFileDialog.DontUseNativeDialog|QFileDialog.DontUseCustomDirectoryIcons)
+        dialog = PhtmFileDialog(None, "Open", QFileDialog.AnyFile, "JSON files (*.json)", options=QFileDialog.DontUseNativeDialog|QFileDialog.DontUseCustomDirectoryIcons)
         filenames = []
 
         if dialog.exec_():

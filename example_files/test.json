@@ -1,47 +1,55 @@
 {
-    "root":{
-        "link":[
-            {
-                "method" : "search",
-                "format" : "list",
-                "deselect" : "__v _id",
-                "from_collection" : "characters",
-                "search" : {
-                    "key" : "kana_characters",
-                    "look_up" : {
-                        "method" : "pattern",
-                        "pattern" : "",
-                        "from_key" : "inKana",
-                        "in_key": [
-                            "character",
-                            "dakuten->character",
-                            "hanakuten->character"
-                        ]
-                    }
-                }
-            },
-            {
-                "method" : "search",
-                "format" : "list",
-                "deselect" : "__v _id",
-                "from_collection" : "characters",
-                "search" : {
-                    "key" : "kana_characters",
-                    "look_up" : {
-                        "method" : "pattern",
-                        "pattern" : "",
-                        "from_key" : "inKana",
-                        "in_key": [
-                            "character"
-                        ],
-                        "filter":{
-                            "from_key" : "kanji",
-                            "in_key": "script"
-                            
+    "link":[
+        {
+            "method" : "search",
+            "format" : "list",
+            "deselect" : "__v _id",
+            "from_collection" : "characters",
+            "search" : [
+                {
+                    "add_key" : "kana_characters",
+                    "look_up" : [
+                        {
+                            "method" : "pattern",
+                            "pattern" : "",
+                            "from_key" : "inKana",
+                            "in_key": [
+                                "character",
+                                "dakuten->character",
+                                "hanakuten->character"
+                            ]
                         }
-                    }
+                    ]
                 }
-            }
-        ]
-    }
+            ]
+        },
+        {
+            "method" : "search",
+            "format" : "list",
+            "deselect" : "__v _id",
+            "from_collection" : "characters",
+            "search" : [
+                {
+                    "add_key" : "kana_characters",
+                    "look_up" : [
+                        {
+                            "method" : "pattern",
+                            "pattern" : "",
+                            "from_key" : "inKana",
+                            "in_key": [
+                                "character"
+                            ],
+                            "filter":[
+                                {
+                                    "from_key" : "kanji",
+                                    "in_key": "script"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+
 }

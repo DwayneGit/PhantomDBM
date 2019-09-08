@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import re
+import json
 import copy
 import pprint
 
@@ -11,11 +12,10 @@ from Phantom.ApplicationSettings import Settings
 class DmiHandler():
     def __init__(self, dmiInstr):
         try:
-            self.xmlObject = untangle.parse(dmiInstr)
+            self.root = json.loads(dmiInstr)
         except Exception as err:
             Settings.__LOG__.logError("DMI_ERR: Error untangleing xml document.\n" + str(err))
             return
-        self.root = self.xmlObject.root
 
         self.configureInstructionSettings()
 
@@ -29,10 +29,8 @@ class DmiHandler():
 
     def manipulate(self, data):
         tempData = copy.deepcopy(data) # deep copy data to be manipulated
-        for link in self.root.link:
-            # print("hello")
+        for link in self.root.get('link'):
             self.__handleLink(link, tempData)
-        # pprint.pprint(tempData)
         return tempData
 
     def __handleLink(self, link, data):
@@ -42,46 +40,47 @@ class DmiHandler():
         queryData = {}
 
         try:
-            queryData['db_name'] = link.from_db.cdata
+            queryData['db_name'] = link['from_db']
         except:
             pass
 
         try:
-            queryData['collection_name'] = link.from_collection.cdata
+            queryData['collection_name'] = link['from_collection']
         except:
             pass
 
-        for srch in getattr(link, 'search', []):
-            for lookup in getattr(srch, 'look_up', []):
-                if not isinstance(lookup.from_key.cdata, str):
+        for srch in (link.get('search') or []):
+            for lookup in (srch.get('look_up') or []):
+                if not isinstance(lookup['from_key'], str):
                     Settings.__LOG__.logError("DMI_ERR: Value to look up is not a string")
                     return
 
-                elif not lookup.from_key.cdata in data:
+                elif not lookup['from_key'] in data:
                     return
 
                 # if more than one look_ups return error
-                if lookup['method'] == "pattern":
-                    patternLookupKey = lookup
-                    if not lookup['pattern'] or lookup['pattern'] == "":
-                        patternQueue = list(data[lookup.from_key.cdata])
-                    else:
-                        patternQueue = re.split(lookup['pattern'], lookup.from_key.cdata)
-                    # pprint.pprint(patternQueue)
+                if lookup.get('method'):
+                    if  lookup['method'] == "pattern":
+                        patternLookupKey = lookup
+                        if not lookup.get('pattern'):
+                            patternQueue = list(data[lookup['from_key']])
+                        else:
+                            patternQueue = re.split(lookup['pattern'], lookup['from_key'])
+                        # pprint.pprint(patternQueue)
 
-                elif lookup['method'] == "direct":
-                    if not directQueue:
-                        directQueue = {}
-                    directQueue[lookup.in_key.cdata] = lookup.from_key.cdata
-                    print(str(directQueue)+"57")
+                    elif lookup['method'] == "direct":
+                        if not directQueue:
+                            directQueue = {}
+                        directQueue[lookup['in_key']] = lookup['from_key']
+                        print(str(directQueue)+"57")
 
             queryData['select'] = {}
             
-            if link['select']:
+            if link.get('select'):
                 for field in link['select'].split():
                     queryData['select'][field] = 1
 
-            elif link['deselect']:
+            elif link.get('deselect'):
                 for field in link['deselect'].split():
                     queryData['select'][field] = 0
 
@@ -97,24 +96,26 @@ class DmiHandler():
                         https://stackoverflow.com/questions/8859874/pymongo-search-dict-or-operation
                     '''
                     criteria = {}
-                    if isinstance(patternLookupKey.in_key, list):
+                    if isinstance(patternLookupKey['in_key'], list):
                         criteria['$or'] = []
-                        for key in patternLookupKey.in_key:
+                        for key in patternLookupKey['in_key']:
                             temp = {}
-                            point = re.split(r"\W+", key.cdata)
+                            point = re.split(r"\W+", key)
                             newKey = ""
                             for path in point:
                                 newKey += "." + path
                             temp[newKey[1:]] = item
                             criteria['$or'].append(temp)
-                    elif isinstance(patternLookupKey.in_key, untangle.Element):
-                        criteria[patternLookupKey.in_key.cdata] = item
+                    elif isinstance(patternLookupKey['in_key'], str):
+                        criteria[patternLookupKey['in_key']] = item
+                    else:
+                        raise Exception("DMI_ERR: No in_key for lookup instruction")
 
-                    for filt in getattr(lookup, 'filter', []):
+                    for filt in (lookup.get('filter') or []):
                         temp = {}
                         temp['$and'] = []
                         temp['$and'].append(criteria)
-                        temp['$and'].append({filt.in_key.cdata : filt.from_key.cdata})
+                        temp['$and'].append({filt['in_key'] : filt['from_key']})
                         criteria = temp
                         # pprint.pprint(criteria)
 
@@ -128,7 +129,6 @@ class DmiHandler():
 
 
     def __searchDatabase(self, queryData, data, link, search):
-
         foundDocument = Settings.__DATABASE__.findDoc(**queryData)
 
         if foundDocument:
