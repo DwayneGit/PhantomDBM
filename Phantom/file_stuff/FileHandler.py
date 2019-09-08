@@ -9,6 +9,20 @@ from Phantom.PhtmWidgets import PhtmMessageBox, PhtmFileDialog
 
 from Phantom.ApplicationSettings import Settings
 class FileHandler(QWidget):
+    @staticmethod
+    def loadInstructions():
+        dialog = PhtmFileDialog(None, "Open", QFileDialog.AnyFile, "XML files (*.xml)", options=QFileDialog.DontUseNativeDialog|QFileDialog.DontUseCustomDirectoryIcons)
+        filenames = []
+
+        if dialog.exec_():
+            filenames = dialog.selectedFiles
+
+            filenameWithExtension = os.path.basename(filenames[0])
+            filename = os.path.splitext(filenameWithExtension)[0]
+
+            return filename, filenames[0]
+        return "", None
+
     def __init__(self, parent):
         super().__init__()
         self.adjustSignal = None
@@ -26,19 +40,6 @@ class FileHandler(QWidget):
 
     def setAdjustSignal(self, signal):
         self.adjustSignal = signal
-
-    def loadInstructions(self):
-        dialog = PhtmFileDialog(None, "Open", QFileDialog.AnyFile, "XML files (*.xml)", options=QFileDialog.DontUseNativeDialog|QFileDialog.DontUseCustomDirectoryIcons)
-        filenames = []
-
-        if dialog.exec_():
-            filenames = dialog.selectedFiles
-
-            filenameWithExtension = os.path.basename(filenames[0])
-            filename = os.path.splitext(filenameWithExtension)[0]
-
-            return filename, filenames[0]
-        return "", None
 
     def loadScript(self):
         dialog = PhtmFileDialog(None, "Open", QFileDialog.AnyFile, "JSON files (*.json)", options=QFileDialog.DontUseNativeDialog|QFileDialog.DontUseCustomDirectoryIcons)

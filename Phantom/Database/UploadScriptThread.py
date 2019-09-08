@@ -5,6 +5,7 @@ import json
 import time
 import signal
 import socket
+import pprint
 
 from collections import OrderedDict
 
@@ -25,17 +26,16 @@ class UploadScriptThread(QObject):
 
     threadDone = pyqtSignal(str) # done signal
 
-    def __init__(self, script_s, databaseHandler, dmiInstr=None):
+    def __init__(self, script_s, dmiInstr=None):
         QObject.__init__(self)
         self.script_s = script_s
-        self.databaseHandler = databaseHandler
         self.pauseFlag = False
         self.stopFlag = False
 
         self.threadId = int(QThread.currentThreadId())  # cast to int() is necessary
 
         if dmiInstr:
-            self.dmi = DmiHandler(self.databaseHandler, dmiInstr)
+            self.dmi = DmiHandler(dmiInstr)
         else:
             self.dmi = None
 
@@ -85,10 +85,12 @@ class UploadScriptThread(QObject):
                 data = s.recv(1024)
                 print(data.decode("utf-8"))
                 time.sleep(1)
+
                 s.sendall(bytes(model, encoding='utf-8'))
                 data = s.recv(1024)
                 print(data.decode("utf-8"))
                 time.sleep(1)
+                
                 self.__docsToRun(s, docs)
         else:
             s.sendall(bytes("set_model", encoding='utf-8'))
@@ -114,6 +116,7 @@ class UploadScriptThread(QObject):
                 sendData = docs[i]
                 if self.dmi:
                     sendData = self.dmi.manipulate(docs[i])
+                    # pprint.pprint(sendData)
                 try:
                     s.sendall(bytes(json.dumps(sendData), encoding='utf-8'))
                     data = s.recv(1024)

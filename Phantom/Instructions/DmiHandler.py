@@ -9,13 +9,12 @@ import untangle
 from Phantom.ApplicationSettings import Settings
 
 class DmiHandler():
-    def __init__(self, databaseHandler, dmiInstr):
+    def __init__(self, dmiInstr):
         try:
             self.xmlObject = untangle.parse(dmiInstr)
         except Exception as err:
             Settings.__LOG__.logError("DMI_ERR: Error untangleing xml document.\n" + str(err))
             return
-        self.databaseHandler = databaseHandler
         self.root = self.xmlObject.root
 
         self.configureInstructionSettings()
@@ -76,7 +75,15 @@ class DmiHandler():
                     directQueue[lookup.in_key.cdata] = lookup.from_key.cdata
                     print(str(directQueue)+"57")
 
-            queryData['store'] = link['store']
+            queryData['select'] = {}
+            
+            if link['select']:
+                for field in link['select'].split():
+                    queryData['select'][field] = 1
+
+            elif link['deselect']:
+                for field in link['deselect'].split():
+                    queryData['select'][field] = 0
 
             if not patternQueue:
                 queryData['criteria'] = directQueue
@@ -122,7 +129,7 @@ class DmiHandler():
 
     def __searchDatabase(self, queryData, data, link, search):
 
-        foundDocument = self.databaseHandler.findDoc(**queryData)
+        foundDocument = Settings.__DATABASE__.findDoc(**queryData)
 
         if foundDocument:
             if link['format'] == 'list':

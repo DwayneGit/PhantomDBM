@@ -43,9 +43,8 @@ class RunCtrl(QWidget):
         Settings.__LOG__.logInfo("Connected to Database. " + Settings.__DATABASE__.getDatabaseName() + " collection " + Settings.__DATABASE__.getCollectionName())
         self.boardSignal.emit("Connected to Database. " + Settings.__DATABASE__.getDatabaseName() + " collection " + Settings.__DATABASE__.getCollectionName())
 
-        self.__mongooseThread = MongooseThread(Settings.__DATABASE__) # instanciate the Q object
-        self.__uploadThread = UploadScriptThread(script_s, Settings.__DATABASE__,
-                                         self.__editorWidget.getCluster().getPhmScripts()["__dmi_instr__"]["instr"]) # instanciate the Q object
+        self.__mongooseThread = MongooseThread() # instanciate the Q object
+        self.__uploadThread = UploadScriptThread(script_s, self.__editorWidget.getCluster().getPhmScripts()["__dmi_instr__"]["instr"]) # instanciate the Q object
 
         thread1 = QThread(self) # create a thread
         thread2 = QThread(self)

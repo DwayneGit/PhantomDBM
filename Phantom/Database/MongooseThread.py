@@ -9,14 +9,13 @@ class MongooseThread(QObject):
     start = pyqtSignal(int) # signal data ready to be appended to th board
     done = pyqtSignal(str)
 
-    def __init__(self, databaseHandler):
+    def __init__(self):
         QObject.__init__(self)
-        self.databaseHandler = databaseHandler
 
     def insertDocs(self):
         try:
             execute_js('./Phantom/Database/js/index.js',
-                       arguments="insert " + self.databaseHandler.getUri() + " " + self.databaseHandler.getCollection())
+                       arguments="insert " + Settings.__DATABASE__.getUri() + " " + Settings.__DATABASE__.getCollection())
             print(os.getpid())
 
         except Exception as err:
@@ -26,7 +25,7 @@ class MongooseThread(QObject):
     def find_docs(self):
         try:
             execute_js('./Phantom/Database/js/index.js',
-                       arguments="find " + self.databaseHandler.getUri() + " " + self.databaseHandler.getCollection() + 'Schema')
+                       arguments="find " + Settings.__DATABASE__.getUri() + " " + Settings.__DATABASE__.getCollection() + 'Schema')
             print(os.getpid())
 
         except Exception as err:

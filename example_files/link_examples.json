@@ -1,0 +1,65 @@
+[
+    {
+        "root":{
+            "link":{
+                "method" : "search",
+                "store" : "reference",
+                "format" : "auto",
+                "from_db" : "__DATABASE__",
+                "from_col" : "__COLLECTION__",
+                "search_key" : {
+                    "key" : "new_key",
+                    "criteria" : "single",
+                    "look_up" : {
+                        "method" : "pattern",
+                        "pattern" : "",
+                        "for_value" : "SEARCH_FOR_THIS_VALUE",
+                        "in_field": "IN_THIS_FIELD"
+                    }
+                }
+            }
+        }
+    },
+
+    {
+        "root":{
+            "link":[
+                {
+                    "method" : "search",
+                    "store" : "complete",
+                    "format" : "list",
+                    "from_db" : "__DATABASE__",
+                    "from_col" : "__COLLECTION__",
+                    "search_key" : {
+                        "key" : "new_key",
+                        "criteria" : "multi",
+                        "criteria_match" : "specified",
+                        "look_up" : [
+                            {
+                                "method" : "pattern",
+                                "pattern" : "\\w+",
+                                "match" : "yes",
+                                "for_value" : "search_for_ID",
+                                "in_field": "ID"
+                            },
+                            {
+                                "method" : "pattern",
+                                "pattern" : "[A-Za-z]+",
+                                "match" : "yes",
+                                "for_value" : "search_for_NAME",
+                                "in_field": "NAME"
+                            },
+                            {
+                                "method" : "pattern",
+                                "pattern" : "[A-Za-z ]+",
+                                "match" : "yes",
+                                "for_value" : "search_for_JOB",
+                                "in_field": "COMPANY"
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    }
+]

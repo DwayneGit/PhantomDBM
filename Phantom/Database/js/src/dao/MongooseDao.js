@@ -4,10 +4,17 @@ const path = require('path')
 class MongooseDOA {
 
     constructor(db_uri, collection){
-        var host = /(?<=\/)([\w]+)(?<!:)/g.exec(db_uri)[0]
-        var port = /(?<=:)([\w]+)(?<!\/)/g.exec(db_uri)[0]
-        var database = /\/([\w]+)$/g.exec(db_uri)[1]
-
+        console.log(db_uri)
+        try{
+            var host = /(?<=\/)([\w]+)(?<!:)/g.exec(db_uri)[0]
+            var port = /(?<=:)([\w]+)(?<!\/)/g.exec(db_uri)[0]
+            var database = /\/([\w]+)$/g.exec(db_uri)[1]
+        }
+        catch(err){
+            console.log(err)
+            process.exit(0)
+            return
+        }
         var s = {}
         const normalizedPath = path.join(__dirname, "../schemas/" + database + "_" + collection + "/");
         fs.readdirSync(normalizedPath).forEach(function(file) {
@@ -41,14 +48,27 @@ class MongooseDOA {
                     }
 
                     var d = JSON.parse(data.toString())
-                    var test = new this.schemas[this.model](d)
-                    
-                    test.save().then((err) => {
-                        socket.write("Document saved")
-                    })
-                    .catch(err=>{
-                        socket.write(err.message)
-                    })
+                    if (d._id){
+                        var id = d._id;
+                        delete d._id;
+                        this.schemas[this.model].update({_id: id}, d, {upsert: true, setDefaultsOnInsert: true},
+                            (err) => {
+                                if(err)
+                                    socket.write(err.message)
+                                socket.write("Document saved")
+                            }
+                        )
+                     }   
+                    else{
+                        var test = new this.schemas[this.model](d)
+                        
+                        test.save().then((err) => {
+                            socket.write("Document saved")
+                        })
+                        .catch(err=>{
+                            socket.write(err.message)
+                        })
+                    }
                 }
                 catch (err) {
                     console.error(err)

@@ -2,7 +2,7 @@
 
 <!-- example 1 -->
 <root>
-    <link method="search" store="complete" format="list">
+    <link method="search" format="list" select="" deselect="__v _id">
         <from_collection>characters</from_collection>
         <search add_key="kana_characters">
             <look_up method="pattern" pattern="">
@@ -14,7 +14,7 @@
             </look_up>
         </search>
     </link>
-    <link method="search" store="complete" format="list">
+    <link method="search" format="list" select="" deselect="__v _id">
         <from_collection>characters</from_collection>
         <search add_key="kanji_characters" >
             <look_up method="pattern" pattern="">

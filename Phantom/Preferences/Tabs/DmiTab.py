@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QSizePolicy, QHBoxLayout
 from PyQt5.QtCore import QSize
 
 from Phantom.Utility import TextStyle
-from Phantom.file_stuff import FileHandler as f_ctrl
+from Phantom.file_stuff import FileHandler
 from Phantom.PhtmWidgets import PhtmPushButton
 from Phantom.PhtmWidgets import PhtmPlainTextEdit
 
@@ -51,7 +51,7 @@ class DmiTab(QWidget):
         self.setLayout(dmiVBox)
 
     def __load_dmi_instr(self, dmi, editor):
-        name, filePath = f_ctrl.loadInstructions()
+        name, filePath = FileHandler.loadInstructions()
         if filePath:
             dmi.setPlainText(name)
             instr = TextStyle.readText(filePath)
