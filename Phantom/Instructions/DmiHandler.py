@@ -10,6 +10,7 @@ import untangle
 from Phantom.ApplicationSettings import Settings
 
 class DmiHandler():
+    genCounter = 0
     def __init__(self, dmiInstr):
         try:
             self.root = json.loads(dmiInstr)
@@ -28,15 +29,38 @@ class DmiHandler():
         return False
 
     def manipulate(self, data):
-        tempData = copy.deepcopy(data) # deep copy data to be manipulated
-        for link in self.root.get('link'):
-            self.__handleLink(link, tempData)
-        return tempData
+        try:
+            tempData = copy.deepcopy(data) # deep copy data to be manipulated
+            for link in (self.root.get('link') or []):
+                self.__handleLink(link, tempData)
+            for gen in (self.root.get('generate') or []):
+                self.__handlGen(gen, tempData)
+            # pprint.pprint(tempData)
+            return tempData
+        except Exception as err:
+            Settings.__LOG__.logError("DMI_ERR0: " + err)
+            print("DMI_ERR0: " + err)
+
+    def __handlGen(self, gen, data):
+        pattern = '(\w*)({[a-z0-9:><]+})'
+        if not gen.get('pattern'):
+            return
+        try:
+            if gen.get('op') == "inc":
+                pat = re.match(pattern, gen.get('pattern'))
+                # print(pat[1])
+                # print(pat[2])
+                data[gen.get('for_field')] = pat[1] + str(pat[2].format(self.genCounter))
+        except:
+            pass
+
+        self.genCounter+=1
 
     def __handleLink(self, link, data):
         directQueue = None
         patternQueue = None
         patternLookupKey = None
+        directSearchQueue = None
         queryData = {}
 
         try:
@@ -55,9 +79,6 @@ class DmiHandler():
                     Settings.__LOG__.logError("DMI_ERR: Value to look up is not a string")
                     return
 
-                elif not lookup['from_key'] in data:
-                    return
-
                 # if more than one look_ups return error
                 if lookup.get('method'):
                     if  lookup['method'] == "pattern":
@@ -72,7 +93,11 @@ class DmiHandler():
                         if not directQueue:
                             directQueue = {}
                         directQueue[lookup['in_key']] = lookup['from_key']
-                        print(str(directQueue)+"57")
+
+                else:
+                    if not lookup.get('filter'):
+                        raise Exception("Invalid lookup")
+                    directQueue = {}
 
             queryData['select'] = {}
             
@@ -85,8 +110,15 @@ class DmiHandler():
                     queryData['select'][field] = 0
 
             if not patternQueue:
+                for filt in (lookup.get('filter') or []):
+                    temp = {}
+                    temp['$and'] = []
+                    temp['$and'].append(directQueue)
+                    temp['$and'].append({filt['in_key'] : filt['from_key']})
+                    directQueue = temp
+                    # pprint.pprint(criteria)
+
                 queryData['criteria'] = directQueue
-                self.__searchDatabase(queryData, data, link, srch)
 
             else:
                 for item in patternQueue:
@@ -125,7 +157,7 @@ class DmiHandler():
                     else:
                         queryData['criteria'] = criteria
                         
-                    self.__searchDatabase(queryData, data, link, srch)
+            self.__searchDatabase(queryData, data, link, srch)
 
 
     def __searchDatabase(self, queryData, data, link, search):

@@ -101,7 +101,7 @@ class FileHandler(QWidget):
                                             [QMessageBox.Yes, QMessageBox.Cancel])
                 if saveMessage.exec_():
                     if saveMessage.messageSelection == QMessageBox.Yes:
-                        filePath = self.exportPhm(self.__editorWidget)
+                        filePath = self.exportPhm()
                         if not filePath:
                             return False
                         
@@ -110,6 +110,26 @@ class FileHandler(QWidget):
 
                     else: return False
                         
+            self.adjustSignal.emit(filePath if filePath[-4:] == ".phm" else filePath+".phm")
+            self.__editorWidget.savePhm(filePath)
+            
+            return True
+
+        except Exception as err:
+            Settings.__LOG__.logError("SAVE_ERR: " + str(err))
+            return False
+
+    def savePhmAs(self):
+        try:
+            filePath = None
+            cluster = self.__editorWidget.getCluster()
+            
+            filePath = self.exportPhm()
+            if not filePath:
+                return False
+            
+            cluster.getPhm().setName(os.path.basename(filePath)[:-4])
+                    
             self.adjustSignal.emit(filePath if filePath[-4:] == ".phm" else filePath+".phm")
             self.__editorWidget.savePhm(filePath)
             
@@ -138,7 +158,7 @@ class FileHandler(QWidget):
                 with open(dialog.saveName, "w") as writeFile:
                     writeFile.write(eval(json.dumps(currScript.toPlainText(), indent=4)))
 
-    def exportPhm(self, editorWidget):
+    def exportPhm(self):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
         dialog = PhtmFileDialog(None, "Save Cluster", QFileDialog.AnyFile, "Cluster files (*.phm)", options=options, acceptMode=QFileDialog.AcceptSave)

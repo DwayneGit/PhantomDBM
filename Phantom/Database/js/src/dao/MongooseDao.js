@@ -53,8 +53,10 @@ class MongooseDOA {
                         delete d._id;
                         this.schemas[this.model].update({_id: id}, d, {upsert: true, setDefaultsOnInsert: true},
                             (err) => {
-                                if(err)
+                                if(err){
                                     socket.write(err.message)
+                                    console.error(err.message)
+                                }
                                 socket.write("Document saved")
                             }
                         )

@@ -50,6 +50,11 @@
                 }
             ]
         }
-    ]
-
+    ],
+    "generate":{
+        "pattern":"hello{:0>2d}",
+        "op": "inc",
+        "base": 10,
+        "for_field": "_id"
+    }
 }

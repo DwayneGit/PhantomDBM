@@ -162,9 +162,13 @@ class DatabaseHandler():
         results = []
         try:
             for doc in dbCollection.find(queryData.get('criteria'), queryData.get('select')):
-                if not (queryData.get('select').get('_id') == 0):
+                if isinstance(doc.get('_id'), ObjectId):
                     doc["_id"] = str(doc.get("_id"))
-                results.append(doc)
+
+                if len(queryData.get('select'))==1:
+                    results.append(doc[list(queryData['select'])[0]])
+                else:
+                    results.append(doc)
 
         except Exception as err:
             Settings.__LOG__.logError("ERR: " + str(err))

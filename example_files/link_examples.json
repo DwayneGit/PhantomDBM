@@ -1,36 +1,47 @@
 [
     {
-        "root":{
-            "link":{
+        "link":[
+            {
                 "method" : "search",
                 "store" : "reference",
                 "format" : "auto",
                 "from_db" : "__DATABASE__",
                 "from_col" : "__COLLECTION__",
-                "search_key" : {
-                    "key" : "new_key",
-                    "criteria" : "single",
-                    "look_up" : {
-                        "method" : "pattern",
-                        "pattern" : "",
-                        "for_value" : "SEARCH_FOR_THIS_VALUE",
-                        "in_field": "IN_THIS_FIELD"
+                "deselect" : "field1 filedn",
+                "select" : "field1 filedn",
+                "search_key" : [
+                    {
+                        "key" : "new_key",
+                        "criteria" : "single",
+                        "look_up" : [
+                            {
+                                "method" : "pattern",
+                                "pattern" : "",
+                                "for_value" : "SEARCH_FOR_THIS_VALUE",
+                                "in_field": "IN_THIS_FIELD"
+                            }
+                        ]
                     }
-                }
+                ]
             }
+        ],
+        "generate":{
+            "pattern":"__REGEX__",
+            "op": "__OPERATION__",
+            "for_field": "__FIELD_TO_GENERATE__"
         }
     },
 
     {
-        "root":{
-            "link":[
-                {
-                    "method" : "search",
-                    "store" : "complete",
-                    "format" : "list",
-                    "from_db" : "__DATABASE__",
-                    "from_col" : "__COLLECTION__",
-                    "search_key" : {
+        "link":[
+            {
+                "method" : "search",
+                "store" : "complete",
+                "format" : "list",
+                "from_db" : "__DATABASE__",
+                "from_col" : "__COLLECTION__",
+                "search_key" : [
+                    {
                         "key" : "new_key",
                         "criteria" : "multi",
                         "criteria_match" : "specified",
@@ -58,8 +69,8 @@
                             }
                         ]
                     }
-                }
-            ]
-        }
+                ]
+            }
+        ]
     }
 ]

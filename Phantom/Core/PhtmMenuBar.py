@@ -72,7 +72,7 @@ class PhtmMenuBar(QMenuBar):
 
         savePAsAction = QAction("Save PHM As...", self)
         savePAsAction.setStatusTip('Save Script File')
-        savePAsAction.triggered.connect(lambda: self.fileHandler.exportPhm())
+        savePAsAction.triggered.connect(lambda: self.fileHandler.savePhmAs())
 
         importAction = QAction("Import Script", self)
         importAction.setStatusTip('Save Script File')
