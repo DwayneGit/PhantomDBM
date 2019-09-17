@@ -62,6 +62,7 @@ class MongooseDOA {
                         )
                      }   
                     else{
+                        console.log(this.model)
                         var test = new this.schemas[this.model](d)
                         
                         test.save().then((err) => {

@@ -202,7 +202,8 @@ class MainWindow(QMainWindow):
     @pyqtSlot()
     def newEditorWidget(self):
         if self.fileHandler.savePhm(self.__menuBar.getAdjustSignal()):
-            editorWidget = PhtmEditorWidget(self)
+            self.fileHandler = FileHandler(self)
+            editorWidget = PhtmEditorWidget(self.fileHandler, self)
             self.setMainWindowTitle(self.__programTitle)
             self.__mainSplitter.replaceWidget(self.__mainSplitter.indexOf(self.__editorWidget), editorWidget)
             self.__editorWidget = editorWidget

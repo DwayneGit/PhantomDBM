@@ -188,11 +188,19 @@ class SchemaTab(QWidget):
         fp.close()
 
         if schemas.find("__children"):
-            self.children = (self.__getKeys(collectionDirectory, self.__getObject(schemas, "__children")[0]))
-            print(self.children)
+            try:
+                self.children = (self.__getKeys(collectionDirectory, self.__getObject(schemas, "__children")[0]))
+                print(self.children)
+            
+            except Exception as err:
+                Settings.__LOG__.logError(err)
+                return
                 
-    def __getKeys(self, collectionDirectory, jsonData, start=0, keyList=[]):
-        key = regex.search("[^\[\]{}\s:\",]+", jsonData[start:])
+    def __getKeys(self, collectionDirectory, jsonData, keyList=[]):
+        key = regex.search("[^\[\]{}\s:\",]+", jsonData)
+        # print(jsonData)
+        # print(key)
+        # print("-----------------------------------")
 
         if not key: 
             return keyList
@@ -213,8 +221,8 @@ class SchemaTab(QWidget):
             fp2.write(self.__getObject(data)[0] + "))\n")
 
         fp2.close()
-        if start < len(jsonData):
-            return self.__getKeys(collectionDirectory, jsonData, index, keyList)
+        
+        return self.__getKeys(collectionDirectory, jsonData[index:], keyList)
 
     def __getObject(self, jsonData, *keydata):
         index = 0
